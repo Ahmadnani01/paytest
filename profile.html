@@ -1,0 +1,603 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Profile - JobSeeker</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="styles/main.css" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-storage-compat.js"></script>
+    <style>
+        .profile-container {
+            max-width: 800px;
+            margin: 0 auto;
+            padding: 20px;
+        }
+
+        .profile-header {
+            display: flex;
+            align-items: center;
+            gap: 20px;
+            margin-bottom: 30px;
+        }
+
+        .profile-picture {
+            width: 150px;
+            height: 150px;
+            border-radius: 50%;
+            background: #3498db;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: white;
+            font-size: 3em;
+            font-weight: bold;
+            text-transform: uppercase;
+        }
+
+        .profile-info {
+            flex-grow: 1;
+        }
+
+        .profile-section {
+            background: white;
+            border-radius: 8px;
+            padding: 20px;
+            margin-bottom: 20px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .edit-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .form-group {
+            margin-bottom: 15px;
+        }
+
+        .form-group label {
+            display: block;
+            margin-bottom: 5px;
+            font-weight: bold;
+        }
+
+        .form-group input,
+        .form-group textarea,
+        .form-group select {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .save-btn {
+            background: #2ecc71;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .preferences-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(200px, 1fr));
+            gap: 15px;
+        }
+
+        .preference-item {
+            background: #f8f9fa;
+            padding: 10px;
+            border-radius: 4px;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .skills-container {
+            margin-top: 10px;
+        }
+
+        .skills-input-group {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 10px;
+        }
+
+        .add-skill-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .skills-list {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 10px;
+        }
+
+        .skill-tag {
+            background: #f0f0f0;
+            padding: 5px 10px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .remove-skill-btn {
+            background: none;
+            border: none;
+            color: #e74c3c;
+            cursor: pointer;
+            padding: 0;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <nav class="sidebar">
+        <button class="toggle-btn">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <div class="logo">
+            <img src="logo/tinywow_change_bg_photo_79922413.png" alt="CVTailor.CC Logo" style="width: 150px; height: auto;">
+        </div>
+        <ul class="nav-links">
+            <li class="active" onclick="window.location.href='index.html'"><i class="fas fa-home"></i><span>Home</span></li>
+            <li onclick="window.location.href='marketplace.html'"><i class="fas fa-store"></i><span>Marketplace</span></li>
+            <li onclick="window.location.href='region.html'"><i class="fas fa-globe"></i><span>Region</span></li>
+            <li onclick="window.location.href='cv-section.html'"><i class="fas fa-file-alt"></i><span>CV & Cover Letter</span></li>
+            <li onclick="window.location.href='job-board.html'"><i class="fas fa-briefcase"></i><span>Job Board</span></li>
+            <li><i class="fas fa-tasks"></i><span>Application Tracker <span style="color: grey;">(Coming Soon)</span></span></li>
+            <li onclick="window.location.href='profile.html'" ><i class="fas fa-user"></i><span>Profile</span></li>
+            <li><i class="fas fa-comments"></i><span>Consultation <span style="color: grey;">(Coming Soon)</span></span></li>
+            <li onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i><span>Logout</span></li>
+            <li onclick="window.location.href='plan.html'" class="subscription-plan"><i class="fas fa-credit-card"></i><span>Subscription Plan</span><span id="nav-credit-display" style="font-size: 0.8em; color: #fff; margin-left: 5px;">(Credit: Loading...)</span></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <div class="profile-container">
+            <div class="profile-header">
+                <div class="profile-picture">
+                    <span id="userInitials">...</span>
+                </div>
+                <div class="profile-info">
+                    <h1 id="userName">Loading...</h1>
+                    <p id="userEmail">Loading...</p>
+                </div>
+            </div>
+
+            <div class="profile-section">
+                <div class="section-header">
+                    <h2>Personal Information</h2>
+                    <button class="edit-btn" onclick="toggleEdit('personal')">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                </div>
+                <div id="personalInfo">
+                    <div class="form-group">
+                        <label>First Name</label>
+                        <input type="text" id="firstName" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Last Name</label>
+                        <input type="text" id="lastName" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Location</label>
+                        <input type="text" id="location" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Bio</label>
+                        <textarea id="bio" rows="4" disabled></textarea>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-section">
+                <div class="section-header">
+                    <h2>Contact Information</h2>
+                    <button class="edit-btn" onclick="toggleEdit('contact')">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                </div>
+                <div id="contactInfo">
+                    <div class="form-group">
+                        <label>Phone Number</label>
+                        <input type="tel" id="phoneNumber" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>LinkedIn Profile</label>
+                        <input type="url" id="linkedinProfile" placeholder="https://linkedin.com/in/username" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Portfolio Website</label>
+                        <input type="url" id="portfolioWebsite" placeholder="https://yourwebsite.com" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Alternative Email</label>
+                        <input type="email" id="alternativeEmail" disabled>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-section">
+                <div class="section-header">
+                    <h2>Job Preferences</h2>
+                    <button class="edit-btn" onclick="toggleEdit('preferences')">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                </div>
+                <div id="preferencesInfo">
+                    <div class="form-group">
+                        <label>Preferred Role</label>
+                        <input type="text" id="preferredRole" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Desired Location</label>
+                        <input type="text" id="desiredLocation" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Salary Range</label>
+                        <select id="salaryRange" disabled>
+                            <option value="">Select Salary Range</option>
+                            <option value="0-30k">$0 - $30,000</option>
+                            <option value="30k-50k">$30,000 - $50,000</option>
+                            <option value="50k-80k">$50,000 - $80,000</option>
+                            <option value="80k-100k">$80,000 - $100,000</option>
+                            <option value="100k+">$100,000+</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Work Type</label>
+                        <select id="workType" disabled>
+                            <option value="">Select Work Type</option>
+                            <option value="full-time">Full Time</option>
+                            <option value="part-time">Part Time</option>
+                            <option value="contract">Contract</option>
+                            <option value="freelance">Freelance</option>
+                            <option value="remote">Remote</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Skills</label>
+                        <div class="skills-container" id="skillsContainer">
+                            <div class="skills-input-group">
+                                <input type="text" id="skillInput" placeholder="Add a skill" disabled>
+                                <button class="add-skill-btn" onclick="addSkill()" disabled>
+                                    <i class="fas fa-plus"></i>
+                                </button>
+                            </div>
+                            <div class="skills-list" id="skillsList"></div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-section">
+                <div class="section-header">
+                    <h2>Education</h2>
+                    <button class="edit-btn" onclick="toggleEdit('education')">
+                        <i class="fas fa-edit"></i> Edit
+                    </button>
+                </div>
+                <div id="educationInfo">
+                    <div class="form-group">
+                        <label>Degree Level</label>
+                        <select id="degreeLevel" disabled>
+                            <option value="">Select Degree Level</option>
+                            <option value="bachelor">Bachelor's Degree</option>
+                            <option value="master">Master's Degree</option>
+                            <option value="phd">Ph.D.</option>
+                            <option value="other">Other</option>
+                        </select>
+                    </div>
+                    <div class="form-group">
+                        <label>Field of Study</label>
+                        <input type="text" id="fieldOfStudy" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Institution</label>
+                        <input type="text" id="institution" disabled>
+                    </div>
+                    <div class="form-group">
+                        <label>Graduation Year</label>
+                        <input type="number" id="graduationYear" disabled>
+                    </div>
+                </div>
+            </div>
+
+            <div class="profile-section">
+                <div class="section-header">
+                    <h2>CV Upload</h2>
+                </div>
+                <div id="cvUploadInfo">
+                    <div class="form-group">
+                        <label>Current CV</label>
+                        <div id="currentCV">No CV uploaded</div>
+                    </div>
+                    <div class="form-group">
+                        <input type="file" id="cvInput" accept=".pdf,.doc,.docx" style="display: none;">
+                        <button class="edit-btn" onclick="document.getElementById('cvInput').click()">
+                            <i class="fas fa-upload"></i> Upload New CV
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCCoH_alBrRE_LrrE_nR-edbJXqy1pjfCU",
+            authDomain: "quick-test-aac28.firebaseapp.com",
+            projectId: "quick-test-aac28",
+            storageBucket: "quick-test-aac28.firebasestorage.app",
+            messagingSenderId: "892247718936",
+            appId: "1:892247718936:web:e74b78c6897ef081e3d76d",
+            measurementId: "G-0KXC6TQCEE"
+        };
+
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        const storage = firebase.storage();
+
+        // Check auth state and fetch user data
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                db.collection('users').doc(user.uid).get()
+                    .then((doc) => {
+                        if (doc.exists) {
+                            const userData = doc.data();
+                            const initials = `${userData.firstName?.charAt(0) || ''}${userData.lastName?.charAt(0) || ''}`;
+                            document.getElementById('userInitials').textContent = initials;
+                            document.getElementById('userName').textContent = 
+                                `${userData.firstName} ${userData.lastName}`;
+                            document.getElementById('userEmail').textContent = user.email;
+                            document.getElementById('firstName').value = userData.firstName;
+                            document.getElementById('lastName').value = userData.lastName;
+                            document.getElementById('location').value = userData.location || '';
+                            document.getElementById('bio').value = userData.bio || '';
+                            document.getElementById('degreeLevel').value = userData.degreeLevel || '';
+                            document.getElementById('fieldOfStudy').value = userData.fieldOfStudy || '';
+                            document.getElementById('institution').value = userData.institution || '';
+                            document.getElementById('graduationYear').value = userData.graduationYear || '';
+                            document.getElementById('phoneNumber').value = userData.phoneNumber || '';
+                            document.getElementById('linkedinProfile').value = userData.linkedinProfile || '';
+                            document.getElementById('portfolioWebsite').value = userData.portfolioWebsite || '';
+                            document.getElementById('alternativeEmail').value = userData.alternativeEmail || '';
+                            document.getElementById('preferredRole').value = userData.preferredRole || '';
+                            document.getElementById('desiredLocation').value = userData.desiredLocation || '';
+                            document.getElementById('salaryRange').value = userData.salaryRange || '';
+                            document.getElementById('workType').value = userData.workType || '';
+                            if (userData.skills) {
+                                userData.skills.forEach(skill => {
+                                    addSkillToDOM(skill);
+                                });
+                            }
+                            
+                            if (userData.cvUrl) {
+                                document.getElementById('currentCV').innerHTML = `
+                                    <a href="${userData.cvUrl}" target="_blank">View Current CV</a>
+                                `;
+                            }
+                            userCredits = userData.credits || 0; // Default to 0 if credits don't exist
+                            const currentPlan = userData.plan || 'free'; // Default to free if no plan exists
+                            updateCreditDisplayInButton(userCredits); // Update the button
+                        }
+                    })
+                    .catch((error) => {
+                        console.error('Error fetching user data:', error);
+                    });
+            } else {
+                window.location.href = 'auth.html';
+            }
+        });
+
+        // Sidebar toggle functionality
+        const sidebar = document.querySelector('.sidebar');
+        const mainContent = document.querySelector('.main-content');
+        const toggleBtn = document.querySelector('.toggle-btn');
+        const toggleIcon = toggleBtn.querySelector('i');
+
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('expanded');
+            toggleIcon.classList.toggle('fa-chevron-left');
+            toggleIcon.classList.toggle('fa-chevron-right');
+        });
+
+        // Profile functionality
+        function toggleEdit(section) {
+            const container = document.getElementById(`${section}Info`);
+            const inputs = container.querySelectorAll('input, textarea, select');
+            const editBtn = container.parentElement.querySelector('.edit-btn');
+            
+            if (inputs[0].disabled) {
+                inputs.forEach(input => input.disabled = false);
+                if (section === 'preferences') {
+                    document.querySelector('.add-skill-btn').disabled = false;
+                }
+                editBtn.textContent = 'Save';
+                editBtn.onclick = () => saveChanges(section);
+            } else {
+                inputs.forEach(input => input.disabled = true);
+                if (section === 'preferences') {
+                    document.querySelector('.add-skill-btn').disabled = true;
+                }
+                editBtn.innerHTML = '<i class="fas fa-edit"></i> Edit';
+                editBtn.onclick = () => toggleEdit(section);
+            }
+        }
+
+        function saveChanges(section) {
+            const user = auth.currentUser;
+            if (!user) return;
+
+            const updates = {};
+            const container = document.getElementById(`${section}Info`);
+            
+            // Handle different sections
+            if (section === 'preferences') {
+                updates.preferredRole = document.getElementById('preferredRole').value;
+                updates.desiredLocation = document.getElementById('desiredLocation').value;
+                updates.salaryRange = document.getElementById('salaryRange').value;
+                updates.workType = document.getElementById('workType').value;
+                
+                // Get skills from the skills list
+                const skillTags = document.querySelectorAll('.skill-tag');
+                updates.skills = Array.from(skillTags).map(tag => 
+                    tag.textContent.trim().replace('×', '').trim()
+                );
+            } else {
+                // Handle other sections (personal, contact, education)
+                container.querySelectorAll('input, textarea, select').forEach(input => {
+                    if (input.id) {
+                        updates[input.id] = input.value;
+                    }
+                });
+            }
+
+            // Save to Firestore
+            db.collection('users').doc(user.uid).update(updates)
+                .then(() => {
+                    alert('Changes saved successfully!');
+                    toggleEdit(section);
+                })
+                .catch(error => {
+                    console.error('Error saving changes:', error);
+                    alert('Failed to save changes');
+                });
+        }
+
+        // Logout functionality
+        function handleLogout() {
+            auth.signOut()
+                .then(() => {
+                    window.location.href = 'auth.html';
+                })
+                .catch((error) => {
+                    console.error('Logout failed:', error);
+                });
+        }
+
+        // CV upload handling
+        document.getElementById('cvInput').addEventListener('change', function(e) {
+            if (e.target.files[0]) {
+                const file = e.target.files[0];
+                const user = auth.currentUser;
+                const cvRef = storage.ref(`cvs/${user.uid}/${file.name}`);
+                
+                cvRef.put(file).then((snapshot) => {
+                    return snapshot.ref.getDownloadURL();
+                }).then((downloadURL) => {
+                    return db.collection('users').doc(user.uid).update({
+                        cvUrl: downloadURL,
+                        cvName: file.name
+                    });
+                }).then(() => {
+                    document.getElementById('currentCV').innerHTML = `
+                        <a href="${downloadURL}" target="_blank">View Current CV</a>
+                    `;
+                    alert('CV uploaded successfully!');
+                }).catch((error) => {
+                    console.error('Error uploading CV:', error);
+                    alert('Failed to upload CV');
+                });
+            }
+        });
+
+        function addSkill() {
+            const skillInput = document.getElementById('skillInput');
+            const skill = skillInput.value.trim();
+            
+            if (skill) {
+                addSkillToDOM(skill);
+                skillInput.value = '';
+                saveSkills();
+            }
+        }
+
+        function addSkillToDOM(skill) {
+            const skillsList = document.getElementById('skillsList');
+            const skillTag = document.createElement('div');
+            skillTag.className = 'skill-tag';
+            skillTag.innerHTML = `
+                ${skill}
+                <button class="remove-skill-btn" onclick="removeSkill(this)">
+                    <i class="fas fa-times"></i>
+                </button>
+            `;
+            skillsList.appendChild(skillTag);
+        }
+
+        function removeSkill(button) {
+            button.parentElement.remove();
+            saveSkills();
+        }
+
+        function saveSkills() {
+            const user = auth.currentUser;
+            if (!user) return;
+
+            const skillTags = document.querySelectorAll('.skill-tag');
+            const skills = Array.from(skillTags).map(tag => 
+                tag.textContent.trim().replace('×', '').trim()
+            );
+
+            db.collection('users').doc(user.uid).update({
+                skills: skills
+            }).catch(error => {
+                console.error('Error saving skills:', error);
+                alert('Failed to save skills');
+            });
+        }
+
+        // Function to update credit display in the subscription button
+        async function updateCreditDisplayInButton(credits) {
+            const navCreditDisplay = document.getElementById('nav-credit-display');
+            if (navCreditDisplay) {
+                const user = auth.currentUser;
+                if (user) {
+                    const userDoc = await db.collection('users').doc(user.uid).get();
+                    if (userDoc.exists) {
+                        const userData = userDoc.data();
+                        const currentPlan = userData.plan || 'free';
+
+                        if (currentPlan === 'premium') {
+                            navCreditDisplay.textContent = 'Premium';
+                        } else {
+                            navCreditDisplay.textContent = `(Credit: ${credits})`;
+                        }
+                    }
+                }
+            }
+        }
+    </script>
+</body>
+</html>
