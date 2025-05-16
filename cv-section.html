@@ -1,0 +1,3520 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>CV Section - JobSeeker</title>
+    <link href="styles/main.css" rel="stylesheet">
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <style>
+        .upload-section {
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .file-upload {
+            border: 2px dashed #3498db;
+            border-radius: 8px;
+            padding: 20px;
+            text-align: center;
+            cursor: pointer;
+            margin-bottom: 20px;
+        }
+
+        .job-description {
+            width: 100%;
+            min-height: 150px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 20px;
+        }
+
+        .generate-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 10px 20px;
+            border-radius: 4px;
+            cursor: pointer;
+            font-size: 16px;
+        }
+
+        .result-section {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 20px;
+            margin-top: 20px;
+        }
+
+        .result-box {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+        }
+
+        .result-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 15px;
+        }
+
+        .sidebar {
+            position: fixed;
+            left: 0;
+            top: 0;
+            height: 100vh;
+            width: 250px;
+            background: #2c3e50;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .sidebar .logo h2 {
+            color: white;
+            text-align: center;
+            margin-bottom: 30px;
+        }
+
+        .nav-links li {
+            padding: 15px;
+            border-radius: 8px;
+            margin-bottom: 10px;
+            color: #ecf0f1;
+            cursor: pointer;
+            transition: all 0.3s ease;
+        }
+
+        .nav-links li:hover, .nav-links li.active {
+            background: #34495e;
+        }
+
+        .nav-links li i {
+            margin-right: 10px;
+            width: 25px;
+        }
+
+        .toggle-btn {
+            position: absolute;
+            top: 20px;
+            right: -15px;
+            width: 30px;
+            height: 30px;
+            background: #2c3e50;  /* Changed from #3498db to match sidebar color */
+            color: white;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            z-index: 100;
+        }
+
+        .main-content {
+            margin-left: 250px;
+            padding: 20px;
+            transition: all 0.3s ease;
+        }
+
+        .main-content.expanded {
+            margin-left: 70px;
+        }
+
+        .sidebar.collapsed {
+            width: 70px;
+        }
+
+        .sidebar.collapsed .logo h2,
+        .sidebar.collapsed .nav-links span {
+            display: none;
+        }
+
+        .btn-edit {
+            background: #9b59b6;
+            color: white;
+            border: none;
+            width: 30px;
+            height: 30px;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .btn-edit:hover {
+            background: #8e44ad;
+        }
+
+        .editor-modal {
+            display: none;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: rgba(0,0,0,0.5);
+            z-index: 1000;
+            overflow-y: auto;
+        }
+
+        .editor-content {
+            position: relative;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            background: white;
+            padding: 30px;
+            border-radius: 12px;
+            width: 90%;
+            max-width: 1000px;
+            max-height: 90vh;
+            overflow-y: auto;
+            box-shadow: 0 5px 15px rgba(0,0,0,0.2);
+        }
+
+        .cv-editor-container {
+            display: flex;
+            flex-direction: column;
+            padding: 30px;
+            background: white;
+            width: 21cm; /* A4 width */
+            min-height: 29.7cm; /* A4 height */
+            margin: 0 auto;
+            box-shadow: 0 0 10px rgba(0,0,0,0.1);
+        }
+
+        .cv-header {
+            text-align: center;
+            margin-bottom: 15px;
+            padding-bottom: 15px;
+            border-bottom: 2px solid #2c3e50;
+        }
+
+        .cv-name {
+            font-size: 24px;
+            font-weight: bold;
+            margin-bottom: 5px;
+        }
+
+        .cv-contact {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 10px;
+            font-size: 12px;
+            margin-top: 10px;
+        }
+
+        .cv-section {
+            margin-bottom: 15px;
+            width: 100%;
+            position: relative;
+            padding: 20px;
+            border: 1px solid transparent;
+            border-radius: 8px;
+            transition: all 0.3s ease;
+            cursor: move; /* Show move cursor */
+            user-select: none; /* Prevent text selection while dragging */
+        }
+
+        .cv-section:hover {
+            border-color: #e9ecef;
+        }
+
+        .cv-section.dragging {
+            opacity: 0.5;
+            background: #f8f9fa;
+            border: 2px dashed #3498db;
+        }
+
+        .cv-section-header {
+            display: flex;
+            align-items: center;
+            margin-bottom: 8px;
+            border-bottom: 1px solid #3498db;
+        }
+
+        .cv-section-header h3 {
+            font-size: 16px;
+            margin: 0;
+            padding: 5px 0;
+            color: #2c3e50;
+        }
+
+        .editable-field {
+            font-size: 12px;
+            padding: 4px 8px;
+            margin: 2px 0;
+        }
+
+        .experience-item {
+            margin-bottom: 10px;
+        }
+
+        .experience-header {
+            display: flex;
+            justify-content: space-between;
+            font-weight: bold;
+            margin-bottom: 3px;
+        }
+
+        .experience-bullets {
+            margin-left: 15px;
+            font-size: 12px;
+        }
+
+        .skills-grid {
+            display: grid;
+            grid-template-columns: repeat(2, 1fr);
+            gap: 10px;
+            font-size: 12px;
+        }
+
+        .separator-line {
+            width: 100%;
+            height: 1px;
+            background: linear-gradient(to right, transparent, #3498db, transparent);
+            margin: 20px 0;
+        }
+
+        .editor-textarea {
+            width: 100%;
+            height: 400px;
+            margin: 10px 0;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            resize: vertical;
+        }
+
+        .editor-actions {
+            display: flex;
+            justify-content: space-between;
+            gap: 10px;
+            margin-top: 10px;
+        }
+
+        .editor-actions button {
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .save-btn {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .cancel-btn {
+            background: #e74c3c;
+            color: white;
+        }
+
+        .text-center {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 30px;
+        }
+
+        .cv-editor-container {
+            animation: fadeIn 0.3s ease;
+        }
+
+        .editable-field[contenteditable="true"]:empty:before {
+            content: attr(data-placeholder);
+            color: #999;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(-20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+
+        .section-controls {
+            position: relative;
+            display: inline-flex;
+            align-items: center;
+        }
+
+        .section-dropdown {
+            position: absolute;
+            top: calc(100% + 5px);  /* Position below the button */
+            left: 0;
+            background: white;
+            border-radius: 8px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            min-width: 220px;
+            opacity: 0;
+            visibility: hidden;
+            transform: translateY(-10px);
+            transition: all 0.2s ease;
+            z-index: 1000;
+            border: 1px solid #e1e4e8;
+        }
+
+        .section-dropdown.show {
+            opacity: 1;
+            visibility: visible;
+            transform: translateY(0);
+        }
+
+        .section-option {
+            padding: 10px 16px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            color: #2c3e50;
+            transition: all 0.2s ease;
+        }
+
+        .section-option:hover {
+            background: #f8f9fa;
+            color: #3498db;
+        }
+
+        .section-option i {
+            width: 20px;
+            text-align: center;
+            font-size: 14px;
+            opacity: 0.7;
+        }
+
+        .add-section-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 6px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .add-section-btn:hover {
+            background: #2980b9;
+            transform: translateY(-1px);
+        }
+
+        .remove-section {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            width: 24px;
+            height: 24px;
+            border-radius: 12px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.3s;
+        }
+
+        .cv-section:hover .remove-section {
+            opacity: 1;
+        }
+
+        .drag-handle {
+            position: absolute;
+            left: 10px;
+            top: 10px;
+            color: #95a5a6;
+            cursor: move;
+            font-size: 14px;
+        }
+
+        .cv-section:hover .drag-handle {
+            color: #3498db;
+        }
+
+        .bullet-point {
+            position: relative;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .remove-bullet {
+            opacity: 0;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            width: 16px;
+            height: 16px;
+            border-radius: 50%;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 10px;
+            transition: opacity 0.2s;
+        }
+
+        .bullet-point:hover .remove-bullet {
+            opacity: 1;
+        }
+
+        .add-bullet {
+            color: #3498db;
+            cursor: pointer;
+            font-size: 12px;
+            margin-left: 15px;
+            opacity: 0.7;
+        }
+
+        .add-bullet:hover {
+            opacity: 1;
+        }
+
+        .add-entry-btn {
+            position: relative;
+            color: #3498db;
+            background: white;
+            border: none;
+            padding: 5px 10px;
+            border-radius: 15px;
+            cursor: pointer;
+            display: inline-flex;
+            align-items: center;
+            gap: 5px;
+            font-size: 12px;
+            box-shadow: 0 2px 5px rgba(0,0,0,0.1);
+            margin: 5px 0 5px 15px;
+            transition: all 0.2s ease;
+        }
+
+        .add-entry-btn:hover {
+            background: #f7f9fc;
+            transform: translateY(-1px);
+            box-shadow: 0 3px 8px rgba(0,0,0,0.15);
+        }
+
+        .add-entry-btn i {
+            font-size: 10px;
+        }
+
+        .entry-container {
+            position: relative;
+            padding: 12px;
+            margin: 8px 0;
+            border: 1px solid #eee;
+            border-radius: 4px;
+            transition: all 0.2s ease;
+        }
+
+        .entry-container:hover {
+            border-color: #3498db;
+            background: #f8f9fc;
+        }
+
+        .remove-entry {
+            position: absolute;
+            right: 10px;
+            top: 10px;
+            background: #e74c3c;
+            color: white;
+            border: none;
+            width: 20px;
+            height: 20px;
+            border-radius: 10px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 12px;
+            opacity: 0;
+            transition: opacity 0.2s;
+        }
+
+        .entry-container:hover .remove-entry {
+            opacity: 1;
+        }
+
+        .cover-letter-editor {
+            padding: 30px;
+            background: white;
+            width: 21cm;
+            min-height: 29.7cm;
+            margin: 0 auto;
+            font-family: Arial, sans-serif;
+        }
+
+        .cover-letter-section {
+            margin-bottom: 20px;
+        }
+
+        .cover-letter-header {
+            margin-bottom: 30px;
+        }
+
+        .date-field {
+            color: #666;
+            margin-bottom: 20px;
+        }
+
+        .recipient-info {
+            margin-bottom: 20px;
+        }
+
+        .letter-body {
+            line-height: 1.6;
+            margin-bottom: 30px;
+        }
+
+        .letter-closing {
+            margin-top: 30px;
+        }
+
+        .signature-space {
+            height: 60px;
+            margin: 20px 0;
+        }
+
+        .autofill-btn {
+            background: #9b59b6;
+            color: white;
+            padding: 8px 16px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-right: 10px;
+        }
+
+        .autofill-btn:hover {
+            background: #8e44ad;
+        }
+
+        .loading-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            right: 0;
+            bottom: 0;
+            background: rgba(255, 255, 255, 0.9);
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            z-index: 1000;
+        }
+
+        .loading-spinner {
+            width: 50px;
+            height: 50px;
+            border: 5px solid #f3f3f3;
+            border-top: 5px solid #3498db;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-bottom: 15px;
+        }
+
+        .loading-status {
+            text-align: center;
+            color: #2c3e50;
+            font-size: 14px;
+            margin-top: 10px;
+        }
+
+        .loading-progress {
+            width: 200px;
+            height: 4px;
+            background: #f3f3f3;
+            border-radius: 2px;
+            margin-top: 10px;
+            overflow: hidden;
+        }
+
+        .loading-progress-bar {
+            height: 100%;
+            background: #3498db;
+            width: 0;
+            transition: width 0.3s ease;
+        }
+
+        .completion-check {
+            color: #2ecc71;
+            font-size: 50px;
+            margin-bottom: 15px;
+            animation: scaleIn 0.3s ease;
+        }
+
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+
+        @keyframes scaleIn {
+            from { transform: scale(0); opacity: 0; }
+            to { transform: scale(1); opacity: 1; }
+        }
+
+        .email-editor {
+            padding: 20px;
+            background: white;
+            border-radius: 8px;
+        }
+
+        .email-form {
+            display: flex;
+            flex-direction: column;
+            gap: 20px;
+        }
+
+        .form-group {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .form-group label {
+            font-weight: bold;
+            color: #2c3e50;
+        }
+
+        .email-subject {
+            width: 100%;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .email-body {
+            min-height: 300px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            white-space: pre-wrap;
+            font-family: Arial, sans-serif;
+            line-height: 1.6;
+        }
+
+        .floating-email-btn {
+            position: fixed;
+            bottom: 30px;
+            right: 30px;
+            background: #3498db;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .floating-email-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+
+        .floating-email-btn i {
+            font-size: 18px;
+        }
+
+        .email-panel {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background: white;
+            box-shadow: -2px 0 8px rgba(0,0,0,0.1);
+            transition: right 0.3s ease;
+            z-index: 1001;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .email-panel.open {
+            right: 0;
+        }
+
+        .email-panel-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .email-panel-header h3 {
+            margin: 0;
+            color: #2c3e50;
+        }
+
+        .close-panel-btn {
+            background: none;
+            border: none;
+            color: #95a5a6;
+            cursor: pointer;
+            font-size: 20px;
+            padding: 5px;
+        }
+
+        .close-panel-btn:hover {
+            color: #7f8c8d;
+        }
+
+        .email-panel-content {
+            padding: 20px;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .email-actions {
+            display: flex;
+            gap: 10px;
+            margin-top: 20px;
+        }
+
+        .generate-email-btn, .copy-email-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .generate-email-btn {
+            background: #3498db;
+            color: white;
+        }
+
+        .copy-email-btn {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .generate-email-btn:hover, .copy-email-btn:hover {
+            transform: translateY(-1px);
+        }
+
+        .email-body[contenteditable="true"]:empty:before {
+            content: attr(data-placeholder);
+            color: #95a5a6;
+        }
+
+        .regenerate-email-btn {
+            background: #2ecc71;
+            color: white;
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .regenerate-email-btn:hover {
+            transform: translateY(-1px);
+            background: #27ae60;
+        }
+
+        /* Questions Panel Styles */
+        .floating-questions-btn {
+            position: fixed;
+            bottom: 100px; /* Position above email button */
+            right: 30px;
+            background: #9b59b6;
+            color: white;
+            padding: 15px 25px;
+            border-radius: 50px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            box-shadow: 0 4px 12px rgba(0,0,0,0.15);
+            transition: all 0.3s ease;
+            z-index: 1000;
+        }
+
+        .floating-questions-btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 6px 16px rgba(0,0,0,0.2);
+        }
+
+        .floating-questions-btn i {
+            font-size: 18px;
+        }
+
+        .questions-panel {
+            position: fixed;
+            top: 0;
+            right: -400px;
+            width: 400px;
+            height: 100vh;
+            background: white;
+            box-shadow: -2px 0 8px rgba(0,0,0,0.1);
+            transition: right 0.3s ease;
+            z-index: 1001;
+            display: flex;
+            flex-direction: column;
+        }
+
+        .questions-panel.open {
+            right: 0;
+        }
+
+        .questions-panel-header {
+            padding: 20px;
+            border-bottom: 1px solid #eee;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .questions-panel-content {
+            padding: 20px;
+            flex-grow: 1;
+            overflow-y: auto;
+        }
+
+        .question-input {
+            width: 100%;
+            min-height: 100px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            margin-bottom: 15px;
+            resize: vertical;
+        }
+
+        .answer-box {
+            min-height: 200px;
+            padding: 15px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+            background: #f9f9f9;
+            margin-bottom: 15px;
+            white-space: pre-wrap;
+        }
+
+        .answer-box:empty:before {
+            content: attr(data-placeholder);
+            color: #999;
+        }
+
+        .questions-actions {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .generate-answer-btn,
+        .regenerate-answer-btn,
+        .copy-answer-btn {
+            padding: 10px 20px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            font-size: 14px;
+            transition: all 0.2s ease;
+        }
+
+        .generate-answer-btn {
+            background: #9b59b6;
+            color: white;
+        }
+
+        .regenerate-answer-btn {
+            background: #2ecc71;
+            color: white;
+        }
+
+        .copy-answer-btn {
+            background: #3498db;
+            color: white;
+        }
+
+        .generate-answer-btn:hover,
+        .regenerate-answer-btn:hover,
+        .copy-answer-btn:hover {
+            transform: translateY(-1px);
+            opacity: 0.9;
+        }
+    </style>
+    <!-- Add PDF.js library -->
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.min.js"></script>
+    <script>
+        pdfjsLib.GlobalWorkerOptions.workerSrc = 'https://cdnjs.cloudflare.com/ajax/libs/pdf.js/3.11.174/pdf.worker.min.js';
+    </script>
+
+    <!-- Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-analytics-compat.js"></script>
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyCCoH_alBrRE_LrrE_nR-edbJXqy1pjfCU",
+          authDomain: "quick-test-aac28.firebaseapp.com",
+          projectId: "quick-test-aac28",
+          storageBucket: "quick-test-aac28.firebasestorage.app",
+          messagingSenderId: "892247718936",
+          appId: "1:892247718936:web:e74b78c6897ef081e3d76d",
+          measurementId: "G-0KXC6TQCEE"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const analytics = firebase.analytics();
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Authentication state listener
+        auth.onAuthStateChanged((user) => {
+            if (!user) {
+                // User is not logged in, redirect to index.html
+                window.location.href = '/codes/index.html';
+            } else {
+                // User is logged in, load their data
+                loadUserData(user.uid);
+            }
+        });
+
+        async function loadUserData(userId) {
+            db.collection('users').doc(userId).get()
+                .then(async (doc) => {
+                    if (doc.exists) {
+                        const userData = doc.data();
+                        const currentPlan = userData.plan || 'free';
+
+                        // Update UI with user data
+                        const creditDisplay = document.getElementById('nav-credit-display');
+                        if (creditDisplay) {
+                            if (currentPlan === 'premium') {
+                                creditDisplay.textContent = 'Premium';
+                            } else {
+                                creditDisplay.textContent = `(Credit: ${userData.credits || 0})`;
+                            }
+                        }
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error loading user data:', error);
+                });
+        }
+
+        function handleLogout() {
+            auth.signOut()
+                .then(() => {
+                    window.location.href = '/codes/index.html';
+                })
+                .catch((error) => {
+                    console.error('Logout error:', error);
+                    alert('Logout failed: ' + error.message);
+                });
+        }
+    </script>
+</head>
+<body>
+    <nav class="sidebar">
+        <button class="toggle-btn">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <div class="logo">
+            <img src="logo/tinywow_change_bg_photo_79922413.png" alt="CVTailor.CC Logo" style="width: 150px; height: auto;">
+        </div>
+        <ul class="nav-links">
+            <li onclick="window.location.href='index.html'"><i class="fas fa-home"></i><span>Home</span></li>
+            <li onclick="window.location.href='marketplace.html'"><i class="fas fa-store"></i><span>Marketplace</span></li>
+            <li onclick="window.location.href='region.html'"><i class="fas fa-globe"></i><span>Region</span></li>
+            <li class="active"><i class="fas fa-file-alt"></i><span>CV & Cover Letter</span></li>
+            <li onclick="window.location.href='job-board.html'"><i class="fas fa-briefcase"></i><span>Job Board</span></li>
+            <li><i class="fas fa-tasks"></i><span>Application Tracker <span style="color: grey;">(Coming Soon)</span></span></li>
+            <li onclick="window.location.href='profile.html'"><i class="fas fa-user"></i><span>Profile</span></li>
+            <li><i class="fas fa-comments"></i><span>Consultation <span style="color: grey;">(Coming Soon)</span></span></li>
+            <li onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i><span>Logout</span></li>
+            <li onclick="window.location.href='plan.html'" class="subscription-plan"><i class="fas fa-credit-card"></i><span>Subscription Plan</span><span id="nav-credit-display" style="font-size: 0.8em; color: #fff; margin-left: 5px;">(Credit: Loading...)</span></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <div class="welcome-section">
+            <h1>CV & Cover Letter Generator</h1>
+            <p>Upload your CV and job description to generate tailored documents</p>
+        </div>
+
+        <div class="upload-section">
+            <h2>Upload Documents</h2>
+            <div class="file-upload" onclick="document.getElementById('cvFile').click()">
+                <i class="fas fa-cloud-upload-alt fa-3x"></i>
+                <p>Click to upload your CV</p>
+                <input type="file" id="cvFile" hidden accept=".pdf,.doc,.docx">
+            </div>
+            
+            <h2>Job Description</h2>
+            <textarea class="job-description" placeholder="Paste the job description here..."></textarea>
+            
+            <button class="generate-btn" onclick="generateDocuments()">
+                <i class="fas fa-magic"></i> Generate Documents
+            </button>
+        </div>
+
+        <div class="result-section">
+            <div class="result-box">
+                <div class="result-header">
+                    <h2>Tailored CV (2 Credits)</h2>
+                    <div class="button-group">
+                        <button class="btn-edit" onclick="openEditor('cv')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-regenerate" onclick="regenerateDocument('cv')">
+                            <i class="fas fa-redo"></i>
+                        </button>
+                        <button class="btn-download" onclick="downloadDocument('cv')">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    </div>
+                </div>
+                <div id="cvPreview" class="preview-content">
+                    <!-- CV content will be displayed here -->
+                </div>
+            </div>
+
+            <div class="result-box">
+                <div class="result-header">
+                    <h2>Cover Letter (2 Credits)</h2>
+                    <div class="button-group">
+                        <button class="btn-edit" onclick="openEditor('coverLetter')">
+                            <i class="fas fa-edit"></i>
+                        </button>
+                        <button class="btn-regenerate" onclick="regenerateDocument('coverLetter')">
+                            <i class="fas fa-redo"></i>
+                        </button>
+                        <button class="btn-download" onclick="downloadDocument('coverLetter')">
+                            <i class="fas fa-download"></i>
+                        </button>
+                    </div>
+                </div>
+                <div id="coverLetterPreview" class="preview-content">
+                    <!-- Cover letter content will be displayed here -->
+                </div>
+            </div>
+        </div>
+    </main>
+
+    <!-- Add floating email button and panel -->
+    <div class="floating-email-btn" onclick="toggleEmailPanel()">
+        <i class="fas fa-envelope"></i>
+        <span>Quick Email</span>
+    </div>
+
+    <div class="email-panel">
+        <div class="email-panel-header">
+            <h3>Outreach Email</h3>
+            <button class="close-panel-btn" onclick="toggleEmailPanel()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="email-panel-content">
+            <div class="email-form">
+                <div class="form-group">
+                    <label>Subject Line:</label>
+                    <input type="text" class="email-subject" placeholder="Enter email subject...">
+                </div>
+                <div class="form-group">
+                    <label>Email Body:</label>
+                    <div class="email-body" contenteditable="true" data-placeholder="Write your email here..."></div>
+                </div>
+            </div>
+            <div class="email-actions">
+                <button class="generate-email-btn" onclick="generateEmail()">
+                    <i class="fas fa-magic"></i> Generate Email
+                </button>
+                <button class="copy-email-btn" onclick="copyEmail()">
+                    <i class="fas fa-copy"></i> Copy to Clipboard
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add floating questions button and panel -->
+    <div class="floating-questions-btn" onclick="toggleQuestionsPanel()">
+        <i class="fas fa-question-circle"></i>
+        <span>Application Q&A</span>
+    </div>
+
+    <div class="questions-panel">
+        <div class="questions-panel-header">
+            <h3>Application Questions</h3>
+            <button class="close-panel-btn" onclick="toggleQuestionsPanel()">
+                <i class="fas fa-times"></i>
+            </button>
+        </div>
+        <div class="questions-panel-content">
+            <div class="questions-form">
+                <div class="form-group">
+                    <label>Application Question:</label>
+                    <textarea class="question-input" placeholder="Paste your application question here..."></textarea>
+                </div>
+                <div class="form-group">
+                    <label>Generated Answer:</label>
+                    <div class="answer-box" data-placeholder="Your answer will appear here..."></div>
+                </div>
+            </div>
+            <div class="questions-actions">
+                <button class="generate-answer-btn" onclick="generateAnswer()">
+                    <i class="fas fa-magic"></i> Generate Answer
+                </button>
+                <button class="regenerate-answer-btn" onclick="regenerateAnswer()">
+                    <i class="fas fa-redo"></i> Regenerate
+                </button>
+                <button class="copy-answer-btn" onclick="copyAnswer()">
+                    <i class="fas fa-copy"></i> Copy Answer
+                </button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add editor modal before closing body tag -->
+    <div id="editorModal" class="editor-modal">
+        <div class="editor-content">
+            <h2 id="editorTitle"></h2>
+            <textarea id="editorTextarea" class="editor-textarea"></textarea>
+            <div class="editor-actions">
+                <div class="section-controls">
+                    <button class="autofill-btn" onclick="autofillCV()">
+                        <i class="fas fa-magic"></i> Autofill CV
+                    </button>
+                    <button class="add-section-btn" onclick="toggleSectionDropdown()">
+                        <i class="fas fa-plus"></i> Add Section
+                    </button>
+                    <div class="section-dropdown" id="sectionDropdown">
+                        <div class="section-option" onclick="addSection('work')">
+                            <i class="fas fa-briefcase"></i>Work Experience
+                        </div>
+                        <div class="section-option" onclick="addSection('education')">
+                            <i class="fas fa-graduation-cap"></i>Education
+                        </div>
+                        <div class="section-option" onclick="addSection('skills')">
+                            <i class="fas fa-tools"></i>Skills
+                        </div>
+                        <div class="section-option" onclick="addSection('projects')">
+                            <i class="fas fa-project-diagram"></i>Projects
+                        </div>
+                        <div class="section-option" onclick="addSection('certifications')">
+                            <i class="fas fa-certificate"></i>Certifications
+                        </div>
+                        <div class="section-option" onclick="addSection('languages')">
+                            <i class="fas fa-language"></i>Languages
+                        </div>
+                        <div class="section-option" onclick="addSection('custom')">
+                            <i class="fas fa-plus-circle"></i>Custom Section
+                        </div>
+                    </div>
+                </div>
+                <div>
+                    <button class="cancel-btn" onclick="closeEditor()">Cancel</button>
+                    <button class="save-btn" onclick="saveEdits()">Save Changes</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Credit Popup -->
+    <div id="credit-popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border: 1px solid #ccc; box-shadow: 0 4px 8px rgba(0,0,0,0.2); z-index: 1000; text-align: center;">
+        <h2>Insufficient Credits</h2>
+        <p>You don't have enough credits to perform this action. Please buy more credits or upgrade to premium.</p>
+        <button onclick="window.location.href='plan.html'" style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; cursor: pointer;">Go to Subscription Plan</button>
+    </div>
+
+    <div id="popup-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999;"></div>
+
+    <script>
+        // API Configuration
+        const API_CONFIG = {
+            key: 'sk-63b9dfae9f8a4f3fb49a3c94e664c46a',
+            endpoint: 'https://api.deepseek.com/v1/chat/completions',  // DeepSeek endpoint
+            headers: {
+                'Content-Type': 'application/json',
+                'Authorization': `Bearer sk-63b9dfae9f8a4f3fb49a3c94e664c46a`
+            }
+        };
+
+        // Update the process with AI function for DeepSeek API
+        async function processWithAI(cvContent, jobDescription) {
+            try {
+                const response = await fetch(API_CONFIG.endpoint, {
+                    method: 'POST',
+                    headers: API_CONFIG.headers,
+                    body: JSON.stringify({
+                        messages: [{
+                            role: "user",
+                            content: `
+                                Analyze this CV:
+                                ${cvContent}
+                                
+                                And this job description:
+                                ${jobDescription}
+                                
+                                Please provide:
+                                1. A tailored version of the CV that highlights relevant skills and experience for this job
+                                2. A professional cover letter based on the CV content and job requirements
+                                3. A concise outreach email (max 150 words) to the hiring manager that:
+                                   - Shows enthusiasm for the role
+                                   - Highlights 2-3 key relevant experiences
+                                   - Includes a clear call to action
+                                
+                                Format the response as:
+                                TAILORED_CV:
+                                [Tailored CV content]
+                                
+                                COVER_LETTER:
+                                [Cover letter content]
+                                
+                                OUTREACH_EMAIL:
+                                [Outreach email content]
+                            `
+                        }],
+                        model: "deepseek-chat",
+                        temperature: 0.7
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    throw new Error(errorData.error?.message || 'DeepSeek API request failed');
+                }
+
+                const data = await response.json();
+                const content = data.choices[0].message.content;
+
+                // Split content into CV, cover letter, and outreach email
+                const [cv, coverLetter, outreachEmail] = content.split(/COVER_LETTER:|OUTREACH_EMAIL:/).map(text => 
+                    text.replace('TAILORED_CV:', '').trim()
+                );
+
+                return {
+                    cv: formatContent(cv),
+                    coverLetter: formatContent(coverLetter),
+                    outreachEmail: formatContent(outreachEmail)
+                };
+            } catch (error) {
+                console.error('API Processing Error:', error);
+                throw new Error(`Processing failed: ${error.message}`);
+            }
+        }
+
+        // Enhanced error handling in generate documents
+        async function generateDocuments() {
+            const cvFile = document.getElementById('cvFile').files[0];
+            const jobDescription = document.querySelector('.job-description').value;
+
+            if (!cvFile || !jobDescription) {
+                alert('Please upload your CV and provide a job description');
+                return;
+            }
+
+            const user = auth.currentUser;
+            if (!user) {
+                alert('User not logged in.');
+                return;
+            }
+
+            const userId = user.uid;
+            
+            // Check user credits
+            const userDoc = await db.collection('users').doc(userId).get();
+            if (!userDoc.exists) {
+                alert('User data not found.');
+                return;
+            }
+
+            const userData = userDoc.data();
+            const isPremium = userData.plan === 'premium';
+            let credits = userData.credits || 0;
+
+            // For free users, check if they have enough credits (4 needed for documents)
+            if (!isPremium && credits < 4) {
+                document.getElementById('credit-popup').style.display = 'block';
+                document.getElementById('popup-overlay').style.display = 'block';
+                return;
+            }
+
+            // Show loading state with spinner
+            ['cvPreview', 'coverLetterPreview'].forEach(id => {
+                document.getElementById(id).innerHTML = `
+                    <div class="loading">
+                        <i class="fas fa-spinner fa-spin"></i>
+                        <p>Processing...</p>
+                    </div>
+                `;
+            });
+
+            try {
+                const cvContent = await readFileContent(cvFile);
+                const processedDocs = await processWithAI(cvContent, jobDescription);
+
+                // Save the generated documents
+                if (processedDocs.cv) {
+                    localStorage.setItem('savedCVPreview', `
+                        <div class="tailored-content">
+                            ${processedDocs.cv}
+                        </div>
+                    `);
+                }
+                if (processedDocs.coverLetter) {
+                    localStorage.setItem('savedCoverLetter', processedDocs.coverLetter);
+                }
+                if (processedDocs.outreachEmail) {
+                    localStorage.setItem('savedOutreachEmail', processedDocs.outreachEmail);
+                }
+
+                // Update UI with results
+                document.getElementById('cvPreview').innerHTML = `
+                    <div class="tailored-content">
+                        ${processedDocs.cv || 'No content generated'}
+                    </div>
+                `;
+                document.getElementById('coverLetterPreview').innerHTML = `
+                    <div class="tailored-content">
+                        ${processedDocs.coverLetter || 'No content generated'}
+                    </div>
+                `;
+
+                // Store email in session storage for later use
+                if (processedDocs.outreachEmail) {
+                    sessionStorage.setItem('generatedEmail', processedDocs.outreachEmail);
+                }
+
+                // Check user plan and only deduct credits for free users
+                const creditsToDeduct = 4;
+                const userRef = db.collection('users').doc(userId);
+                const userDoc = await userRef.get();
+                
+                if (userDoc.exists && userDoc.data().plan !== 'premium') {
+                    try {
+                        await db.runTransaction(async (transaction) => {
+                            const sfDoc = await transaction.get(userRef);
+                            if (!sfDoc.exists) {
+                                throw "Document does not exist!";
+                            }
+                            const currentCredits = sfDoc.data().credits || 0;
+                            if (currentCredits < creditsToDeduct) {
+                                throw "Not enough credits. You need 4 credits to generate documents.";
+                            }
+                            transaction.update(userRef, { credits: currentCredits - creditsToDeduct });
+                        });
+                        console.log("Credits successfully deducted for free user!");
+                    } catch (e) {
+                        console.log("Transaction failure: ", e);
+                        alert(e.message || 'Failed to deduct credits. Please try again.');
+                        return;
+                    }
+                } else {
+                    console.log("Skipping credit deduction for premium user");
+                }
+
+                // Refresh credit display after document generation
+                loadUserData(userId);
+
+            } catch (error) {
+                console.error('Document Generation Error:', error);
+                const errorMessage = `
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <p>${error.message || 'Processing failed'}</p>
+                        <button onclick="generateDocuments()" class="retry-btn">
+                            <i class="fas fa-redo"></i> Retry
+                        </button>
+                    </div>
+                `;
+                ['cvPreview', 'coverLetterPreview'].forEach(id => {
+                    document.getElementById(id).innerHTML = errorMessage;
+                });
+            }
+        }
+
+        // Updated file reading utility with better PDF handling
+        async function readFileContent(file) {
+            return new Promise(async (resolve, reject) => {
+                if (file.type === 'application/pdf') {
+                    try {
+                        const arrayBuffer = await file.arrayBuffer();
+                        const pdf = await pdfjsLib.getDocument({ data: arrayBuffer }).promise;
+                        let fullText = '';
+                        
+                        for (let i = 1; i <= pdf.numPages; i++) {
+                            const page = await pdf.getPage(i);
+                            const textContent = await page.getTextContent();
+                            const pageText = textContent.items
+                                .map(item => item.str)
+                                .join(' ');
+                            fullText += pageText + '\n';
+                        }
+                        
+                        resolve(fullText.trim());
+                    } catch (error) {
+                        console.error('PDF reading error:', error);
+                        reject(new Error('Could not read PDF file. Please check the file format.'));
+                    }
+                } else {
+                    // For non-PDF files
+                    const reader = new FileReader();
+                    reader.onload = (e) => resolve(e.target.result);
+                    reader.onerror = (e) => {
+                        console.error('File reading error:', e);
+                        reject(new Error('Could not read file content'));
+                    };
+                    reader.readAsText(file);
+                }
+            });
+        }
+
+        // Content formatting helper
+        function formatContent(content) {
+            return content
+                .replace(/\n/g, '<br>') // Convert newlines to HTML line breaks
+                .replace(/\*/g, '') // Remove asterisks
+                .replace(/•/g, '<br>•') // Keep bullet points
+                .replace(/\s{2,}/g, ' ') // Remove extra spaces
+                .replace(/(\[|\])/g, '') // Remove square brackets
+                .trim();
+        }
+
+        // Add sidebar toggle functionality
+        const sidebar = document.querySelector('.sidebar');
+        const mainContent = document.querySelector('.main-content');
+        const toggleBtn = document.querySelector('.toggle-btn');
+        const toggleIcon = toggleBtn.querySelector('i');
+
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('expanded');
+            toggleIcon.classList.toggle('fa-chevron-left');
+            toggleIcon.classList.toggle('fa-chevron-right');
+        });
+
+        // Maintain navigation functionality
+        document.querySelector('li[onclick="window.location.href=\'index.html\'"]')
+            .addEventListener('click', () => window.location.href = 'index.html');
+        
+        document.querySelector('li[onclick="window.location.href=\'region.html\'"]')
+            .addEventListener('click', () => window.location.href = 'region.html');
+
+        // File upload preview
+        document.getElementById('cvFile').addEventListener('change', function(e) {
+            if (e.target.files[0]) {
+                const fileName = e.target.files[0].name;
+                e.target.parentElement.querySelector('p').textContent = `Selected: ${fileName}`;
+                saveCVFileName(fileName);
+                
+                // Save the file content
+                const reader = new FileReader();
+                reader.onload = function(e) {
+                    localStorage.setItem('savedCVContent', e.target.result);
+                };
+                reader.readAsText(e.target.files[0]);
+            }
+        });
+
+        // Add job description change listener
+        document.querySelector('.job-description').addEventListener('input', function(e) {
+            saveJobDescription(e.target.value);
+        });
+
+        // Add new styles for loading and error states
+        const styles = `
+            .button-group {
+                display: flex;
+                gap: 10px;
+            }
+            .btn-regenerate {
+                background: #2ecc71;
+                color: white;
+                border: none;
+                width: 30px;
+                height: 30px;
+                border-radius: 4px;
+                cursor: pointer;
+                display: flex;
+                align-items: center;
+                justify-content: center;
+            }
+            .btn-regenerate:hover {
+                background: #27ae60;
+            }
+            .loading {
+                text-align: center;
+                padding: 20px;
+            }
+            .loading i {
+                font-size: 24px;
+                color: #3498db;
+                margin-bottom: 10px;
+            }
+            .error-message {
+                text-align: center;
+                color: #e74c3c;
+                padding: 20px;
+            }
+            .error-message i {
+                font-size: 24px;
+                margin-bottom: 10px;
+            }
+            .retry-btn {
+                background: #3498db;
+                color: white;
+                border: none;
+                padding: 8px 16px;
+                border-radius: 4px;
+                cursor: pointer;
+                margin-top: 10px;
+            }
+            .retry-btn:hover {
+                background: #2980b9;
+            }
+        `;
+
+        // Add styles to document
+        const styleSheet = document.createElement("style");
+        styleSheet.innerText = styles;
+        document.head.appendChild(styleSheet);
+
+        // Add regenerate document functionality
+        async function regenerateDocument(type) {
+            const cvFile = document.getElementById('cvFile').files[0];
+            const jobDescription = document.querySelector('.job-description').value;
+
+            if (!cvFile || !jobDescription) {
+                alert('Please ensure both CV and job description are provided');
+                return;
+            }
+
+            const user = auth.currentUser;
+            if (!user) {
+                alert('User not logged in.');
+                return;
+            }
+
+            const userId = user.uid;
+            const userRef = db.collection('users').doc(userId);
+            const userDoc = await userRef.get();
+            
+            if (!userDoc.exists) {
+                alert('User data not found.');
+                return;
+            }
+
+            const userData = userDoc.data();
+            const isPremium = userData.plan === 'premium';
+            const credits = userData.credits || 0;
+
+            // For free users, check if they have enough credits
+            if (!isPremium && credits < 1) {
+                document.getElementById('credit-popup').style.display = 'block';
+                document.getElementById('popup-overlay').style.display = 'block';
+                return;
+            }
+
+            const previewElement = document.getElementById(`${type}Preview`);
+            previewElement.innerHTML = `
+                <div class="loading">
+                    <i class="fas fa-spinner fa-spin"></i>
+                    <p>Regenerating ${type === 'cv' ? 'CV' : type === 'coverLetter' ? 'cover letter' : 'outreach email'}...</p>
+                </div>
+            `;
+
+            try {
+                const cvContent = await readFileContent(cvFile);
+                const processedDocs = await processWithAI(cvContent, jobDescription);
+                
+                previewElement.innerHTML = `
+                    <div class="tailored-content">
+                        ${type === 'cv' ? processedDocs.cv : type === 'coverLetter' ? processedDocs.coverLetter : processedDocs.outreachEmail}
+                    </div>
+                `;
+
+                // Deduct credits for regeneration if user is not premium
+                if (!isPremium) {
+                    try {
+                        await db.runTransaction(async (transaction) => {
+                            const sfDoc = await transaction.get(userRef);
+                            if (!sfDoc.exists) {
+                                throw "Document does not exist!";
+                            }
+                            const newCredits = sfDoc.data().credits - 1;
+                            transaction.update(userRef, { credits: newCredits });
+                        });
+                        console.log("Credits successfully deducted for regeneration!");
+                        loadUserData(userId); // Refresh credit display
+                    } catch (e) {
+                        console.log("Transaction failure: ", e);
+                        alert('Failed to deduct credits for regeneration. Please try again.');
+                    }
+                }
+            } catch (error) {
+                console.error('Regeneration Error:', error);
+                previewElement.innerHTML = `
+                    <div class="error-message">
+                        <i class="fas fa-exclamation-circle"></i>
+                        <p>${error.message || 'Regeneration failed'}</p>
+                        <button onclick="regenerateDocument('${type}')" class="retry-btn">
+                            <i class="fas fa-redo"></i> Retry
+                        </button>
+                    </div>
+                `;
+            }
+        }
+
+        // Add editor functions
+        let currentEditingType = null;
+
+        function openEditor(type) {
+            currentEditingType = type;
+            const modal = document.getElementById('editorModal');
+            const content = document.querySelector('.editor-content');
+            
+            if (type === 'cv') {
+                content.innerHTML = `
+                    <div class="cv-editor-container" id="cvSections">
+                        <div class="cv-section" draggable="true">
+                            <i class="fas fa-grip-vertical drag-handle"></i>
+                            <button class="remove-section" onclick="removeSection(this)">×</button>
+                            <div class="cv-header">
+                                <div class="cv-name" contenteditable="true" data-placeholder="Your Full Name">John Doe</div>
+                                <div class="cv-contact">
+                                    <span contenteditable="true">📧 email@example.com</span>
+                                    <span contenteditable="true">📱 (123) 456-7890</span>
+                                    <span contenteditable="true">🌐 linkedin.com/in/johndoe</span>
+                                    <span contenteditable="true">📍 City, Country</span>
+                                    <span contenteditable="true">🔗 portfolio.com</span>
+                                    <span contenteditable="true">🎓 Degree</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="cv-section" draggable="true">
+                            <i class="fas fa-grip-vertical drag-handle"></i>
+                            <button class="remove-section" onclick="removeSection(this)">×</button>
+                            <div class="cv-section-header">
+                                <h3>PROFESSIONAL SUMMARY</h3>
+                            </div>
+                            <div class="editable-field" contenteditable="true">Experienced professional with [X] years of expertise in [Field]. Proven track record of [Key Achievement]. Skilled in [Key Skills]. Seeking to leverage my expertise in [Target Role/Industry].</div>
+                        </div>
+
+                        <div class="cv-section" draggable="true">
+                            <i class="fas fa-grip-vertical drag-handle"></i>
+                            <button class="remove-section" onclick="removeSection(this)">×</button>
+                            <div class="cv-section-header">
+                                <h3>PROFESSIONAL EXPERIENCE</h3>
+                            </div>
+                            <div class="experience-entries">
+                                <div class="entry-container">
+                                    <button class="remove-entry" onclick="removeEntry(this)">×</button>
+                                    <div class="experience-header">
+                                        <span contenteditable="true">[Company Name] - [Job Title]</span>
+                                        <span contenteditable="true">[MM/YYYY - Present]</span>
+                                    </div>
+                                    <div class="experience-bullets">
+                                        <div class="bullet-point">
+                                            <button class="remove-bullet" onclick="removeBullet(this)">×</button>
+                                            <div contenteditable="true">• Led [project/initiative] resulting in [X]% improvement in [metric]</div>
+                                        </div>
+                                        <div class="bullet-point">
+                                            <button class="remove-bullet" onclick="removeBullet(this)">×</button>
+                                            <div contenteditable="true">• Managed team of [X] members, delivering [Y] projects on time and under budget</div>
+                                        </div>
+                                        <div class="bullet-point">
+                                            <button class="remove-bullet" onclick="removeBullet(this)">×</button>
+                                            <div contenteditable="true">• Developed and implemented [strategy/solution] that [specific outcome]</div>
+                                        </div>
+                                        <div class="add-bullet" onclick="addBullet(this)">
+                                            <i class="fas fa-plus"></i> Add bullet point
+                                        </div>
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="add-entry-btn" onclick="addWorkEntry(this)">
+                                <i class="fas fa-plus"></i> Add Position
+                            </button>
+                        </div>
+
+                        <div class="cv-section" draggable="true">
+                            <i class="fas fa-grip-vertical drag-handle"></i>
+                            <button class="remove-section" onclick="removeSection(this)">×</button>
+                            <div class="cv-section-header">
+                                <h3>TECHNICAL SKILLS</h3>
+                            </div>
+                            <div class="skills-grid">
+                                <div class="bullet-point">
+                                    <button class="remove-bullet" onclick="removeBullet(this)">×</button>
+                                    <div contenteditable="true">• Programming: [Languages]</div>
+                                </div>
+                                <div class="bullet-point">
+                                    <button class="remove-bullet" onclick="removeBullet(this)">×</button>
+                                    <div contenteditable="true">• Frameworks: [List]</div>
+                                </div>
+                                <div class="bullet-point">
+                                    <button class="remove-bullet" onclick="removeBullet(this)">×</button>
+                                    <div contenteditable="true">• Tools: [Tools]</div>
+                                </div>
+                                <div class="bullet-point">
+                                    <button class="remove-bullet" onclick="removeBullet(this)">×</button>
+                                    <div contenteditable="true">• Databases: [List]</div>
+                                </div>
+                                <div class="add-bullet" onclick="addBullet(this)">
+                                    <i class="fas fa-plus"></i> Add skill
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="cv-section" draggable="true">
+                            <i class="fas fa-grip-vertical drag-handle"></i>
+                            <button class="remove-section" onclick="removeSection(this)">×</button>
+                            <div class="cv-section-header">
+                                <h3>EDUCATION</h3>
+                            </div>
+                            <div class="education-entries">
+                                <div class="entry-container">
+                                    <button class="remove-entry" onclick="removeEntry(this)">×</button>
+                                    <div class="experience-header">
+                                        <span contenteditable="true">[University Name] - [Degree]</span>
+                                        <span contenteditable="true">[Graduation Year]</span>
+                                    </div>
+                                    <div class="bullet-point">
+                                        <button class="remove-bullet" onclick="removeBullet(this)">×</button>
+                                        <div contenteditable="true">• GPA: [X.XX] | Major: [Field] | Relevant Coursework: [Courses]</div>
+                                    </div>
+                                    <div class="add-bullet" onclick="addBullet(this)">
+                                        <i class="fas fa-plus"></i> Add bullet point
+                                    </div>
+                                </div>
+                            </div>
+                            <button class="add-entry-btn" onclick="addEducationEntry(this)">
+                                <i class="fas fa-plus"></i> Add Education
+                            </button>
+                        </div>
+
+                        <div class="cv-section" draggable="true">
+                            <i class="fas fa-grip-vertical drag-handle"></i>
+                            <button class="remove-section" onclick="removeSection(this)">×</button>
+                            <div class="cv-section-header">
+                                <h3>CERTIFICATIONS & AWARDS</h3>
+                            </div>
+                            <div class="bullet-point">
+                                <button class="remove-bullet" onclick="removeBullet(this)">×</button>
+                                <div contenteditable="true">• [Certification Name] - [Issuing Organization] ([Year])</div>
+                            </div>
+                            <div class="bullet-point">
+                                <button class="remove-bullet" onclick="removeBullet(this)">×</button>
+                                <div contenteditable="true">• [Award/Recognition] - [Details] ([Year])</div>
+                            </div>
+                            <div class="add-bullet" onclick="addBullet(this)">
+                                <i class="fas fa-plus"></i> Add bullet point
+                            </div>
+                        </div>
+
+                        <div class="editor-actions">
+                            <div class="section-controls">
+                                <button class="autofill-btn" onclick="autofillCV()">
+                                    <i class="fas fa-magic"></i> Autofill CV
+                                </button>
+                                <button class="add-section-btn" onclick="toggleSectionDropdown()">
+                                    <i class="fas fa-plus"></i> Add Section
+                                </button>
+                                <div class="section-dropdown" id="sectionDropdown">
+                                    <div class="section-option" onclick="addSection('work')">
+                                        <i class="fas fa-briefcase"></i>Work Experience
+                                    </div>
+                                    <div class="section-option" onclick="addSection('education')">
+                                        <i class="fas fa-graduation-cap"></i>Education
+                                    </div>
+                                    <div class="section-option" onclick="addSection('skills')">
+                                        <i class="fas fa-tools"></i>Skills
+                                    </div>
+                                    <div class="section-option" onclick="addSection('projects')">
+                                        <i class="fas fa-project-diagram"></i>Projects
+                                    </div>
+                                    <div class="section-option" onclick="addSection('certifications')">
+                                        <i class="fas fa-certificate"></i>Certifications
+                                    </div>
+                                    <div class="section-option" onclick="addSection('languages')">
+                                        <i class="fas fa-language"></i>Languages
+                                    </div>
+                                    <div class="section-option" onclick="addSection('custom')">
+                                        <i class="fas fa-plus-circle"></i>Custom Section
+                                    </div>
+                                </div>
+                            </div>
+                            <div>
+                                <button class="cancel-btn" onclick="closeEditor()">Cancel</button>
+                                <button class="save-btn" onclick="saveEdits()">Save Changes</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+
+                // Add drag and drop functionality
+                initializeDragAndDrop();
+            } else if (type === 'coverLetter') {
+                content.innerHTML = `
+                    <div class="cover-letter-editor">
+                        <div class="cv-section">
+                            <div class="cv-header">
+                                <div class="cv-name" contenteditable="true" data-placeholder="Your Full Name">John Doe</div>
+                                <div class="cv-contact">
+                                    <span contenteditable="true">📧 email@example.com</span>
+                                    <span contenteditable="true">📱 (123) 456-7890</span>
+                                    <span contenteditable="true">🌐 linkedin.com/in/johndoe</span>
+                                    <span contenteditable="true">📍 City, Country</span>
+                                    <span contenteditable="true">🔗 portfolio.com</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="separator-line"></div>
+
+                        <div class="cover-letter-content">
+                            <div class="letter-body" contenteditable="true" style="min-height: 500px; white-space: pre-wrap;">
+[Company Name]
+[Company Address]
+[City, State ZIP]
+
+[Current Date]
+
+Dear [Hiring Manager's Name],
+
+[Insert your complete cover letter here. Structure your letter with:
+
+- An opening paragraph introducing yourself and stating the position you're applying for
+- 2-3 body paragraphs highlighting your relevant experience and skills
+- A closing paragraph thanking the reader and expressing interest in next steps
+
+Make sure to maintain a professional tone and focus on how your skills match the job requirements.]
+
+Sincerely,
+[Your Name]</div>
+                        </div>
+
+                        <div class="editor-actions">
+                            <div>
+                                <button class="autofill-btn" onclick="autofillCoverLetter()">
+                                    <i class="fas fa-magic"></i> Autofill Cover Letter
+                                </button>
+                                <button class="cancel-btn" onclick="closeEditor()">Cancel</button>
+                                <button class="save-btn" onclick="saveEdits()">Save Changes</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            } else if (type === 'outreachEmail') {
+                content.innerHTML = `
+                    <div class="email-editor">
+                        <div class="email-form">
+                            <div class="form-group">
+                                <label>Subject Line:</label>
+                                <input type="text" class="email-subject" contenteditable="true">
+                            </div>
+                            <div class="form-group">
+                                <label>Email Body:</label>
+                                <div class="email-body" contenteditable="true"></div>
+                            </div>
+                        </div>
+                        <div class="editor-actions">
+                            <button class="autofill-btn" onclick="autofillEmail()">
+                                <i class="fas fa-magic"></i> Autofill Email
+                            </button>
+                            <div>
+                                <button class="cancel-btn" onclick="closeEditor()">Cancel</button>
+                                <button class="save-btn" onclick="saveEdits()">Save Changes</button>
+                            </div>
+                        </div>
+                    </div>
+                `;
+            }
+
+            modal.style.display = 'block';
+        }
+
+        function closeEditor() {
+            document.getElementById('editorModal').style.display = 'none';
+            currentEditingType = null;
+            
+            // Save the current state when closing the editor
+            const cvPreview = document.getElementById('cvPreview').innerHTML;
+            if (cvPreview) {
+                localStorage.setItem('savedCVPreview', cvPreview);
+            }
+        }
+
+        function saveEdits() {
+            if (currentEditingType === 'cv') {
+                // Get the CV editor container
+                const cvContainer = document.querySelector('.cv-editor-container');
+                
+                // Create a clone to manipulate
+                const cleanContent = cvContainer.cloneNode(true);
+                
+                // Remove all editing functionality elements
+                cleanContent.querySelectorAll('.drag-handle, .remove-section, .remove-bullet, .remove-entry, .add-bullet, .add-entry-btn, .editor-actions').forEach(el => el.remove());
+                
+                // Remove editing attributes and classes
+                cleanContent.querySelectorAll('[contenteditable]').forEach(el => {
+                    el.removeAttribute('contenteditable');
+                    el.removeAttribute('draggable');
+                    el.removeAttribute('data-placeholder');
+                });
+                
+                // Remove any empty placeholder content
+                cleanContent.querySelectorAll('.cv-section').forEach(section => {
+                    if (section.textContent.trim() === '') {
+                        section.remove();
+                    }
+                });
+
+                // Update the CV preview with clean content
+                document.getElementById('cvPreview').innerHTML = `
+                    <div class="tailored-content">
+                        ${cleanContent.innerHTML}
+                    </div>
+                `;
+            } else if (currentEditingType === 'coverLetter') {
+                // Get the cover letter editor container
+                const letterContainer = document.querySelector('.cover-letter-editor');
+                
+                // Create a clone to manipulate
+                const cleanContent = letterContainer.cloneNode(true);
+                
+                // Remove all editing functionality elements
+                cleanContent.querySelectorAll('.editor-actions').forEach(el => el.remove());
+                
+                // Remove editing attributes
+                cleanContent.querySelectorAll('[contenteditable]').forEach(el => {
+                    el.removeAttribute('contenteditable');
+                    el.removeAttribute('data-placeholder');
+                });
+
+                // Update the cover letter preview with clean content
+                document.getElementById('coverLetterPreview').innerHTML = `
+                    <div class="tailored-content">
+                        ${cleanContent.innerHTML}
+                    </div>
+                `;
+            } else if (currentEditingType === 'outreachEmail') {
+                // Get the email editor container
+                const emailContainer = document.querySelector('.email-editor');
+                
+                // Create a clone to manipulate
+                const cleanContent = emailContainer.cloneNode(true);
+                
+                // Remove all editing functionality elements
+                cleanContent.querySelectorAll('.editor-actions').forEach(el => el.remove());
+                
+                // Remove editing attributes
+                cleanContent.querySelectorAll('[contenteditable]').forEach(el => {
+                    el.removeAttribute('contenteditable');
+                    el.removeAttribute('data-placeholder');
+                });
+
+                // Update the email preview with clean content
+                document.getElementById('outreachEmailPreview').innerHTML = `
+                    <div class="tailored-content">
+                        ${cleanContent.innerHTML}
+                    </div>
+                `;
+            }
+
+            closeEditor();
+        }
+
+        function toggleSectionDropdown() {
+            document.getElementById('sectionDropdown').classList.toggle('show');
+        }
+
+        function addSection(type) {
+            const container = document.querySelector('.cv-editor-container');
+            const newSection = document.createElement('div');
+            newSection.className = 'cv-section';
+            
+            switch(type) {
+                case 'work':
+                    newSection.innerHTML = getWorkExperienceTemplate();
+                    break;
+                case 'education':
+                    newSection.innerHTML = getEducationTemplate();
+                    break;
+                case 'skills':
+                    newSection.innerHTML = getSkillsTemplate();
+                    break;
+                case 'projects':
+                    newSection.innerHTML = getProjectsTemplate();
+                    break;
+                case 'certifications':
+                    newSection.innerHTML = getCertificationsTemplate();
+                    break;
+                case 'languages':
+                    newSection.innerHTML = getLanguagesTemplate();
+                    break;
+                case 'custom':
+                    const sectionName = prompt('Enter section name:');
+                    if (sectionName) {
+                        newSection.innerHTML = getCustomSectionTemplate(sectionName);
+                    }
+                    break;
+            }
+
+            if (newSection.innerHTML) {
+                newSection.draggable = true;
+                newSection.addEventListener('dragstart', handleDragStart);
+                newSection.addEventListener('dragend', handleDragEnd);
+                newSection.addEventListener('dragover', handleDragOver);
+                newSection.addEventListener('drop', handleDrop);
+                container.insertBefore(newSection, document.querySelector('.editor-actions'));
+            }
+            toggleSectionDropdown();
+        }
+
+        function removeSection(button) {
+            if (confirm('Are you sure you want to remove this section?')) {
+                button.closest('.cv-section').remove();
+            }
+        }
+
+        function getWorkExperienceTemplate() {
+            return `
+                <i class="fas fa-grip-vertical drag-handle"></i>
+                <button class="remove-section" onclick="removeSection(this)">×</button>
+                <div class="cv-section-header">
+                    <h3>WORK EXPERIENCE</h3>
+                </div>
+                <div class="experience-entries">
+                    <div class="entry-container">
+                        <button class="remove-entry" onclick="removeEntry(this)">×</button>
+                        <div class="experience-header">
+                            <span contenteditable="true">[Company Name] - [Job Title]</span>
+                            <span contenteditable="true">[MM/YYYY - Present]</span>
+                        </div>
+                        <div class="experience-bullets">
+                            <div class="bullet-point">
+                                <button class="remove-bullet" onclick="removeBullet(this)">×</button>
+                                <div contenteditable="true">• Led [project/initiative] resulting in [X]% improvement</div>
+                            </div>
+                            <div class="add-bullet" onclick="addBullet(this)">
+                                <i class="fas fa-plus"></i> Add bullet point
+                            </div>
+                        </div>
+                    </div>
+                </div>
+                <button class="add-entry-btn" onclick="addWorkEntry(this)">
+                    <i class="fas fa-plus"></i> Add Position
+                </button>
+            `;
+        }
+
+        function getEducationTemplate() {
+            return `
+                <i class="fas fa-grip-vertical drag-handle"></i>
+                <button class="remove-section" onclick="removeSection(this)">×</button>
+                <div class="cv-section-header">
+                    <h3>EDUCATION</h3>
+                </div>
+                <div class="education-entries">
+                    <div class="entry-container">
+                        <button class="remove-entry" onclick="removeEntry(this)">×</button>
+                        <div class="experience-header">
+                            <span contenteditable="true">[University Name] - [Degree]</span>
+                            <span contenteditable="true">[Graduation Year]</span>
+                        </div>
+                        <div class="bullet-point">
+                            <button class="remove-bullet" onclick="removeBullet(this)">×</button>
+                            <div contenteditable="true">• GPA: [X.XX] | Major: [Field] | Relevant Coursework: [Courses]</div>
+                        </div>
+                        <div class="add-bullet" onclick="addBullet(this)">
+                            <i class="fas fa-plus"></i> Add bullet point
+                        </div>
+                    </div>
+                </div>
+                <button class="add-entry-btn" onclick="addEducationEntry(this)">
+                    <i class="fas fa-plus"></i> Add Education
+                </button>
+            `;
+        }
+
+        function getSkillsTemplate() {
+            return `
+                <i class="fas fa-grip-vertical drag-handle"></i>
+                <button class="remove-section" onclick="removeSection(this)">×</button>
+                <div class="cv-section-header">
+                    <h3>SKILLS</h3>
+                </div>
+                <div class="skills-grid">
+                    <div class="bullet-point">
+                        <button class="remove-bullet" onclick="removeBullet(this)">×</button>
+                        <div contenteditable="true">• Skill 1</div>
+                    </div>
+                    <div class="bullet-point">
+                        <button class="remove-bullet" onclick="removeBullet(this)">×</button>
+                        <div contenteditable="true">• Skill 2</div>
+                    </div>
+                </div>
+                <div class="add-bullet" onclick="addBullet(this)">
+                    <i class="fas fa-plus"></i> Add skill
+                </div>
+            `;
+        }
+
+        function getProjectsTemplate() {
+            return `
+                <i class="fas fa-grip-vertical drag-handle"></i>
+                <button class="remove-section" onclick="removeSection(this)">×</button>
+                <div class="cv-section-header">
+                    <h3>PROJECTS</h3>
+                </div>
+                <div class="editable-field" contenteditable="true">• Project 1: Description</div>
+                <div class="editable-field" contenteditable="true">• Project 2: Description</div>
+            `;
+        }
+
+        function getCertificationsTemplate() {
+            return `
+                <i class="fas fa-grip-vertical drag-handle"></i>
+                <button class="remove-section" onclick="removeSection(this)">×</button>
+                <div class="cv-section-header">
+                    <h3>CERTIFICATIONS</</h3>
+                </div>
+                <div class="bullet-point">
+                    <button class="remove-bullet" onclick="removeBullet(this)">×</button>
+                    <div contenteditable="true">• Certification 1</div>
+                </div>
+                <div class="bullet-point">
+                    <button class="remove-bullet" onclick="removeBullet(this)">×</button>
+                    <div contenteditable="true">• Certification 2</div>
+                </div>
+                <div class="add-bullet" onclick="addBullet(this)">
+                    <i class="fas fa-plus"></i> Add bullet point
+                </div>
+            `;
+        }
+
+        function getLanguagesTemplate() {
+            return `
+                <i class="fas fa-grip-vertical drag-handle"></i>
+                <button class="remove-section" onclick="removeSection(this)">×</button>
+                <div class="cv-section-header">
+                    <h3>LANGUAGES</h3>
+                </div>
+                <div class="bullet-point">
+                    <button class="remove-bullet" onclick="removeBullet(this)">×</button>
+                    <div contenteditable="true">• Language 1</div>
+                </div>
+                <div class="bullet-point">
+                    <button class="remove-bullet" onclick="removeBullet(this)">×</button>
+                    <div contenteditable="true">• Language 2</div>
+                </div>
+                <div class="add-bullet" onclick="addBullet(this)">
+                    <i class="fas fa-plus"></i> Add skill
+                </div>
+            `;
+        }
+
+        function getCustomSectionTemplate(name) {
+            return `
+                <i class="fas fa-grip-vertical drag-handle"></i>
+                <button class="remove-section" onclick="removeSection(this)">×</button>
+                <div class="cv-section-header">
+                    <h3>${name.toUpperCase()}</h3>
+                </div>
+                <div class="editable-field" contenteditable="true">• Add your content here</div>
+            `;
+        }
+
+        // Add these new functions to handle bullet points
+        function removeBullet(button) {
+            button.closest('.bullet-point').remove();
+        }
+
+        function addBullet(addButton) {
+            const newBullet = document.createElement('div');
+            newBullet.className = 'bullet-point';
+            newBullet.innerHTML = `
+                <button class="remove-bullet" onclick="removeBullet(this)">×</button>
+                <div contenteditable="true">• New bullet point</div>
+            `;
+            addButton.parentElement.insertBefore(newBullet, addButton);
+        }
+
+        // Add these new functions to handle multiple entries
+        function addEducationEntry(button) {
+            const newEntry = document.createElement('div');
+            newEntry.className = 'entry-container';
+            newEntry.innerHTML = `
+                <button class="remove-entry" onclick="removeEntry(this)">×</button>
+                <div class="experience-header">
+                    <span contenteditable="true">[University Name] - [Degree]</span>
+                    <span contenteditable="true">[Graduation Year]</span>
+                </div>
+                <div class="bullet-point">
+                    <button class="remove-bullet" onclick="removeBullet(this)">×</button>
+                    <div contenteditable="true">• GPA: [X.XX] | Major: [Field] | Relevant Coursework: [Courses]</div>
+                </div>
+                <div class="add-bullet" onclick="addBullet(this)">
+                    <i class="fas fa-plus"></i> Add bullet point
+                </div>
+            `;
+            button.previousElementSibling.appendChild(newEntry);
+        }
+
+        function addWorkEntry(button) {
+            const newEntry = document.createElement('div');
+            newEntry.className = 'entry-container';
+            newEntry.innerHTML = `
+                <button class="remove-entry" onclick="removeEntry(this)">×</button>
+                <div class="experience-header">
+                    <span contenteditable="true">[Company Name] - [Job Title]</span>
+                    <span contenteditable="true">[MM/YYYY - Present]</span>
+                </div>
+                <div class="experience-bullets">
+                    <div class="bullet-point">
+                        <button class="remove-bullet" onclick="removeBullet(this)">×</button>
+                        <div contenteditable="true">• Led [project/initiative] resulting in [X]% improvement</div>
+                    </div>
+                    <div class="add-bullet" onclick="addBullet(this)">
+                        <i class="fas fa-plus"></i> Add bullet point
+                    </div>
+                </div>
+            `;
+            button.previousElementSibling.appendChild(newEntry);
+        }
+
+        function removeEntry(button) {
+            if (confirm('Are you sure you want to remove this entry?')) {
+                button.closest('.entry-container').remove();
+            }
+        }
+
+        // Add these new functions to handle drag and drop
+        function initializeDragAndDrop() {
+            const container = document.getElementById('cvSections');
+            const sections = container.getElementsByClassName('cv-section');
+
+            Array.from(sections).forEach(section => {
+                section.addEventListener('dragstart', handleDragStart);
+                section.addEventListener('dragend', handleDragEnd);
+                section.addEventListener('dragover', handleDragOver);
+                section.addEventListener('drop', handleDrop);
+            });
+        }
+
+        function handleDragStart(e) {
+            this.classList.add('dragging');
+            e.dataTransfer.setData('text/plain', ''); // Required for Firefox
+        }
+
+        function handleDragEnd(e) {
+            this.classList.remove('dragging');
+        }
+
+        function handleDragOver(e) {
+            e.preventDefault();
+            const draggingElement = document.querySelector('.dragging');
+            const container = document.getElementById('cvSections');
+            const afterElement = getDragAfterElement(container, e.clientY);
+            
+            if (afterElement) {
+                container.insertBefore(draggingElement, afterElement);
+            } else {
+                container.appendChild(draggingElement);
+            }
+        }
+
+        function handleDrop(e) {
+            e.preventDefault();
+        }
+
+        function getDragAfterElement(container, y) {
+            const draggableElements = [...container.querySelectorAll('.cv-section:not(.dragging)')];
+            
+            return draggableElements.reduce((closest, child) => {
+                const box = child.getBoundingClientRect();
+                const offset = y - box.top - box.height / 2;
+                
+                if (offset < 0 && offset > closest.offset) {
+                    return { offset: offset, element: child };
+                } else {
+                    return closest;
+                }
+            }, { offset: Number.NEGATIVE_INFINITY }).element;
+        }
+
+        // Add click event listener to close modal when clicking outside
+        window.addEventListener('click', (e) => {
+            const modal = document.getElementById('editorModal');
+            if (e.target === modal) {
+                closeEditor();
+            }
+        });
+
+        // Add these styles to the existing styles
+        const additionalStyles = `
+            .editor-textarea {
+                font-family: 'Courier New', monospace;
+                line-height: 1.5;
+                white-space: pre-wrap;
+            }
+            ${styles}
+        `;
+
+        // Update the styleSheet.innerText
+        styleSheet.innerText = additionalStyles;
+
+        // Add this to handle closing the dropdown when clicking outside
+        document.addEventListener('click', function(e) {
+            const dropdown = document.getElementById('sectionDropdown');
+            const addButton = document.querySelector('.add-section-btn');
+            
+            if (!dropdown || !addButton) return;
+            
+            if (!dropdown.contains(e.target) && !addButton.contains(e.target)) {
+                dropdown.classList.remove('show');
+            }
+        });
+
+        // Add this helper function before autofillCV
+        function cleanJSON(raw) {
+            // First convert <br> tags to newlines for better parsing
+            let cleaned = raw
+                .replace(/<br\s*\/?>/gi, '\n')
+                // Remove HTML tags
+                .replace(/<[^>]*>/g, '')
+                // Remove Markdown code block syntax
+                .replace(/^```json\s*/im, '')
+                .replace(/```$/m, '')
+                // Clean up any multiple newlines
+                .replace(/\n+/g, '\n')
+                .trim();
+            
+            console.log("Cleaned JSON string:", cleaned);
+            return cleaned;
+        }
+
+        async function autofillCV() {
+            const generatedCV = document.querySelector('#cvPreview .tailored-content');
+            if (!generatedCV) {
+                alert('Please generate a CV first before using auto-fill');
+                return;
+            }
+
+            // Create and show loading overlay
+            const loadingOverlay = document.createElement('div');
+            loadingOverlay.className = 'loading-overlay';
+            loadingOverlay.innerHTML = `
+                <div class="loading-spinner"></div>
+                <div class="loading-status">Analyzing CV content...</div>
+                <div class="loading-progress">
+                    <div class="loading-progress-bar"></div>
+                </div>
+            `;
+            
+            const cvEditor = document.querySelector('.cv-editor-container');
+            cvEditor.style.position = 'relative';
+            cvEditor.appendChild(loadingOverlay);
+
+            const progressBar = loadingOverlay.querySelector('.loading-progress-bar');
+            const statusText = loadingOverlay.querySelector('.loading-status');
+
+            try {
+                // Update progress for starting
+                progressBar.style.width = '20%';
+                
+                const cvText = generatedCV.innerHTML;
+                
+                // Update progress for API call
+                statusText.textContent = 'Processing with AI...';
+                progressBar.style.width = '40%';
+                
+                const response = await fetch(API_CONFIG.endpoint, {
+                    method: 'POST',
+                    headers: API_CONFIG.headers,
+                    body: JSON.stringify({
+                        messages: [{
+                            role: "user",
+                            content: `
+                                Analyze this CV content and extract key information in JSON format:
+                                ${cvText}
+                                
+                                Return the data in this structure:
+                                {
+                                    "personalInfo": {
+                                        "name": "",
+                                        "email": "",
+                                        "phone": "",
+                                        "linkedin": "",
+                                        "location": "",
+                                        "portfolio": ""
+                                    },
+                                    "professionalSummary": "",
+                                    "workExperience": [{
+                                        "title": "",
+                                        "company": "",
+                                        "date": "",
+                                        "bullets": []
+                                    }],
+                                    "skills": {
+                                        "technical": [],
+                                        "soft": [],
+                                        "tools": [],
+                                        "languages": []
+                                    },
+                                    "education": [{
+                                        "degree": "",
+                                        "school": "",
+                                        "date": "",
+                                        "details": []
+                                    }],
+                                    "certifications": []
+                                }
+                                
+                                Return ONLY the JSON without any additional text or formatting.`
+                        }],
+                        model: "deepseek-chat",
+                        temperature: 0.7
+                    })
+                });
+
+                // Update progress for parsing
+                statusText.textContent = 'Extracting information...';
+                progressBar.style.width = '60%';
+                
+                const data = await response.json();
+                const cleaned = cleanJSON(data.choices[0].message.content);
+                const cvData = JSON.parse(cleaned);
+
+                // Update progress for populating
+                statusText.textContent = 'Populating CV sections...';
+                progressBar.style.width = '80%';
+
+                const cvEditor = document.querySelector('.cv-editor-container');
+
+                // Fill Personal Information
+                const header = cvEditor.querySelector('.cv-header');
+                if (header) {
+                    header.querySelector('.cv-name').textContent = cvData.personalInfo.name || '[Your Name]';
+                    const contactFields = header.querySelectorAll('.cv-contact span');
+                    
+                    // Map contact information to specific fields
+                    const contactMapping = {
+                        0: `📧 ${cvData.personalInfo.email || '[Your Email]'}`,
+                        1: `📱 ${cvData.personalInfo.phone || '[Your Phone]'}`,
+                        2: `🌐 ${cvData.personalInfo.linkedin || '[Your LinkedIn]'}`,
+                        3: `📍 ${cvData.personalInfo.location || '[Your Location]'}`,
+                        4: `🔗 ${cvData.personalInfo.portfolio || '[Your Portfolio]'}`,
+                        5: `🎓 ${cvData.education?.[0]?.degree || '[Your Degree]'}`
+                    };
+                    
+                    contactFields.forEach((field, index) => {
+                        field.textContent = contactMapping[index] || field.textContent;
+                    });
+                }
+
+                // Fill Professional Summary
+                const summarySection = cvEditor.querySelector('.cv-section:nth-child(2)');
+                if (summarySection) {
+                    const summaryField = summarySection.querySelector('.editable-field');
+                    summaryField.textContent = cvData.professionalSummary || 'Professional summary to be filled';
+                }
+
+                // Fill Work Experience
+                const workSection = Array.from(cvEditor.querySelectorAll('.cv-section')).find(
+                    section => section.querySelector('h3')?.textContent === 'PROFESSIONAL EXPERIENCE'
+                );
+                if (workSection) {
+                    const entriesContainer = workSection.querySelector('.experience-entries');
+                    entriesContainer.innerHTML = ''; // Clear existing entries
+                    
+                    if (cvData.workExperience && cvData.workExperience.length > 0) {
+                        cvData.workExperience.forEach(job => {
+                            const entry = document.createElement('div');
+                            entry.className = 'entry-container';
+                            entry.innerHTML = `
+                                <button class="remove-entry" onclick="removeEntry(this)">×</button>
+                                <div class="experience-header">
+                                    <span contenteditable="true">${job.company} - ${job.title}</span>
+                                    <span contenteditable="true">${job.date}</span>
+                                </div>
+                                <div class="experience-bullets">
+                                    ${job.bullets.map(bullet => `
+                                        <div class="bullet-point">
+                                            <button class="remove-bullet" onclick="removeBullet(this)">×</button>
+                                            <div contenteditable="true">• ${bullet}</div>
+                                        </div>
+                                    `).join('')}
+                                    <div class="add-bullet" onclick="addBullet(this)">
+                                        <i class="fas fa-plus"></i> Add bullet point
+                                    </div>
+                                </div>
+                            `;
+                            entriesContainer.appendChild(entry);
+                        });
+                    }
+                }
+
+                // Fill Skills
+                const skillsSection = Array.from(cvEditor.querySelectorAll('.cv-section')).find(
+                    section => section.querySelector('h3')?.textContent === 'TECHNICAL SKILLS'
+                );
+                if (skillsSection) {
+                    const skillsGrid = skillsSection.querySelector('.skills-grid');
+                    skillsGrid.innerHTML = ''; // Clear existing skills
+                    
+                    // Process each skill category
+                    Object.entries(cvData.skills).forEach(([category, skills]) => {
+                        if (skills && skills.length > 0) {
+                            const skillEntry = document.createElement('div');
+                            skillEntry.className = 'bullet-point';
+                            skillEntry.innerHTML = `
+                                <button class="remove-bullet" onclick="removeBullet(this)">×</button>
+                                <div contenteditable="true">• ${category.charAt(0).toUpperCase() + category.slice(1)}: ${skills.join(', ')}</div>
+                            `;
+                            skillsGrid.appendChild(skillEntry);
+                        }
+                    });
+                }
+
+                // Fill Education
+                const educationSection = Array.from(cvEditor.querySelectorAll('.cv-section')).find(
+                    section => section.querySelector('h3')?.textContent === 'EDUCATION'
+                );
+                if (educationSection) {
+                    const entriesContainer = educationSection.querySelector('.education-entries');
+                    entriesContainer.innerHTML = ''; // Clear existing entries
+                    
+                    if (cvData.education && cvData.education.length > 0) {
+                        cvData.education.forEach(edu => {
+                            const entry = document.createElement('div');
+                            entry.className = 'entry-container';
+                            entry.innerHTML = `
+                                <button class="remove-entry" onclick="removeEntry(this)">×</button>
+                                <div class="experience-header">
+                                    <span contenteditable="true">${edu.school} - ${edu.degree}</span>
+                                    <span contenteditable="true">${edu.date}</span>
+                                </div>
+                                ${edu.details.map(detail => `
+                                    <div class="bullet-point">
+                                        <button class="remove-bullet" onclick="removeBullet(this)">×</button>
+                                        <div contenteditable="true">• ${detail}</div>
+                                    </div>
+                                `).join('')}
+                                <div class="add-bullet" onclick="addBullet(this)">
+                                    <i class="fas fa-plus"></i> Add bullet point
+                                </div>
+                            `;
+                            entriesContainer.appendChild(entry);
+                        });
+                    }
+                }
+
+                // Fill Certifications
+                const certSection = Array.from(cvEditor.querySelectorAll('.cv-section')).find(
+                    section => section.querySelector('h3')?.textContent === 'CERTIFICATIONS & AWARDS'
+                );
+                if (certSection) {
+                    const certContainer = certSection.querySelector('.bullet-point').parentElement;
+                    certContainer.innerHTML = ''; // Clear existing certifications
+                    
+                    if (cvData.certifications && cvData.certifications.length > 0) {
+                        cvData.certifications.forEach(cert => {
+                            const certEntry = document.createElement('div');
+                            certEntry.className = 'bullet-point';
+                            certEntry.innerHTML = `
+                                <button class="remove-bullet" onclick="removeBullet(this)">×</button>
+                                <div contenteditable="true">• ${cert}</div>
+                            `;
+                            certContainer.appendChild(certEntry);
+                        });
+                    }
+                    
+                    // Add the "Add bullet point" option
+                    const addBulletDiv = document.createElement('div');
+                    addBulletDiv.className = 'add-bullet';
+                    addBulletDiv.innerHTML = '<i class="fas fa-plus"></i> Add bullet point';
+                    addBulletDiv.onclick = function() { addBullet(this); };
+                    certContainer.appendChild(addBulletDiv);
+                }
+
+                // Show completion
+                progressBar.style.width = '100%';
+                loadingOverlay.innerHTML = `
+                    <i class="fas fa-check-circle completion-check"></i>
+                    <div class="loading-status">CV has been successfully populated!</div>
+                `;
+
+                // Remove loading overlay after 1.5 seconds
+                setTimeout(() => {
+                    loadingOverlay.remove();
+                }, 1500);
+
+            } catch (error) {
+                console.error('Autofill Error:', error);
+                console.error('Error details:', error.message);
+                
+                // Show error in the loading overlay
+                loadingOverlay.innerHTML = `
+                    <i class="fas fa-exclamation-circle" style="color: #e74c3c; font-size: 50px; margin-bottom: 15px;"></i>
+                    <div class="loading-status" style="color: #e74c3c;">Failed to auto-fill CV editor</div>
+                    <button onclick="this.parentElement.remove()" class="retry-btn" style="margin-top: 15px;">
+                        Close
+                    </button>
+                `;
+            }
+        }
+
+        async function autofillCoverLetter() {
+            const generatedCoverLetter = document.querySelector('#coverLetterPreview .tailored-content');
+            if (!generatedCoverLetter) {
+                alert('Please generate a cover letter first before using auto-fill');
+                return;
+            }
+
+            // Create and show loading overlay
+            const loadingOverlay = document.createElement('div');
+            loadingOverlay.className = 'loading-overlay';
+            loadingOverlay.innerHTML = `
+                <div class="loading-spinner"></div>
+                <div class="loading-status">Analyzing cover letter content...</div>
+                <div class="loading-progress">
+                    <div class="loading-progress-bar"></div>
+                </div>
+            `;
+            
+            const coverLetterEditor = document.querySelector('.cover-letter-editor');
+            coverLetterEditor.style.position = 'relative';
+            coverLetterEditor.appendChild(loadingOverlay);
+
+            const progressBar = loadingOverlay.querySelector('.loading-progress-bar');
+            const statusText = loadingOverlay.querySelector('.loading-status');
+
+            try {
+                // Update progress for starting
+                progressBar.style.width = '20%';
+                
+                const coverLetterText = generatedCoverLetter.innerHTML;
+                
+                // Update progress for API call
+                statusText.textContent = 'Processing content...';
+                progressBar.style.width = '40%';
+                
+                const response = await fetch(API_CONFIG.endpoint, {
+                    method: 'POST',
+                    headers: API_CONFIG.headers,
+                    body: JSON.stringify({
+                        messages: [{
+                            role: "user",
+                            content: `
+                                Extract the following information from this cover letter in JSON format:
+                                ${coverLetterText}
+
+                                Return the data in this structure:
+                                {
+                                    "header": {
+                                        "name": "",
+                                        "email": "",
+                                        "phone": "",
+                                        "linkedin": "",
+                                        "location": "",
+                                        "portfolio": ""
+                                    },
+                                    "letter": {
+                                        "companyInfo": {
+                                            "name": "",
+                                            "address": "",
+                                            "city": "",
+                                            "state": "",
+                                            "zip": ""
+                                        },
+                                        "date": "",
+                                        "salutation": "",
+                                        "content": "",
+                                        "closing": "",
+                                        "signature": ""
+                                    }
+                                }
+                                
+                                Return ONLY the JSON without any additional text.`
+                        }],
+                        model: "deepseek-chat",
+                        temperature: 0.7
+                    })
+                });
+
+                // Update progress for parsing
+                statusText.textContent = 'Extracting content...';
+                progressBar.style.width = '60%';
+                
+                const data = await response.json();
+                const cleaned = cleanJSON(data.choices[0].message.content);
+                const letterData = JSON.parse(cleaned);
+
+                // Update progress for populating
+                statusText.textContent = 'Populating letter sections...';
+                progressBar.style.width = '80%';
+
+                // Fill header information
+                const header = coverLetterEditor.querySelector('.cv-header');
+                if (header) {
+                    header.querySelector('.cv-name').textContent = letterData.header.name;
+                    const contactFields = header.querySelectorAll('.cv-contact span');
+                    contactFields[0].textContent = `📧 ${letterData.header.email}`;
+                    contactFields[1].textContent = `📱 ${letterData.header.phone}`;
+                    contactFields[2].textContent = `🌐 ${letterData.header.linkedin}`;
+                    contactFields[3].textContent = `📍 ${letterData.header.location}`;
+                    contactFields[4].textContent = `🔗 ${letterData.header.portfolio}`;
+                }
+
+                // Fill letter body
+                const letterBody = coverLetterEditor.querySelector('.letter-body');
+                if (letterBody) {
+                    letterBody.textContent = `${letterData.letter.companyInfo.name}
+${letterData.letter.companyInfo.address}
+${letterData.letter.companyInfo.city}, ${letterData.letter.companyInfo.state} ${letterData.letter.companyInfo.zip}
+
+${letterData.letter.date}
+
+${letterData.letter.salutation}
+
+${letterData.letter.content}
+
+${letterData.letter.closing}
+${letterData.letter.signature}`;
+                }
+
+                // Show completion
+                progressBar.style.width = '100%';
+                loadingOverlay.innerHTML = `
+                    <i class="fas fa-check-circle completion-check"></i>
+                    <div class="loading-status">Cover letter has been populated!</div>
+                `;
+
+                // Remove loading overlay after 1.5 seconds
+                setTimeout(() => {
+                    loadingOverlay.remove();
+                }, 1500);
+
+            } catch (error) {
+                console.error('Cover Letter Autofill Error:', error);
+                console.error('Error details:', error.message);
+                
+                // Show error in the loading overlay
+                loadingOverlay.innerHTML = `
+                    <i class="fas fa-exclamation-circle" style="color: #e74c3c; font-size: 50px; margin-bottom: 15px;"></i>
+                    <div class="loading-status" style="color: #e74c3c;">Failed to auto-fill cover letter</div>
+                    <button onclick="this.parentElement.remove()" class="retry-btn" style="margin-top: 15px;">
+                        Close
+                    </button>
+                `;
+            }
+        }
+
+        async function autofillEmail() {
+            const generatedEmail = document.querySelector('#outreachEmailPreview .tailored-content');
+            if (!generatedEmail) {
+                alert('Please generate an outreach email first before using auto-fill');
+                return;
+            }
+
+            // Create and show loading overlay
+            const loadingOverlay = document.createElement('div');
+            loadingOverlay.className = 'loading-overlay';
+            loadingOverlay.innerHTML = `
+                <div class="loading-spinner"></div>
+                <div class="loading-status">Analyzing email content...</div>
+                <div class="loading-progress">
+                    <div class="loading-progress-bar"></div>
+                </div>
+            `;
+            
+            const emailEditor = document.querySelector('.email-editor');
+            emailEditor.style.position = 'relative';
+            emailEditor.appendChild(loadingOverlay);
+
+            const progressBar = loadingOverlay.querySelector('.loading-progress-bar');
+            const statusText = loadingOverlay.querySelector('.loading-status');
+
+            try {
+                // Update progress for starting
+                progressBar.style.width = '20%';
+                
+                const emailText = generatedEmail.innerHTML;
+                
+                // Update progress for API call
+                statusText.textContent = 'Processing content...';
+                progressBar.style.width = '40%';
+                
+                const response = await fetch(API_CONFIG.endpoint, {
+                    method: 'POST',
+                    headers: API_CONFIG.headers,
+                    body: JSON.stringify({
+                        messages: [{
+                            role: "user",
+                            content: `
+                                Extract the following information from this outreach email in JSON format:
+                                ${emailText}
+
+                                Return the data in this structure:
+                                {
+                                    "subject": "",
+                                    "body": ""
+                                }
+                                
+                                Return ONLY the JSON without any additional text.`
+                        }],
+                        model: "deepseek-chat",
+                        temperature: 0.7
+                    })
+                });
+
+                // Update progress for parsing
+                statusText.textContent = 'Extracting content...';
+                progressBar.style.width = '60%';
+                
+                const data = await response.json();
+                const cleaned = cleanJSON(data.choices[0].message.content);
+                const emailData = JSON.parse(cleaned);
+
+                // Update progress for populating
+                statusText.textContent = 'Populating email sections...';
+                progressBar.style.width = '80%';
+
+                // Fill email form
+                const emailForm = emailEditor.querySelector('.email-form');
+                if (emailForm) {
+                    emailForm.querySelector('.email-subject').value = emailData.subject;
+                    emailForm.querySelector('.email-body').textContent = emailData.body;
+                }
+
+                // Show completion
+                progressBar.style.width = '100%';
+                loadingOverlay.innerHTML = `
+                    <i class="fas fa-check-circle completion-check"></i>
+                    <div class="loading-status">Email has been populated!</div>
+                `;
+
+                // Remove loading overlay after 1.5 seconds
+                setTimeout(() => {
+                    loadingOverlay.remove();
+                }, 1500);
+
+            } catch (error) {
+                console.error('Email Autofill Error:', error);
+                console.error('Error details:', error.message);
+                
+                // Show error in the loading overlay
+                loadingOverlay.innerHTML = `
+                    <i class="fas fa-exclamation-circle" style="color: #e74c3c; font-size: 50px; margin-bottom: 15px;"></i>
+                    <div class="loading-status" style="color: #e74c3c;">Failed to auto-fill email editor</div>
+                    <button onclick="this.parentElement.remove()" class="retry-btn" style="margin-top: 15px;">
+                        Close
+                    </button>
+                `;
+            }
+        }
+
+        // Add new print styles dynamically to handle PDF layout
+        function addPrintStyles() {
+            const printStyles = `
+                @media print {
+                    @page {
+                        size: A4;
+                        margin: 0;
+                    }
+                    
+                    body * {
+                        visibility: hidden;
+                    }
+                    
+                    .print-content, .print-content * {
+                        visibility: visible;
+                    }
+                    
+                    .print-content {
+                        position: absolute;
+                        left: 0;
+                        top: 0;
+                        width: 21cm;
+                        min-height: 29.7cm;
+                        padding: 2cm;
+                        box-shadow: none;
+                        margin: 0;
+                        background: white;
+                    }
+                    
+                    .cv-section {
+                        break-inside: avoid;
+                        page-break-inside: avoid;
+                    }
+                    
+                    .entry-container {
+                        break-inside: avoid;
+                        page-break-inside: avoid;
+                    }
+                }
+            `;
+            
+            const styleSheet = document.createElement('style');
+            styleSheet.id = 'print-styles';
+            styleSheet.innerHTML = printStyles;
+            document.head.appendChild(styleSheet);
+        }
+
+        function downloadDocument(type) {
+            // Get the content to print
+            const contentDiv = document.querySelector(`#${type}Preview .tailored-content`);
+            if (!contentDiv || !contentDiv.innerHTML.trim()) {
+                alert('No content available to download. Please generate or edit content first.');
+                return;
+            }
+
+            // Create a temporary container for print
+            const printContainer = document.createElement('div');
+            printContainer.className = 'print-content';
+            printContainer.innerHTML = contentDiv.innerHTML;
+            
+            // Store original body content
+            const originalContent = document.body.innerHTML;
+            
+            // Add print styles
+            addPrintStyles();
+            
+            // Replace body content with print content
+            document.body.innerHTML = '';
+            document.body.appendChild(printContainer);
+            
+            // Use browser print dialog to save as PDF
+            window.print();
+            
+            // Restore original content
+            document.body.innerHTML = originalContent;
+            
+            // Restore event handlers
+            initializeEventListeners(); // You'll need to create this function to restore all event listeners
+        }
+
+        // Add this function to restore event listeners after printing
+        function initializeEventListeners() {
+            // Sidebar toggle
+            const sidebar = document.querySelector('.sidebar');
+            const mainContent = document.querySelector('.main-content');
+            const toggleBtn = document.querySelector('.toggle-btn');
+            const toggleIcon = toggleBtn.querySelector('i');
+            
+            toggleBtn.addEventListener('click', () => {
+                sidebar.classList.toggle('collapsed');
+                mainContent.classList.toggle('expanded');
+                toggleIcon.classList.toggle('fa-chevron-left');
+                toggleIcon.classList.toggle('fa-chevron-right');
+            });
+            
+            // Navigation
+            document.querySelector('li[onclick="window.location.href=\'index.html\'"]')
+                .addEventListener('click', () => window.location.href = 'index.html');
+            
+            document.querySelector('li[onclick="window.location.href=\'region.html\'"]')
+                .addEventListener('click', () => window.location.href = 'region.html');
+            
+            // File upload
+            document.getElementById('cvFile').addEventListener('change', function(e) {
+                if (e.target.files[0]) {
+                    const fileName = e.target.files[0].name;
+                    e.target.parentElement.querySelector('p').textContent = `Selected: ${fileName}`;
+                }
+            });
+            
+            // Re-initialize other event listeners...
+            // Add any other event listeners your application needs
+        }
+
+        function toggleEmailPanel() {
+            document.querySelector('.email-panel').classList.toggle('open');
+        }
+
+        async function generateEmail() {
+            const jobDescription = document.querySelector('.job-description').value;
+            if (!jobDescription) {
+                alert('Please provide a job description first');
+                return;
+            }
+
+            const user = auth.currentUser;
+            if (!user) {
+                alert('User not logged in.');
+                return;
+            }
+
+            const userId = user.uid;
+            const userRef = db.collection('users').doc(userId);
+            
+            // Check user credits
+            const userDoc = await userRef.get();
+            if (!userDoc.exists) {
+                alert('User data not found.');
+                return;
+            }
+
+            const userData = userDoc.data();
+            const isPremium = userData.plan === 'premium';
+            let credits = userData.credits || 0;
+
+                // For free users, check if they have enough credits
+                if (!isPremium && credits < 1) {
+                    document.getElementById('credit-popup').style.display = 'block';
+                    document.getElementById('popup-overlay').style.display = 'block';
+                    return;
+                }
+
+            const emailPanel = document.querySelector('.email-panel-content');
+            const loadingOverlay = document.createElement('div');
+            loadingOverlay.className = 'loading-overlay';
+            loadingOverlay.innerHTML = `
+                <div class="loading-spinner"></div>
+                <div class="loading-status">Generating email...</div>
+            `;
+            emailPanel.appendChild(loadingOverlay);
+
+            try {
+                // Skip credit deduction and checks for premium users
+                if (isPremium) {
+                    console.log("Skipping credit check for premium user");
+                } else {
+                    try {
+                        // First check credit balance
+                        const doc = await userRef.get();
+                        if (!doc.exists) {
+                            alert('User data not found.');
+                            return;
+                        }
+
+                        const userData = doc.data();
+                        const currentCredits = userData.credits || 0;
+
+                        if (currentCredits < 1) {
+                            alert('Not enough credits. You need 1 credit to generate an email.');
+                            return;
+                        }
+                    } catch (e) {
+                        console.log("Transaction failure: ", e);
+                        alert('Failed to check credits. Please try again.');
+                        return;
+                    }
+                }
+
+                const response = await fetch(API_CONFIG.endpoint, {
+                    method: 'POST',
+                    headers: API_CONFIG.headers,
+                    body: JSON.stringify({
+                        messages: [{
+                            role: "user",
+                            content: `Generate a professional outreach email for this job description:
+                                ${jobDescription}
+                                
+                                Requirements:
+                                1. Create a clear subject line that mentions the position
+                                2. Keep the email body under 150 words
+                                3. Show enthusiasm for the role
+                                4. Highlight 2-3 key relevant experiences
+                                5. Include a clear call to action
+                                
+                                Return ONLY a JSON object in this exact format:
+                                {
+                                    "subject": "Subject line here",
+                                    "body": "Email body text here"
+                                }
+                                
+                                Do not include any additional text, markdown, or formatting.`
+                        }],
+                        model: "deepseek-chat",
+                        temperature: 0.7
+                    })
+                });
+
+                const data = await response.json();
+                let emailData;
+
+                // Only deduct credits for free users after successful generation
+                if (isPremium) {
+                    console.log("Skipping credit deduction for premium user");
+                } else {
+                    await db.runTransaction(async (transaction) => {
+                        const sfDoc = await transaction.get(userRef);
+                        if (!sfDoc.exists) {
+                            throw "Document does not exist!";
+                        }
+                        const newCredits = sfDoc.data().credits - 1;
+                        transaction.update(userRef, { credits: newCredits });
+                    });
+
+                    console.log("Credits successfully deducted after generation!");
+                    loadUserData(userId); // Refresh credit display
+                }
+                
+                try {
+                    // Clean and parse the response
+                    const cleaned = cleanJSON(data.choices[0].message.content);
+                    emailData = JSON.parse(cleaned);
+                    
+                    // Validate the parsed data
+                    if (!emailData.subject || !emailData.body) {
+                        throw new Error('Invalid email data structure');
+                    }
+
+                    // Update the email form fields
+                    const subjectInput = document.querySelector('.email-subject');
+                    const bodyDiv = document.querySelector('.email-body');
+
+                    subjectInput.value = emailData.subject.trim();
+                    bodyDiv.textContent = emailData.body.trim();
+
+                    // Store for later use
+                    sessionStorage.setItem('generatedEmail', JSON.stringify(emailData));
+                    
+                    loadingOverlay.remove();
+                } catch (parseError) {
+                    console.error('Parsing Error:', parseError);
+                    // Fallback parsing for non-JSON responses
+                    const content = data.choices[0].message.content;
+                    const lines = content.split('\n').filter(line => line.trim());
+                    
+                    const subjectLine = lines[0].replace(/^Subject:?\s*/i, '').trim();
+                    const bodyText = lines.slice(1).join('\n').trim();
+
+                    document.querySelector('.email-subject').value = subjectLine;
+                    document.querySelector('.email-body').textContent = bodyText;
+                    
+                    loadingOverlay.remove();
+                }
+            } catch (error) {
+                console.error('Email Generation Error:', error);
+                loadingOverlay.innerHTML = `
+                    <i class="fas fa-exclamation-circle" style="color: #e74c3c;"></i>
+                    <div class="loading-status">Failed to generate email</div>
+                    <button onclick="this.parentElement.remove()" class="retry-btn" style="margin-top: 15px;">
+                        Close
+                    </button>
+                `;
+            }
+        }
+
+        function copyEmail() {
+            const subject = document.querySelector('.email-subject').value;
+            const body = document.querySelector('.email-body').textContent;
+            const emailContent = `Subject: ${subject}\n\n${body}`;
+            
+            navigator.clipboard.writeText(emailContent).then(() => {
+                alert('Email copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy email:', err);
+                alert('Failed to copy email to clipboard');
+            });
+        }
+
+        async function regenerateEmail() {
+            const user = auth.currentUser;
+            if (!user) {
+                alert('User not logged in.');
+                return;
+            }
+
+            const userId = user.uid;
+            const userRef = db.collection('users').doc(userId);
+            
+            // Check user plan
+            const userDoc = await userRef.get();
+            if (!userDoc.exists) {
+                alert('User data not found.');
+                return;
+            }
+
+            const userData = userDoc.data();
+            const isPremium = userData.plan === 'premium';
+
+            // Skip credit checks and deduction for premium users
+            if (isPremium) {
+                console.log("Skipping credit check/deduction for premium user");
+            } else {
+                // Check and deduct credits for free users
+                try {
+                    const currentCredits = userData.credits || 0;
+                    if (currentCredits < 1) {
+                        alert('Not enough credits. You need 1 credit to regenerate an email.');
+                        return;
+                    }
+
+                    // Deduct credit in a transaction
+                    await db.runTransaction(async (transaction) => {
+                        const sfDoc = await transaction.get(userRef);
+                        if (!sfDoc.exists) {
+                            throw "Document does not exist!";
+                        }
+                        const newCredits = sfDoc.data().credits - 1;
+                        if (newCredits < 0) {
+                            throw "Insufficient credits";
+                        }
+                        transaction.update(userRef, { credits: newCredits });
+                        console.log(`Deducted 1 credit (new balance: ${newCredits})`);
+                    });
+
+                    // Refresh credit display
+                    loadUserData(userId);
+                } catch (e) {
+                    console.log("Transaction failure: ", e);
+                    alert('Failed to deduct credit. Please try again.');
+                    return;
+                }
+            }
+
+            // Clear out the existing content
+            document.querySelector('.email-subject').value = '';
+            document.querySelector('.email-body').textContent = '';
+            
+            // Remove any existing loading overlay
+            const existingOverlay = document.querySelector('.loading-overlay');
+            if (existingOverlay) {
+                existingOverlay.remove();
+            }
+            
+            // Call generateEmail to create new content
+            await generateEmail();
+        }
+
+        function toggleQuestionsPanel() {
+            document.querySelector('.questions-panel').classList.toggle('open');
+        }
+
+        async function generateAnswer() {
+            const question = document.querySelector('.question-input').value;
+            const cvContent = document.querySelector('#cvPreview .tailored-content')?.innerHTML;
+            const coverLetterContent = document.querySelector('#coverLetterPreview .tailored-content')?.innerHTML;
+
+            if (!question) {
+                alert('Please enter a question first');
+                return;
+            }
+
+            if (!cvContent && !coverLetterContent) {
+                alert('Please generate your CV and/or cover letter first');
+                return;
+            }
+
+            const user = auth.currentUser;
+            if (!user) {
+                alert('User not logged in.');
+                return;
+            }
+
+            const userId = user.uid;
+            
+            // Check user credits
+            const userDoc = await db.collection('users').doc(userId).get();
+            if (!userDoc.exists) {
+                alert('User data not found.');
+                return;
+            }
+
+            const userData = userDoc.data();
+            const isPremium = userData.plan === 'premium';
+            let credits = userData.credits || 0;
+
+            // For free users, check if they have enough credits
+            if (!isPremium && credits < 1) {
+                document.getElementById('credit-popup').style.display = 'block';
+                document.getElementById('popup-overlay').style.display = 'block';
+                return;
+            }
+
+            const answerBox = document.querySelector('.answer-box');
+            const loadingOverlay = document.createElement('div');
+            loadingOverlay.className = 'loading-overlay';
+            loadingOverlay.innerHTML = `
+                <div class="loading-spinner"></div>
+                <div class="loading-status">Generating answer...</div>
+            `;
+            answerBox.parentElement.style.position = 'relative';
+            answerBox.parentElement.appendChild(loadingOverlay);
+
+            try {
+                const response = await fetch(API_CONFIG.endpoint, {
+                    method: 'POST',
+                    headers: API_CONFIG.headers,
+                    body: JSON.stringify({
+                        messages: [{
+                            role: "user",
+                            content: `Based on this CV and cover letter content:
+                                CV: ${cvContent || 'Not provided'}
+                                Cover Letter: ${coverLetterContent || 'Not provided'}
+
+                                Please provide a professional answer to this application question:
+                                "${question}"
+
+                                Requirements:
+                                1. Answer should be specific and relevant to the candidate's experience
+                                2. Use concrete examples from the CV/cover letter where applicable
+                                3. Keep the answer concise but comprehensive
+                                4. Maintain a professional tone
+                                5. Focus on achievements and skills that match the question
+
+                                Return ONLY the answer without any additional text or formatting.`
+                        }],
+                        model: "deepseek-chat",
+                        temperature: 0.7
+                    })
+                });
+
+                const data = await response.json();
+                answerBox.textContent = data.choices[0].message.content.trim();
+                loadingOverlay.remove();
+
+                // Only deduct credits for free users
+                if (!isPremium) {
+                    const currentUser = auth.currentUser;
+                    if (currentUser) {
+                        const userId = currentUser.uid;
+                        const userRef = db.collection('users').doc(userId);
+                        try {
+                            await db.runTransaction(async (transaction) => {
+                                const sfDoc = await transaction.get(userRef);
+                                if (!sfDoc.exists) {
+                                    throw "Document does not exist!";
+                                }
+                                const newCredits = sfDoc.data().credits - 1;
+                                transaction.update(userRef, { credits: newCredits });
+                            });
+                            console.log("Credits successfully deducted for generating answer!");
+                            loadUserData(userId); // Refresh credit display
+                        } catch (e) {
+                            console.log("Transaction failure: ", e);
+                            alert('Failed to deduct credits for generating answer. Please try again.');
+                        }
+                    }
+                }
+            } catch (error) {
+                console.error('Answer Generation Error:', error);
+                loadingOverlay.innerHTML = `
+                    <i class="fas fa-exclamation-circle" style="color: #e74c3c;"></i>
+                    <div class="loading-status">Failed to generate answer</div>
+                    <button onclick="this.parentElement.remove()" class="retry-btn">
+                        Close
+                    </button>
+                `;
+            }
+}
+
+        async function regenerateAnswer() {
+            const answerBox = document.querySelector('.answer-box');
+            answerBox.textContent = '';
+
+            await generateAnswer();
+        }
+
+        function copyAnswer() {
+            const answer = document.querySelector('.answer-box').textContent;
+            if (!answer) {
+                alert('No answer to copy. Please generate an answer first.');
+                return;
+            }
+
+            navigator.clipboard.writeText(answer).then(() => {
+                alert('Answer copied to clipboard!');
+            }).catch(err => {
+                console.error('Failed to copy answer:', err);
+                alert('Failed to copy answer to clipboard');
+            });
+        }
+
+        // Add these functions at the start of your script
+        function saveJobDescription(text) {
+            localStorage.setItem('savedJobDescription', text);
+        }
+
+        function loadJobDescription() {
+            const saved = localStorage.getItem('savedJobDescription');
+            if (saved) {
+                document.querySelector('.job-description').value = saved;
+            }
+        }
+
+        function saveCVFileName(fileName) {
+            localStorage.setItem('savedCVFileName', fileName);
+        }
+
+        function loadCVFileName() {
+            return localStorage.getItem('savedCVFileName');
+        }
+
+        // Add this to your initialization code
+        document.addEventListener('DOMContentLoaded', function() {
+            // Load saved job description
+            loadJobDescription();
+
+            // Load saved CV preview
+            const savedCVPreview = localStorage.getItem('savedCVPreview');
+            if (savedCVPreview) {
+                document.getElementById('cvPreview').innerHTML = savedCVPreview;
+            }
+
+            // Load saved cover letter
+            const savedCoverLetter = localStorage.getItem('savedCoverLetter');
+            if (savedCoverLetter) {
+                document.getElementById('coverLetterPreview').innerHTML = `
+                    <div class="tailored-content">
+                        ${savedCoverLetter}
+                    </div>
+                `;
+            }
+
+            // Update file upload text if CV was previously selected
+            const savedFileName = loadCVFileName();
+            if (savedFileName) {
+                document.querySelector('.file-upload p').textContent = `Selected: ${savedFileName}`;
+            }
+        });
+
+        // Add a clear function if you want to add a reset button
+        function clearSavedData() {
+            localStorage.removeItem('savedJobDescription');
+            localStorage.removeItem('savedCVFileName');
+            localStorage.removeItem('savedCVContent');
+            localStorage.removeItem('savedCVPreview');
+            localStorage.removeItem('savedCoverLetter');
+            localStorage.removeItem('savedOutreachEmail');
+            
+            // Reset the UI
+            document.querySelector('.job-description').value = '';
+            document.querySelector('.file-upload p').textContent = 'Click to upload your CV';
+            document.getElementById('cvPreview').innerHTML = '';
+            document.getElementById('coverLetterPreview').innerHTML = '';
+        }
+    </script>
+</body>
+</html>
