@@ -1,0 +1,565 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Job Board - JobSeeker</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="styles/main.css" rel="stylesheet">
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+    <style>
+        .job-board-container {
+            padding: 20px;
+        }
+
+        .search-section {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            margin-bottom: 20px;
+        }
+
+        .search-bar {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 15px;
+        }
+
+        .search-input {
+            flex: 2;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .location-input {
+            flex: 1;
+            padding: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .filter-section {
+            display: flex;
+            gap: 10px;
+            flex-wrap: wrap;
+        }
+
+        .filter-select {
+            min-width: 150px;
+            padding: 8px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+
+        .job-list {
+            display: grid;
+            gap: 15px;
+        }
+
+        .job-card {
+            background: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+            cursor: pointer;
+            transition: transform 0.2s;
+        }
+
+        .job-card:hover {
+            transform: translateY(-2px);
+        }
+
+        .job-header {
+            display: flex;
+            justify-content: space-between;
+            margin-bottom: 10px;
+        }
+
+        .company-info {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+        }
+
+        .company-logo {
+            width: 50px;
+            height: 50px;
+            border-radius: 4px;
+            background: #f0f0f0;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .job-details {
+            margin-top: 10px;
+        }
+
+        .job-tags {
+            display: flex;
+            gap: 8px;
+            margin-top: 10px;
+        }
+
+        .tag {
+            background: #f0f0f0;
+            padding: 4px 8px;
+            border-radius: 12px;
+            font-size: 0.9em;
+        }
+
+        .apply-btn {
+            background: #3498db;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+
+        .save-region-btn {
+            background: #2ecc71;
+            color: white;
+            border: none;
+            padding: 8px 16px;
+            border-radius: 4px;
+            cursor: pointer;
+            margin-right: 10px;
+            display: flex;
+            align-items: center;
+            gap: 5px;
+        }
+
+        .save-region-btn i {
+            font-size: 14px;
+        }
+
+        .save-region-btn:hover {
+            background: #27ae60;
+        }
+
+        .loading-spinner {
+            text-align: center;
+            padding: 20px;
+            display: none;
+        }
+    </style>
+</head>
+<body>
+    <nav class="sidebar">
+        <button class="toggle-btn">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <div class="logo">
+            <img src="logo/tinywow_change_bg_photo_79922413.png" alt="CVTailor.CC Logo" style="width: 150px; height: auto;">
+        </div>
+        <ul class="nav-links">
+            <li class="active" onclick="window.location.href='index.html'"><i class="fas fa-home"></i><span>Home</span></li>
+            <li onclick="window.location.href='marketplace.html'"><i class="fas fa-store"></i><span>Marketplace</span></li>
+            <li onclick="window.location.href='region.html'"><i class="fas fa-globe"></i><span>Region</span></li>
+            <li onclick="window.location.href='cv-section.html'"><i class="fas fa-file-alt"></i><span>CV & Cover Letter</span></li>
+            <li onclick="window.location.href='job-board.html'"><i class="fas fa-briefcase"></i><span>Job Board</span></li>
+            <li><i class="fas fa-tasks"></i><span>Application Tracker <span style="color: grey;">(Coming Soon)</span></span></li>
+            <li onclick="window.location.href='profile.html'"><i class="fas fa-user"></i><span>Profile</span></li>
+            <li><i class="fas fa-comments"></i><span>Consultation <span style="color: grey;">(Coming Soon)</span></span></li>
+            <li onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i><span>Logout</span></li>
+            <li onclick="window.location.href='plan.html'" class="subscription-plan"><i class="fas fa-credit-card"></i><span>Subscription Plan</span><span id="nav-credit-display" style="font-size: 0.8em; color: #fff; margin-left: 5px;">(Credit: Loading...)</span></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <div class="job-board-container">
+            <div class="search-section">
+                <div class="search-bar">
+                    <input type="text" class="search-input" placeholder="Search job titles, keywords...">
+                    <input type="text" class="location-input" placeholder="Location (city, country)">
+                    <button class="apply-btn" id="searchBtn">Search</button>
+                </div>
+                <div class="filter-section">
+                    <select class="filter-select" id="jobType">
+                        <option value="">Job Type</option>
+                        <option value="full_time">Full Time</option>
+                        <option value="part_time">Part Time</option>
+                        <option value="contract">Contract</option>
+                        <option value="permanent">Permanent</option>
+                    </select>
+                    <select class="filter-select" id="category">
+                        <option value="">Category</option>
+                        <option value="it-jobs">IT Jobs</option>
+                        <option value="engineering-jobs">Engineering</option>
+                        <option value="healthcare-nursing-jobs">Healthcare</option>
+                        <option value="finance-accounting-jobs">Finance</option>
+                        <option value="sales-jobs">Sales</option>
+                        <option value="marketing-jobs">Marketing</option>
+                    </select>
+                    <select class="filter-select" id="sortBy">
+                        <option value="">Sort By</option>
+                        <option value="date">Date Posted</option>
+                        <option value="salary">Salary</option>
+                        <option value="relevance">Relevance</option>
+                    </select>
+                    <select class="filter-select" id="resultsPerPage">
+                        <option value="10">10 per page</option>
+                        <option value="20">20 per page</option>
+                        <option value="50">50 per page</option>
+                    </select>
+                </div>
+            </div>
+
+            <div class="job-list" id="jobList">
+                <!-- Job cards will be dynamically added here -->
+            </div>
+            <div class="loading-spinner" id="loadingSpinner">
+                <i class="fas fa-spinner fa-spin fa-2x"></i>
+            </div>
+        </div>
+    </main>
+
+    <script>
+        // Firebase configuration (same as other pages)
+        const firebaseConfig = {
+            apiKey: "AIzaSyCCoH_alBrRE_LrrE_nR-edbJXqy1pjfCU",
+            authDomain: "quick-test-aac28.firebaseapp.com",
+            projectId: "quick-test-aac28",
+            storageBucket: "quick-test-aac28.firebasestorage.app",
+            messagingSenderId: "892247718936",
+            appId: "1:892247718936:web:e74b78c6897ef081e3d76d",
+            measurementId: "G-0KXC6TQCEE"
+        };
+
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Function to update credit display in the subscription button
+        async function updateCreditDisplayInButton(credits) {
+            const navCreditDisplay = document.getElementById('nav-credit-display');
+            if (navCreditDisplay) {
+                const user = auth.currentUser;
+                if (user) {
+                    const userDoc = await db.collection('users').doc(user.uid).get();
+                    if (userDoc.exists) {
+                        const userData = userDoc.data();
+                        const currentPlan = userData.plan || 'free';
+
+                        if (currentPlan === 'premium') {
+                            navCreditDisplay.textContent = 'Premium';
+                        } else {
+                            navCreditDisplay.textContent = `(Credit: ${credits})`;
+                        }
+                    }
+                }
+            }
+        }
+
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = 'auth.html';
+            } else {
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    userCredits = userData.credits || 0; // Default to 0 if credits don't exist
+                    const currentPlan = userData.plan || 'free'; // Default to free if no plan exists
+                    updateCreditDisplayInButton(userCredits); // Update the button
+                } else {
+                    console.error('Error fetching user data: Document does not exist');
+                }
+            }
+        });
+
+        const ADZUNA_API_KEY = 'deb3c987d4de390bd69ae659651f08d9';
+        const ADZUNA_APP_ID = '17058022';
+        
+        let currentPage = 1;
+        let isLoading = false;
+        let hasMoreJobs = true;
+        let currentSearchParams = {};
+
+        async function fetchJobs(params = {}) {
+            const {
+                query = '',
+                location = '',
+                jobType = '',
+                category = '',
+                sortBy = '',
+                resultsPerPage = 10,
+                page = 1
+            } = params;
+
+            const baseUrl = `https://api.adzuna.com/v1/api/jobs/gb/search/${page}`;
+            let url = `${baseUrl}?app_id=${ADZUNA_APP_ID}&app_key=${ADZUNA_API_KEY}`;
+            
+            // Add search parameters
+            if (query) url += `&what=${encodeURIComponent(query)}`;
+            if (location) url += `&where=${encodeURIComponent(location)}`;
+            if (jobType) url += `&contract_type=${jobType}`;
+            if (category) url += `&category=${category}`;
+            if (sortBy) url += `&sort_by=${sortBy}`;
+            url += `&results_per_page=${resultsPerPage}`;
+
+            try {
+                const response = await fetch(url);
+                const data = await response.json();
+                hasMoreJobs = data.results.length === parseInt(resultsPerPage);
+                return data.results || [];
+            } catch (error) {
+                console.error('Error fetching jobs:', error);
+                return [];
+            }
+        }
+
+        function createJobCard(job) {
+            const salary = job.salary_min && job.salary_max 
+                ? `£${Math.floor(job.salary_min).toLocaleString()} - £${Math.floor(job.salary_max).toLocaleString()}`
+                : 'Salary not specified';
+
+            // Clean and escape the data to prevent JS errors
+            const cleanData = {
+                id: job.id?.toString().replace(/'/g, '\\\'') || '',
+                location: job.location?.display_name?.replace(/'/g, '\\\'') || '',
+                title: job.title?.replace(/'/g, '\\\'') || '',
+                company: job.company?.display_name?.replace(/'/g, '\\\'') || ''
+            };
+
+            return `
+                <div class="job-card">
+                    <div class="job-header">
+                        <div class="company-info">
+                            <div class="company-logo">
+                                <i class="fas fa-building"></i>
+                            </div>
+                            <div>
+                                <h3>${job.title}</h3>
+                                <p>${job.company.display_name}</p>
+                            </div>
+                        </div>
+                        <div class="job-actions">
+                            <button class="save-region-btn" data-job-id="${cleanData.id}" 
+                                onclick="saveJobToRegion('${cleanData.id}', '${cleanData.location}', '${cleanData.title}', '${cleanData.company}')">
+                                <i class="fas fa-map-pin"></i> Save to Region
+                            </button>
+                            <button class="apply-btn" onclick="window.open('${job.redirect_url}', '_blank')">Apply Now</button>
+                        </div>
+                    </div>
+                    <div class="job-details">
+                        <p><i class="fas fa-map-marker-alt"></i> ${job.location.display_name}</p>
+                        <p><i class="fas fa-clock"></i> ${job.contract_time || 'Not specified'}</p>
+                        <p><i class="fas fa-dollar-sign"></i> ${salary}</p>
+                    </div>
+                    <div class="job-description">
+                        ${job.description.substring(0, 200)}...
+                    </div>
+                    <div class="job-tags">
+                        ${job.category.label ? `<span class="tag">${job.category.label}</span>` : ''}
+                        ${job.contract_time ? `<span class="tag">${job.contract_time}</span>` : ''}
+                    </div>
+                </div>
+            `;
+        }
+
+        async function initializeJobs() {
+            const jobList = document.getElementById('jobList');
+            jobList.innerHTML = '<p>Loading jobs...</p>';
+            
+            const jobs = await fetchJobs();
+            if (jobs.length === 0) {
+                jobList.innerHTML = '<p>No jobs found</p>';
+                return;
+            }
+            
+            jobList.innerHTML = '';
+            jobs.forEach(job => {
+                jobList.innerHTML += createJobCard(job);
+            });
+        }
+
+        async function handleSearch() {
+            currentPage = 1;
+            hasMoreJobs = true;
+            const query = document.querySelector('.search-input').value;
+            const location = document.querySelector('.location-input').value;
+            const jobType = document.getElementById('jobType').value;
+            const category = document.getElementById('category').value;
+            const sortBy = document.getElementById('sortBy').value;
+            const resultsPerPage = document.getElementById('resultsPerPage').value;
+
+            currentSearchParams = {
+                query,
+                location,
+                jobType,
+                category,
+                sortBy,
+                resultsPerPage
+            };
+
+            const jobList = document.getElementById('jobList');
+            jobList.innerHTML = '<p>Searching...</p>';
+            
+            const jobs = await fetchJobs(currentSearchParams);
+            jobList.innerHTML = '';
+            
+            if (jobs.length === 0) {
+                jobList.innerHTML = '<p>No jobs found</p>';
+                return;
+            }
+            
+            jobs.forEach(job => {
+                jobList.innerHTML += createJobCard(job);
+            });
+        }
+
+        async function loadMoreJobs() {
+            if (isLoading || !hasMoreJobs) return;
+
+            isLoading = true;
+            document.getElementById('loadingSpinner').style.display = 'block';
+            
+            currentPage++;
+            const jobs = await fetchJobs({
+                ...currentSearchParams,
+                page: currentPage
+            });
+
+            if (jobs.length > 0) {
+                jobs.forEach(job => {
+                    document.getElementById('jobList').innerHTML += createJobCard(job);
+                });
+            }
+
+            isLoading = false;
+            document.getElementById('loadingSpinner').style.display = 'none';
+        }
+
+        // Infinite scroll detection
+        window.addEventListener('scroll', () => {
+            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500) {
+                loadMoreJobs();
+            }
+        });
+
+        // Update event listeners
+        document.getElementById('searchBtn').addEventListener('click', handleSearch);
+        document.querySelector('.search-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleSearch();
+        });
+        document.querySelector('.location-input').addEventListener('keypress', (e) => {
+            if (e.key === 'Enter') handleSearch();
+        });
+
+        // Add filter change handlers
+        ['jobType', 'category', 'sortBy', 'resultsPerPage'].forEach(filterId => {
+            document.getElementById(filterId).addEventListener('change', handleSearch);
+        });
+
+        // Initialize the page with jobs
+        document.addEventListener('DOMContentLoaded', () => {
+            initializeJobs();
+        });
+
+        // Sidebar toggle functionality
+        const sidebar = document.querySelector('.sidebar');
+        const mainContent = document.querySelector('.main-content');
+        const toggleBtn = document.querySelector('.toggle-btn');
+        const toggleIcon = toggleBtn.querySelector('i');
+
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('expanded');
+            toggleIcon.classList.toggle('fa-chevron-left');
+            toggleIcon.classList.toggle('fa-chevron-right');
+        });
+
+        // Logout functionality
+        function handleLogout() {
+            auth.signOut()
+                .then(() => {
+                    window.location.href = 'auth.html';
+                })
+                .catch((error) => {
+                    console.error('Logout failed:', error);
+                });
+        }
+
+        async function saveJobToRegion(jobId, location, title, companyName) {
+            try {
+                const user = auth.currentUser;
+                if (!user) {
+                    alert('Please log in to save jobs to region');
+                    return;
+                }
+
+                // Get the full job details from the DOM
+                const jobCard = document.querySelector(`[data-job-id="${jobId}"]`).closest('.job-card');
+                const salary = jobCard.querySelector('.job-details .fa-dollar-sign').nextSibling.textContent.trim();
+                const jobType = jobCard.querySelector('.job-tags .tag:last-child')?.textContent || 'Not specified';
+                const description = jobCard.querySelector('.job-description')?.textContent || '';
+
+                const savedJob = {
+                    jobId: jobId,
+                    title: title,
+                    companyName: companyName,
+                    jobType: jobType,
+                    salary: salary,
+                    location: {
+                        displayName: location,
+                        city: location.split(',')[0]?.trim() || '',
+                        region: location.split(',')[1]?.trim() || '',
+                        country: 'United Kingdom'
+                    },
+                    savedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    description: description.substring(0, 200),
+                    status: 'active'
+                };
+
+                // Get coordinates using Google Maps Geocoding
+                try {
+                    const geocoder = new google.maps.Geocoder();
+                    const response = await new Promise((resolve, reject) => {
+                        geocoder.geocode({ address: location }, (results, status) => {
+                            if (status === 'OK') {
+                                resolve(results[0]);
+                            } else {
+                                reject(status);
+                            }
+                        });
+                    });
+
+                    savedJob.coordinates = {
+                        lat: response.geometry.location.lat(),
+                        lng: response.geometry.location.lng(),
+                        formattedAddress: response.formatted_address
+                    };
+                } catch (geocodeError) {
+                    console.warn('Geocoding failed:', geocodeError);
+                }
+
+                // Save only to savedRegions collection
+                await db.collection('users').doc(user.uid)
+                    .collection('savedRegions')
+                    .doc(jobId)
+                    .set(savedJob);
+
+                alert('Job location saved successfully! You can view it in the Region section.');
+
+                // Update button state
+                const saveBtn = document.querySelector(`[data-job-id="${jobId}"]`);
+                if (saveBtn) {
+                    saveBtn.innerHTML = '<i class="fas fa-check"></i> Saved';
+                    saveBtn.style.background = '#27ae60';
+                    saveBtn.disabled = true;
+                }
+            } catch (error) {
+                console.error('Error saving job location:', error);
+                alert('Failed to save job location. Please try again.');
+            }
+        }
+    </script>
+</body>
+</html>
