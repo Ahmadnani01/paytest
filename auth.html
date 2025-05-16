@@ -196,7 +196,10 @@
                             firstName: firstName,
                             lastName: lastName,
                             email: email,
-                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                            plan: 'free',
+                            tokenBalance: 100
+
                         })
                         .then(() => {
                             window.location.href = 'index.html';
