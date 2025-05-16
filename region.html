@@ -1,0 +1,1903 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Region Management - JobSeeker</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="styles/main.css" rel="stylesheet">
+    <style>
+        /* Enhanced Apple-inspired styles for region section */
+        #degree-search-section,
+        .search-filter-container,
+        #map,
+        #saved-companies,
+        #saved-locations {
+            background-color: #f0f0f0; /* Slightly darker, premium feel */
+            border-radius: 16px;
+            box-shadow: 0 8px 16px rgba(0, 0, 0, 0.15); /* Enhanced shadow */
+            padding: 24px;
+            margin-bottom: 24px;
+            font-family: "SF Pro Display", "Segoe UI", Tahoma, Geneva, Verdana, sans-serif;
+        }
+
+        .search-bar input[type="text"],
+        #industry-filter {
+            border: none; /* Remove border */
+            border-radius: 12px; /* Slightly more rounded */
+            padding: 12px 16px; /* Adjust padding */
+            font-size: 16px;
+            box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.15); /* Refine inner shadow */
+            transition: box-shadow 0.3s ease; /* Smooth transition */
+            background-color: #ffffff; /* Pure white background */
+            color: #222; /* Even darker text */
+        }
+
+        .search-bar input[type="text"]:focus,
+        #industry-filter:focus {
+            outline: none;
+            box-shadow: 0 4px 9px rgba(0, 0, 0, 0.25); /* Even more enhanced shadow on focus */
+        }
+
+        .search-bar button,
+        #add-industry-button,
+        .industry-suggestion-button,
+        #live-location-button,
+        #degree-search-button {
+            background-color: #29abe2; /* A lighter, more premium blue */
+            color: white;
+            border: none;
+            border-radius: 12px;
+            padding: 14px 24px;
+            font-size: 16px;
+            cursor: pointer;
+            transition: background-color 0.3s ease, transform 0.2s ease;
+        }
+
+        .search-bar button:hover,
+        #add-industry-button:hover,
+        .industry-suggestion-button:hover,
+        #live-location-button:hover,
+        #degree-search-button:hover {
+            background-color: #0062cc;
+            transform: scale(1.05);
+        }
+
+        #saved-companies .job-card,
+        #saved-locations .job-card {
+            background-color: #f9f9f9; /* Use the same background as the sections */
+            border-radius: 12px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.08);
+            padding: 16px;
+            margin-bottom: 16px;
+            transition: transform 0.2s ease;
+        }
+
+        #saved-companies .job-card:hover,
+        #saved-locations .job-card:hover {
+            transform: translateY(-4px);
+            box-shadow: 0 6px 12px rgba(0, 0, 0, 0.1);
+        }
+
+        #saved-companies h3,
+        #saved-locations h3 {
+            color: #222;
+            margin-bottom: 12px;
+            font-size: 20px;
+        }
+
+        #saved-companies p,
+        #saved-locations p {
+            color: #555;
+            margin-bottom: 10px;
+            line-height: 1.5;
+        }
+
+        /* Styles for the degree search section */
+        #degree-search-section {
+            display: flex;
+            flex-direction: column;
+            align-items: flex-start;
+        }
+
+        #degree-search-input {
+            margin-bottom: 10px;
+            width: 100%;
+        }
+
+        #degree-search-suggestions {
+            display: flex;
+            flex-wrap: wrap;
+            gap: 5px;
+        }
+
+        /* Styles for applied filters */
+        #applied-filters {
+            display: flex;
+            gap: 10px;
+            margin-bottom: 20px;
+        }
+
+        /* Styles for industry suggestions */
+        #industry-suggestions-container {
+            margin-bottom: 20px;
+        }
+
+        .industry-suggestion-button {
+            margin: 5px;
+        }
+
+        /* Styles for live location button */
+        #live-location-button {
+            margin-top: 10px;
+        }
+    </style>
+</head>
+
+<body>
+    <nav class="sidebar">
+        <button class="toggle-btn">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <div class="logo">
+            <img src="logo/tinywow_change_bg_photo_79922413.png" alt="CVTailor.CC Logo" style="width: 150px; height: auto;">
+        </div>
+        <ul class="nav-links" >
+            <li onclick="window.location.href='index.html'"><i class="fas fa-home"></i><span>Home</span></li>
+            <li onclick="window.location.href='marketplace.html'"><i class="fas fa-store"></i><span>Marketplace</span></li>
+            <li class="active"><i class="fas fa-globe"></i><span>Region</span></li>
+            <li onclick="window.location.href='cv-section.html'"><i class="fas fa-file-alt"></i><span>CV & Cover Letter</span></li>
+            <li onclick="window.location.href='job-board.html'"><i class="fas fa-briefcase"></i><span>Job Board</span></li>
+            <li><i class="fas fa-tasks"></i><span>Application Tracker <span style="color: grey;">(Coming Soon)</span></span></li>
+            <li><i class="fas fa-user"></i><span>Profile</span></li>
+            <li><i class="fas fa-comments"></i><span>Consultation <span style="color: grey;">(Coming Soon)</span></span></li>
+            <li onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i><span>Logout</span></li>
+            <li onclick="window.location.href='plan.html'" class="subscription-plan"><i class="fas fa-credit-card"></i><span>Subscription Plan</span><span id="nav-credit-display" style="font-size: 0.8em; color: #fff; margin-left: 5px;">(Credit: Loading...)</span></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <div class="welcome-section">
+            <h1>Region Management</h1>
+            <div id="search-info" style="margin-top: 10px; padding: 10px; background: #f8f9fa; border-radius: 8px;">
+                <p id="search-count-display">Searches: Loading...</p>
+                <p id="credit-display">Credits: Loading...</p>
+            </div>
+        </div>
+        <div id="degree-search-section">
+             <h2>Find your Industry</h2>
+            <input type="text" id="degree-search-input" placeholder="Enter your degree or field of study">
+            <button id="degree-search-button">Search</button>
+            <div id="degree-search-suggestions">
+                
+            </div>
+           </div>
+        
+        <p>
+                Use the interactive map to find businesses in your local area. You can also use the Sector and Category filters below to refine your search further.
+            </p>
+        <div class="search-filter-container">
+             <div class="search-bar">
+                <input type="text" id="city-search" placeholder="Enter a city">
+                <button id="search-button">Search</button>
+            </div>
+             <div class="search-bar">
+                <input type="text" id="custom-industry" placeholder="Enter custom industry">
+                 <select id="industry-filter">
+                    <option value="all">All Industries</option>
+                    <option value="Tech Industry">Tech Industry</option>
+                    <option value="Healthcare Industry">Healthcare Industry</option>
+                    <option value="Finance Industry">Finance Industry</option>
+                    <option value="Education">Education</option>
+                    <option value="Retail">Retail</option>
+                    <option value="Manufacturing">Manufacturing</option>
+                    <option value="Job Agency">Job Agency</option>
+                    <option value="Entertainment">Entertainment</option>
+                    <option value="Hospitality">Hospitality</option>
+                    <option value="Construction">Construction</option>
+                    <option value="Energy">Energy</option>
+                    <option value="Agriculture">Agriculture</option>
+                    <option value="Transportation">Transportation</option>
+                    <option value="Telecommunications">Telecommunications</option>
+                </select>
+                <button id="add-industry-button">Add Industry</button>
+            </div>
+                <div id="applied-filters" style="display:flex;gap:10px">
+                    
+                </div>
+                <div id="industry-suggestions-container" style="margin-bottom: 20px;">
+                    
+                    
+                </div>
+                <button id="live-location-button">Live Location</button>
+        </div>
+      
+        <div id="map" style="height: 400px; width: 100%;"></div>
+
+
+        <h2>Saved Companies</h2>
+        <div id="saved-companies"></div>
+
+        <!-- Add new Saved Locations section -->
+        <h2>Saved Locations</h2>
+        <p>Locations you've saved for quick access to local businesses</p>
+        <div id="saved-locations"></div>
+
+        <!-- Industry Information List -->
+        </div>
+
+        <div id="map" style="height: 400px; width: 100%;"></div>
+
+
+        
+
+        <!-- Industry Information List -->
+        <div class="industry-list">
+            <!-- Industry items will be dynamically added here -->
+        </div>
+    </main>
+
+    <!-- Credit Popup -->
+    <div id="credit-popup" style="display: none; position: fixed; top: 50%; left: 50%; transform: translate(-50%, -50%); background: white; padding: 20px; border: 1px solid #ccc; box-shadow: 0 4px 8px rgba(0,0,0,0.2); z-index: 1000; text-align: center;">
+        <h2>Insufficient Credits</h2>
+        <p>You don't have enough credits to perform this search. Please buy more credits or upgrade to premium.</p>
+        <button onclick="window.location.href='plan.html'" style="background-color: #4CAF50; color: white; padding: 10px 20px; border: none; cursor: pointer;">Go to Subscription Plan</button>
+    </div>
+
+    <div id="popup-overlay" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 999;"></div>
+
+    <script src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDU5Y7mGd7Eih8fJ9bgK8GesXog9k9qIlw&callback=initMap&libraries=places" defer></script>
+    <!-- Firebase Auth -->
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-app.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-auth.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/8.10.0/firebase-firestore.js"></script>
+    <script>
+        // Update Firebase configuration to match other pages
+        const firebaseConfig = {
+            apiKey: "AIzaSyCCoH_alBrRE_LrrE_nR-edbJXqy1pjfCU",
+            authDomain: "quick-test-aac28.firebaseapp.com",
+            projectId: "quick-test-aac28",
+            storageBucket: "quick-test-aac28.firebasestorage.app",
+            messagingSenderId: "892247718936",
+            appId: "1:892247718936:web:e74b78c6897ef081e3d76d",
+            measurementId: "G-0KXC6TQCEE"
+        };
+
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        let searchCount = 0;
+
+        // Function to update credit display
+        async function updateCreditDisplay() {
+            const user = auth.currentUser;
+            if (!user) return;
+
+            const userDoc = await db.collection('users').doc(user.uid).get();
+            if (!userDoc.exists) return;
+
+            const userData = userDoc.data();
+            const isPremium = userData.plan === 'premium';
+            let credits = userData.credits || 0;
+
+            if (isPremium) {
+                credits = 'Unlimited';
+            }
+
+            const creditDisplayElements = document.querySelectorAll('#credit-display');
+            creditDisplayElements.forEach(element => {
+                element.textContent = `Credits: ${credits}`;
+            });
+        }
+
+        // Function to update search count display
+        async function updateSearchCountDisplay() {
+            const user = auth.currentUser;
+            if (!user) return;
+
+            const userDoc = await db.collection('users').doc(user.uid).get();
+            if (!userDoc.exists) return;
+
+            const userData = userDoc.data();
+            const searchCount = userData.searchCount || 0;
+            const isPremium = userData.plan === 'premium';
+
+            const searchCountDisplay = document.getElementById('search-count-display');
+            if (searchCountDisplay) {
+                if (isPremium) {
+                    searchCountDisplay.textContent = 'Premium: Unlimited searches';
+                } else {
+                    searchCountDisplay.textContent = `Searches: ${searchCount % 3}/3 (2 credits every 3 searches)`;
+
+                    // Show warning if credits are low
+                    if (userData.credits < 2) {
+                        searchCountDisplay.style.color = '#e74c3c';
+                        searchCountDisplay.innerHTML += ' <span style="font-weight:bold">(Low credits!)</span>';
+                    } else {
+                        searchCountDisplay.style.color = '';
+                    }
+                }
+            }
+        }
+        // Function to update credit display in the subscription button
+        async function updateCreditDisplayInButton() {
+            const user = auth.currentUser;
+            if (!user) return;
+
+            const userDoc = await db.collection('users').doc(user.uid).get();
+            if (!userDoc.exists) return;
+
+            const userData = userDoc.data();
+            const isPremium = userData.plan === 'premium';
+            let credits = userData.credits || 0;
+            const currentPlan = userData.plan || 'free';
+
+            const navCreditDisplay = document.getElementById('credit-display');
+            if (navCreditDisplay) {
+                if (isPremium) {
+                    navCreditDisplay.textContent = 'Premium';
+                } else {
+                    navCreditDisplay.textContent = `(Credit: ${credits})`;
+                }
+            }
+        }
+
+        // Function to update credit display in the subscription button
+        async function updateCreditDisplayInButton(credits) {
+            const navCreditDisplay = document.getElementById('nav-credit-display');
+            if (navCreditDisplay) {
+                const user = auth.currentUser;
+                if (user) {
+                    const userDoc = await db.collection('users').doc(user.uid).get();
+                    if (userDoc.exists) {
+                        const userData = userDoc.data();
+                        const currentPlan = userData.plan || 'free';
+
+                        if (currentPlan === 'premium') {
+                            navCreditDisplay.textContent = 'Premium';
+                        } else {
+                            navCreditDisplay.textContent = `(Credit: ${credits})`;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Add auth state listener
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = 'auth.html';
+            } else {
+                loadSavedCompanies(); // Load saved companies once authenticated
+                loadSavedLocations();
+
+                // Listen for changes to the user document
+                db.collection('users').doc(user.uid)
+                    .onSnapshot((doc) => {
+                        if (doc.exists) {
+                            const userData = doc.data();
+                            const credits = userData.credits || 0;
+                            const plan = userData.plan || 'free';
+                            const searchCount = userData.searchCount || 0;
+                            updateCreditDisplayInButton(credits);
+                            updateCreditDisplay();
+                            updateSearchCountDisplay();
+                        }
+                    });
+            }
+        });
+
+        // Initialize display immediately
+        if (auth.currentUser) {
+            db.collection('users').doc(auth.currentUser.uid).get()
+                .then(userDoc => {
+                    if (userDoc.exists) {
+                        const userData = userDoc.data();
+                        const credits = userData.credits || 0;
+                        updateCreditDisplay(credits);
+                        updateCreditDisplayInButton(credits);
+                        updateSearchCountDisplay();
+                    }
+                });
+        }
+
+        // Update saveCompany function to check auth
+        async function saveCompany(company) {
+            const user = auth.currentUser;
+            if (!user) {
+                window.location.href = 'auth.html';
+                return;
+            }
+
+            try {
+                const companyData = {
+                    ...company,
+                    savedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    userId: user.uid
+                };
+
+                const docRef = await db.collection('users').doc(user.uid)
+                    .collection('savedCompanies')
+                    .add(companyData);
+
+                alert('Company saved successfully!');
+                loadSavedCompanies(); // Refresh the list after saving
+            } catch (error) {
+                console.error('Error saving company:', error);
+                alert('Failed to save company. Please try again.');
+            }
+        }
+
+        // Add loadSavedCompanies function
+        async function loadSavedCompanies() {
+            const user = auth.currentUser;
+            if (!user) return;
+
+            try {
+                const snapshot = await db.collection('users').doc(user.uid)
+                    .collection('savedCompanies')
+                    .orderBy('savedAt', 'desc')
+                    .get();
+
+                savedCompanies = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+                displaySavedCompanies();
+            } catch (error) {
+                console.error('Error loading saved companies:', error);
+            }
+        }
+
+        const sidebar = document.querySelector('.sidebar');
+        const searchButton = document.getElementById('search-button');
+        const mainContent = document.querySelector('.main-content');
+        const customIndustryInput = document.getElementById('custom-industry');
+        const industryFilter = document.getElementById('industry-filter');
+        const addIndustryButton = document.getElementById('add-industry-button');
+         const appliedFiltersContainer = document.getElementById('applied-filters');
+         const liveLocationButton = document.getElementById('live-location-button');
+        const toggleBtn = document.querySelector('.toggle-btn');
+        const toggleIcon = toggleBtn.querySelector('i');
+
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('expanded');
+            toggleIcon.classList.toggle('fa-chevron-left');
+            toggleIcon.classList.toggle('fa-chevron-right');
+        });
+
+        let map;
+        let geocoder;
+        let markers = [];
+        let mapLoaded = false;
+        let placesService;
+        let infoWindow;
+         // Initialize saved companies from local storage
+        let savedCompanies = [];
+
+        // Add function to load saved companies from Firestore
+        async function loadSavedCompanies() {
+            try {
+                const user = firebase.auth().currentUser;
+                if (!user) return;
+
+                const snapshot = await db.collection('users').doc(user.uid)
+                    .collection('savedCompanies')
+                    .orderBy('savedAt', 'desc')
+                    .get();
+
+                savedCompanies = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+                displaySavedCompanies();
+            } catch (error) {
+                console.error('Error loading saved companies:', error);
+            }
+        }
+
+        // Modify saveCompany function to use Firestore
+        async function saveCompany(company) {
+            try {
+                const user = firebase.auth().currentUser;
+                if (!user) {
+                    alert('Please login to save companies');
+                    return;
+                }
+
+                const companyData = {
+                    ...company,
+                    savedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    userId: user.uid
+                };
+
+                const docRef = await db.collection('users').doc(user.uid)
+                    .collection('savedCompanies')
+                    .add(companyData);
+
+                savedCompanies.unshift({ id: docRef.id, ...companyData });
+                displaySavedCompanies();
+            } catch (error) {
+                console.error('Error saving company:', error);
+                alert('Failed to save company. Please try again.');
+            }
+        }
+
+        // Update displaySavedCompanies function
+        function displaySavedCompanies() {
+            const savedCompaniesContainer = document.getElementById('saved-companies');
+            savedCompaniesContainer.innerHTML = '';
+
+            savedCompanies.forEach((company) => {
+                const companyDiv = document.createElement('div');
+                companyDiv.className = 'job-card'; // Use same styling as job board
+                companyDiv.style.cssText = `
+                    background: white;
+                    padding: 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                    margin-bottom: 15px;
+                `;
+
+                // Format the saved date
+                const savedDate = company.savedAt ? new Date(company.savedAt.toDate()).toLocaleDateString() : 'N/A';
+
+                companyDiv.innerHTML = `
+                    <div class="company-info">
+                        <div class="job-header">
+                            <div>
+                                <h3 style="color: #2c3e50; margin-bottom: 10px;">${company.title || 'No Title'}</h3>
+                                <h4 style="color: #7f8c8d; margin: 5px 0;">${company.companyName || 'No Company Name'}</h4>
+                            </div>
+                            <div style="color: #95a5a6; font-size: 0.9em;">
+                                Saved: ${savedDate}
+                            </div>
+                        </div>
+                        <div class="job-details" style="margin-top: 15px;">
+                            <p style="margin: 8px 0;">
+                                <i class="fas fa-map-marker-alt" style="color: #e74c3c;"></i>
+                                <strong>Location:</strong> ${company.location?.displayName || 'Location not specified'}
+                            </p>
+                            <p style="margin: 8px 0;">
+                                <i class="fas fa-briefcase" style="color: #3498db;"></i>
+                                <strong>Job Type:</strong> ${company.jobType || 'Not specified'}
+                            </p>
+                            <p style="margin: 8px 0;">
+                                <i class="fas fa-money-bill" style="color: #2ecc71;"></i>
+                                <strong>Salary:</strong> ${company.salary || 'Not specified'}
+                            </p>
+                        </div>
+                        ${company.description ? `
+                            <div class="job-description" style="margin-top: 15px; color: #666;">
+                                <strong>Description:</strong><br>
+                                ${company.description}
+                            </div>
+                        ` : ''}
+                        <div class="job-tags" style="margin-top: 15px;">
+                            ${company.jobType ? `<span class="tag">${company.jobType}</span>` : ''}
+                            ${company.location?.city ? `<span class="tag">${company.location.city}</span>` : ''}
+                        </div>
+                    </div>
+                `;
+
+                // Add click handler for map centering
+                if (company.coordinates) {
+                    companyDiv.style.cursor = 'pointer';
+                    companyDiv.onclick = async () => {
+                        // Clear existing markers
+                        clearMarkers();
+                        
+                        // Construct search query using company name and address
+                        const searchQuery = `${company.name} ${company.address}`;
+                        
+                        // Search for the exact company location
+                        const request = {
+                            query: searchQuery,
+                            fields: ['name', 'geometry', 'place_id', 'formatted_address']
+                        };
+                        
+                        try {
+                            placesService.findPlaceFromQuery(request, (results, status) => {
+                                if (status === google.maps.places.PlacesServiceStatus.OK && results.length > 0) {
+                                    const place = results[0];
+                                    
+                                    // Center map on company location
+                                    map.setCenter(place.geometry.location);
+                                    map.setZoom(16);
+                                    
+                                    // Create marker for company location
+                                    const marker = new google.maps.Marker({
+                                        position: place.geometry.location,
+                                        map: map,
+                                        title: company.name,
+                                        animation: google.maps.Animation.DROP
+                                    });
+                                    
+                                    markers.push(marker);
+                                    
+                                    // Get detailed place information
+                                    placesService.getDetails({
+                                        placeId: place.place_id,
+                                        fields: ['name', 'formatted_address', 'website', 'formatted_phone_number', 'photos', 'opening_hours']
+                                    }, (placeDetail, detailStatus) => {
+                                        if (detailStatus === google.maps.places.PlacesServiceStatus.OK) {
+                                            const content = document.createElement('div');
+                                            content.style.maxWidth = '400px';
+                                            content.innerHTML = `
+                                                <div style="padding: 15px;">
+                                                    <h3 style="color: #2c3e50; margin-bottom: 10px;">${company.name}</h3>
+                                                    <div style="margin: 10px 0;">
+                                                        <p><i class="fas fa-map-marker-alt" style="color: #e74c3c;"></i> <strong>Address:</strong> ${placeDetail.formatted_address}</p>
+                                                        ${company.phone ? `
+                                                            <p><i class="fas fa-phone" style="color: #27ae60;"></i> <strong>Phone:</strong> ${company.phone}</p>
+                                                        ` : ''}
+                                                        ${company.website ? `
+                                                            <p><i class="fas fa-globe" style="color: #9b59b6;"></i> <strong>Website:</strong> <a href="${company.website}" target="_blank">Visit Website</a></p>
+                                                        ` : ''}
+                                                        ${company.industryDetails ? `
+                                                            <p><i class="fas fa-industry" style="color: #f39c12;"></i> <strong>Industry Details:</strong> ${company.industryDetails}</p>
+                                                        ` : ''}
+                                                        ${placeDetail.opening_hours ? `
+                                                            <div style="margin-top: 10px;">
+                                                                <p><strong><i class="fas fa-clock" style="color: #e67e22;"></i> Hours:</strong></p>
+                                                                <p>${placeDetail.opening_hours.weekday_text.join('<br>')}</p>
+                                                            </div>
+                                                        ` : ''}
+                                                    </div>
+                                                </div>
+                                            `;
+                                            
+                                            // Open info window at marker position
+                                            infoWindow.setContent(content);
+                                            infoWindow.open(map, marker);
+                                            
+                                            // Add click listener to marker
+                                            marker.addListener('click', () => {
+                                                infoWindow.setContent(content);
+                                                infoWindow.open(map, marker);
+                                            });
+                                        }
+                                    });
+                                } else {
+                                    // Fallback to geocoding if place search fails
+                                    geocoder.geocode({ address: company.address }, (results, status) => {
+                                        if (status === 'OK') {
+                                            const location = results[0].geometry.location;
+                                            map.setCenter(location);
+                                            map.setZoom(15);
+                                            
+                                            const marker = new google.maps.Marker({
+                                                position: location,
+                                                map: map,
+                                                title: company.name,
+                                                animation: google.maps.Animation.DROP
+                                            });
+                                            
+                                            markers.push(marker);
+                                            
+                                            // Show basic info window
+                                            const content = `
+                                                <div style="padding: 15px;">
+                                                    <h3 style="color: #2c3e50; margin-bottom: 10px;">${company.name}</h3>
+                                                    <p><i class="fas fa-map-marker-alt" style="color: #e74c3c;"></i> <strong>Address:</strong> ${company.address}</p>
+                                                    ${company.phone ? `<p><i class="fas fa-phone" style="color: #27ae60;"></i> <strong>Phone:</strong> ${company.phone}</p>` : ''}
+                                                    ${company.website ? `<p><i class="fas fa-globe" style="color: #9b59b6;"></i> <strong>Website:</strong> <a href="${company.website}" target="_blank">Visit Website</a></p>` : ''}
+                                                    ${company.industryDetails ? `<p><i class="fas fa-industry" style="color: #f39c12;"></i> <strong>Industry Details:</strong> ${company.industryDetails}</p>` : ''}
+                                                </div>
+                                            `;
+                                            
+                                            infoWindow.setContent(content);
+                                            infoWindow.open(map, marker);
+                                            
+                                            marker.addListener('click', () => {
+                                                infoWindow.open(map, marker);
+                                            });
+                                        } else {
+                                            alert('Could not locate company on map');
+                                        }
+                                    });
+                                }
+                            });
+                        } catch (error) {
+                            console.error('Error finding place:', error);
+                            alert('Error locating company on map');
+                        }
+                    };
+                }
+
+                // Add remove button
+                const removeButton = document.createElement('button');
+                removeButton.textContent = 'Remove';
+                removeButton.style.cssText = `
+                    background: #e74c3c;
+                    color: white;
+                    border: none;
+                    padding: 8px 16px;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    margin-top: 10px;
+                    float: right;
+                `;
+                
+                removeButton.onclick = async (e) => {
+                    e.stopPropagation(); // Prevent triggering the parent div's onclick
+                    try {
+                        const user = auth.currentUser;
+                        if (!user) return;
+
+                        await db.collection('users').doc(user.uid)
+                            .collection('savedCompanies')
+                            .doc(company.jobId)
+                            .delete();
+
+                        // Also delete from savedRegions collection
+                        await db.collection('users').doc(user.uid)
+                            .collection('savedRegions')
+                            .doc(company.jobId)
+                            .delete();
+
+                        savedCompanies = savedCompanies.filter(c => c.jobId !== company.jobId);
+                        displaySavedCompanies();
+                    } catch (error) {
+                        console.error('Error removing company:', error);
+                        alert('Failed to remove company');
+                    }
+                };
+
+                companyDiv.appendChild(removeButton);
+                savedCompaniesContainer.appendChild(companyDiv);
+            });
+        }
+
+        async function initMap() {
+            const { Map } = await google.maps.importLibrary("maps");
+            const { PlacesService } = await google.maps.importLibrary("places");
+          geocoder = new google.maps.Geocoder();
+          map = new Map(document.getElementById("map"), {
+                center: { lat: 51.505, lng: -0.09 }, 
+                zoom: 13,
+            });
+            placesService = new PlacesService(map);
+            mapLoaded = true;
+            infoWindow = new google.maps.InfoWindow();
+        }
+            function convertAddressToLatLng(address, callback) {
+                geocoder.geocode({ address: address }, callback);
+            }
+
+
+
+       function clearMarkers() {
+            markers.forEach(marker => {
+                marker.setMap(null);
+            });
+            markers = [];
+        }
+        async function performPlacesSearch(industry) {
+            const user = auth.currentUser;
+            if (!user) {
+                window.location.href = 'auth.html';
+                return;
+            }
+
+            // Get user data
+            const userDoc = await db.collection('users').doc(user.uid).get();
+            if (!userDoc.exists) return;
+            
+            const userData = userDoc.data();
+            const isPremium = userData.plan === 'premium';
+            let credits = userData.credits || 0;
+
+            // For free users, check search count and credits
+            if (!isPremium) {
+                if (credits <= 0) {
+                    // Show the popup
+                    document.getElementById('credit-popup').style.display = 'block';
+                    document.getElementById('popup-overlay').style.display = 'block';
+                    return;
+                }
+                // Increment search count
+                const newSearchCount = (userData.searchCount || 0) + 1;
+                await db.collection('users').doc(user.uid).update({
+                    searchCount: newSearchCount
+                });
+                updateSearchCountDisplay();
+
+                // Every 3 searches, deduct 2 credits
+                if (newSearchCount % 3 === 0) {
+                    if (credits < 2) {
+                        alert('Not enough credits! Please purchase more credits to continue searching.');
+                        return;
+                    }
+                    credits -= 2;
+                    await db.collection('users').doc(user.uid).update({
+                        credits: credits
+                    });
+                    updateCreditDisplay(credits);
+                    updateCreditDisplayInButton(credits);
+                    alert(`2 credits deducted. Remaining credits: ${credits}`);
+                }
+            }
+
+            // Perform the actual search
+            const bounds = map.getBounds();
+            const request = {
+                bounds: bounds,
+                query: industry,
+            };
+
+            placesService.textSearch(request, (results, status) => {
+                if (status === google.maps.places.PlacesServiceStatus.OK && results) {
+                    map.setCenter(results[0].geometry.location);
+                    map.setZoom(12);
+                    
+                    results.forEach(place => {
+                        const marker = new google.maps.Marker({
+                            position: place.geometry.location,
+                            map: map,
+                            title: place.name,
+                            animation: google.maps.Animation.DROP
+                        });
+
+                        marker.placeId = place.place_id;
+                        markers.push(marker);
+                        
+                        marker.addListener('click', () => {
+                            placesService.getDetails({
+                                placeId: marker.placeId,
+                                fields: ['name', 'formatted_address', 'rating', 'photos', 'website', 
+                                        'formatted_phone_number', 'editorial_summary', 'opening_hours', 
+                                        'types', 'reviews']
+                            }, (placeDetail, status) => {
+                                if (status === google.maps.places.PlacesServiceStatus.OK && placeDetail) {
+                                    const content = document.createElement('div');
+                                    content.style.maxWidth = '400px';
+                                    content.innerHTML = `
+                                        <div style="padding: 15px;">
+                                            <h3 style="color: #2c3e50; margin-bottom: 10px;">${placeDetail.name}</h3>
+                                            <div style="margin: 10px 0;">
+                                                <p><i class="fas fa-map-marker-alt" style="color: #e74c3c;"></i> 
+                                                   <strong>Address:</strong> ${placeDetail.formatted_address}</p>
+                                                ${placeDetail.formatted_phone_number ? `
+                                                    <p><i class="fas fa-phone" style="color: #27ae60;"></i> 
+                                                    <strong>Phone:</strong> ${placeDetail.formatted_phone_number}</p>` : ''}
+                                                ${placeDetail.website ? `
+                                                    <p><i class="fas fa-globe" style="color: #9b59b6;"></i> 
+                                                    <strong>Website:</strong> <a href="${placeDetail.website}" target="_blank">Visit Website</a></p>` : ''}
+                                                ${placeDetail.rating ? `
+                                                    <p><i class="fas fa-star" style="color: #f1c40f;"></i> 
+                                                    <strong>Rating:</strong> ${placeDetail.rating} / 5</p>` : ''}
+                                                ${placeDetail.editorial_summary?.overview ? `
+                                                    <p><i class="fas fa-info-circle" style="color: #3498db;"></i> 
+                                                    <strong>About:</strong> ${placeDetail.editorial_summary.overview}</p>` : ''}
+                                                ${placeDetail.types?.length ? `
+                                                    <p><i class="fas fa-tag" style="color: #95a5a6;"></i> 
+                                                    <strong>Categories:</strong> ${placeDetail.types.map(t => t.replace(/_/g, ' ')).join(', ')}</p>` : ''}
+                                            </div>
+                                            ${placeDetail.opening_hours ? `
+                                                <div style="margin-top: 10px;">
+                                                    <p><strong><i class="fas fa-clock" style="color: #e67e22;"></i> Hours:</strong></p>
+                                                    <p>${placeDetail.opening_hours.weekday_text.join('<br>')}</p>
+                                                </div>
+                                            ` : ''}
+                                            ${placeDetail.photos?.[0] ? `
+                                                <div style="margin-top: 10px;">
+                                                    <img src="${placeDetail.photos[0].getUrl({maxWidth: 300, maxHeight: 200})}" 
+                                                         style="width: 100%; border-radius: 4px;" alt="${placeDetail.name}">
+                                                </div>
+                                            ` : ''}
+                                         </div>
+                                         <div style="padding: 0px; border-top: 0px solid #eee;">
+                                            <button id="saveLocationBtn" style="
+                                                background: #2ecc71;
+                                                color: white;
+                                                border: none;
+                                                padding: 8px 16px;
+                                                border-radius: 4px;
+                                                cursor: pointer;
+                                                width: 100%;
+                                                margin-bottom: 15px;
+                                            ">Save Location</button>
+                                        </div>
+                                    `;
+
+                                    // Add save button functionality
+                                    content.querySelector('#saveLocationBtn').onclick = () => {
+                                        saveCompany({
+                                            name: placeDetail.name,
+                                            address: placeDetail.formatted_address,
+                                            phone: placeDetail.formatted_phone_number || 'N/A',
+                                            website: placeDetail.website || 'N/A',
+                                            industryDetails: placeDetail.editorial_summary?.overview || 'N/A',
+                                            coordinates: {
+                                                lat: place.geometry.location.lat(),
+                                                lng: place.geometry.location.lng()
+                                            }
+                                        });
+                                        content.querySelector('#saveLocationBtn').textContent = 'Saved!';
+                                        content.querySelector('#saveLocationBtn').disabled = true;
+                                        content.querySelector('#saveLocationBtn').style.backgroundColor = '#95a5a6';
+                                    };
+
+                                    infoWindow.setContent(content);
+                                    infoWindow.open(map, marker);
+                                }
+                            });
+                        });
+                    });
+                }
+            });
+        }
+
+        function searchTagsGenerator(fieldOfStudy) {
+            // Ensure the input is treated as lowercase for case-insensitive matching
+            const normalizedField = fieldOfStudy.toLowerCase().trim();
+
+            // Define a comprehensive list of degrees and their related tags
+            const degreeToTags = {
+                "computer science": ["Software Companies", "Tech Startups", "AI Companies", "Web Development Agencies", "Cybersecurity Firms"],
+                "software engineering": ["Software Companies", "Tech Startups", "AI Companies", "Web Development Agencies", "Cybersecurity Firms"],
+                "mechanical engineering": ["Automobile Companies", "Aerospace Manufacturers", "Industrial Engineering Firms", "Manufacturing Companies", "Mechanical Engineering Consultants"],
+                "electrical engineering": ["Electronics Manufacturers", "Power Companies", "Semiconductor Companies", "Telecommunications Firms", "Automation Companies"],
+                "civil engineering": ["Construction Companies", "Infrastructure Development Firms", "Urban Planning Consultants", "Environmental Engineering Firms", "Structural Engineering Companies"],
+                "chemical engineering": ["Pharmaceutical Companies", "Petrochemical Companies", "Biotech Firms", "Polymer Manufacturers", "Chemical Manufacturing Companies"],
+                "business administration": ["Management Consulting Firms", "Financial Services Companies", "Marketing Agencies", "Human Resources Firms", "Retail Management Companies"],
+                "marketing": ["Digital Marketing Agencies", "Advertising Agencies", "Brand Management Companies", "Market Research Firms", "Social Media Marketing Companies"],
+                "finance": ["Investment Banks", "Financial Analysis Firms", "Accounting Firms", "Wealth Management Companies", "Corporate Finance Departments"],
+                "biology": ["Biotech Companies", "Pharmaceutical Research Companies", "Environmental Science Firms", "Genetics Research Labs", "Microbiology Labs"],
+                "chemistry": ["Pharmaceutical Companies", "Chemical Manufacturing Companies", "Analytical Laboratories", "Cosmetics Companies", "Material Science Companies"],
+                "physics": ["Aerospace Companies", "Optics Companies", "Semiconductor Companies", "Renewable Energy Companies", "Research and Development Labs"],
+                "environmental science": ["Environmental Consulting Firms", "Conservation Organizations", "Waste Management Companies", "Renewable Energy Companies", "Sustainability Consulting Firms"],
+                "data science": ["Data Analysis Companies", "Machine Learning Companies", "AI Companies", "Big Data Companies", "Business Intelligence Companies"],
+                "psychology": ["Clinical Psychology Practices", "Counseling Centers", "Industrial-Organizational Psychology Firms", "Research Psychology Labs", "Neuroscience Centers"],
+                "economics": ["Financial Analysis Firms", "Economic Consulting Firms", "Market Research Firms", "Government Agencies", "Banks"],
+                "graphic design": ["Advertising Agencies", "Web Design Companies", "Branding Agencies", "UX/UI Design Firms", "Print Media Companies"],
+                "architecture": ["Architectural Firms", "Urban Design Firms", "Interior Design Firms", "Landscape Architecture Firms", "Construction Management Companies"],
+                "art": ["Fine Art Galleries", "Illustration Studios", "Photography Studios", "Sculpture Studios", "Art Education Centers"],
+                "nursing": ["Hospitals", "Clinics", "Home Healthcare Agencies", "Rehabilitation Centers", "Long-Term Care Facilities"],
+                "medicine": ["Hospitals", "Clinics", "Medical Research Labs", "Pharmaceutical Companies", "Public Health Organizations"],
+                "law": ["Law Firms", "Government Agencies", "Corporate Law Departments", "Criminal Defense Firms", "Civil Litigation Firms"],
+                "computer engineering": ["Hardware Development Companies", "Embedded Systems Companies", "Microelectronics Companies", "Robotics Companies", "Telecommunications Companies"],
+                "education": ["Primary Schools", "Secondary Schools", "Universities", "Special Education Centers", "Educational Administration Offices"],
+                "history": ["Museum Studies Departments", "Archival Research Centers", "Historical Preservation Organizations", "Publishing Companies", "Academic Research Institutions"],
+                "political science": ["Government Agencies", "Political Consulting Firms", "Public Policy Organizations", "International Relations Organizations", "Non-Profit Organizations"],
+                "sociology": ["Social Work Agencies", "Community Development Organizations", "Urban Planning Departments", "Market Research Firms", "Non-Profit Organizations"],
+                "linguistics": ["Language Teaching Institutions", "Translation Companies", "Computational Linguistics Companies", "Speech Pathology Centers", "Publishing Companies"],
+                "literature": ["Publishing Companies", "Journalism Outlets", "Creative Writing Organizations", "Content Writing Agencies", "Literary Criticism Outlets"],
+                "theater": ["Theaters", "Acting Studios", "Directing Studios", "Stage Management Companies", "Set Design Companies"],
+            };
+
+            // Find the closest matching degree
+            let bestMatch = null;
+            let highestSimilarity = 0;
+
+            for (const degree in degreeToTags) {
+                const similarity = calculateSimilarity(normalizedField, degree);
+                if (similarity > highestSimilarity) {
+                    highestSimilarity = similarity;
+                    bestMatch = degree;
+                }
+            }
+
+            // If a match is found and the similarity is above the threshold return the associated tags, otherwise return an empty array
+            return bestMatch && highestSimilarity > 0.5 ? degreeToTags[bestMatch] : [];
+        }
+
+
+        /**
+         * Calculates the similarity between two strings using a basic comparison method.
+         *
+         * @param {string} str1 - The first string.
+         * @param {string} str2 - The second string.
+         * @returns {number} A similarity score between 0 and 1, where 1 means identical.
+         */
+         function calculateSimilarity(str1, str2) {
+            if (str1 === str2) return 1;
+            if (str1.length === 0 || str2.length === 0) return 0;
+            // Find the long and short string for comparing the length
+            const longer = str1.length > str2.length ? str1 : str2;
+            const shorter = str1.length > str2.length ? str2 : str1;
+
+            return (shorter.length / longer.length) * 0.8; // Simpler ratio-based comparison
+        }
+
+        function truncateText(text) {
+            if (!text) return '';
+            return text.slice(0, 8000);
+        }
+
+        function cleanFormatting(text) {
+            return text
+                .replace(/\*\*/g, '') // Remove bold markers
+                .replace(/\*/g, '')   // Remove italic markers
+                .replace(/#{1,6}\s/g, '') // Remove heading markers
+                .replace(/\n{3,}/g, '\n\n') // Replace multiple newlines with double
+                .replace(/•\s*/g, '• ') // Standardize bullet points
+                .replace(/[\-_]\s*/g, '- ') // Standardize dashes
+                .trim();
+        }
+
+        function formatSection(text) {
+            // Split into lines and clean each line
+            const lines = text.split('\n').map(line => line.trim());
+            let formatted = [];
+            let inBulletList = false;
+
+            for (let line of lines) {
+                // Skip empty lines
+                if (!line) continue;
+
+                // Handle bullet points
+                if (line.startsWith('•') || line.startsWith('-')) {
+                    inBulletList = true;
+                    formatted.push(line);
+                } else {
+                    // Add spacing between sections
+                    if (inBulletList) {
+                        formatted.push(''); // Add space after bullet list
+                        inBulletList = false;
+                    }
+                    formatted.push(line);
+                }
+            }
+
+            return formatted.join('\n');
+        }
+
+        async function processDocuments(cvContent, jobDescription) {
+            try {
+                // Add variation to regenerated content
+                const timestamp = new Date().getTime();
+                const promptVariation = `\nPlease create a ${timestamp % 2 === 0 ? 'more creative' : 'more professional'} version.\nFocus on ${timestamp % 3 === 0 ? 'achievements' : timestamp % 3 === 1 ? 'skills' : 'experience'}.\nMake it ${timestamp % 2 === 0 ? 'concise' : 'detailed'}.`;
+
+                const response = await fetch("https://api.deepseek.com/v1/chat/completions", {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer sk-63b9dfae9f8a4f3fb49a3c94e664c46a`
+                    },
+                    body: JSON.stringify({
+                        model: "deepseek-chat",
+                        messages: [
+                            {
+                                role: "system",
+                                content: "You are a professional CV writer. Create tailored CVs and cover letters."
+                            },
+                            {
+                                role: "user",
+                                content: `Optimize this CV for the job description:\n\nCV:\n${truncateText(cvContent)}\n\nJob Description:\n${truncateText(jobDescription)}\n\nAdditional Instructions:\n${promptVariation}\n\nFormat your response exactly as:\n===TAILORED_CV===\n[optimized CV content]\n===COVER_LETTER===\n[cover letter content]\n===END===`
+                            }
+                        ],
+                        temperature: 0.7,
+                        max_tokens: 1500,
+                        top_p: 0.9
+                    })
+                });
+
+                if (!response.ok) {
+                    const errorData = await response.text();
+                    console.error('API Error Response:', errorData);
+                    throw new Error(`API request failed: ${response.status}`);
+                }
+
+                const data = await response.json();
+                console.log('API Response:', data); // Debug log
+
+                if (!data.choices?.[0]?.message?.content) {
+                    throw new Error('Invalid API response format');
+                }
+
+                const content = data.choices[0].message.content;
+
+                // Extract and clean sections
+                const cvMatch = content.match(/===TAILORED_CV===\s*([\s\S]*?)\s*===COVER_LETTER===/);
+                const coverMatch = content.match(/===COVER_LETTER===\s*([\s\S]*?)\s*===END===/);
+
+                if (!cvMatch || !coverMatch) {
+                    throw new Error('Failed to parse API response');
+                }
+
+                // Clean and format each section
+                const tailoredCV = formatSection(cleanFormatting(cvMatch[1]));
+                const coverLetter = formatSection(cleanFormatting(coverMatch[1]));
+
+                return {
+                    tailoredCV,
+                    coverLetter
+                };
+
+            } catch (error) {
+                console.error('AI Processing Error:', error);
+                throw new Error('Failed to generate documents: ' + error.message);
+            }
+        }
+
+
+        function displaySavedCompanies() {
+            const savedCompaniesContainer = document.getElementById('saved-companies');
+            savedCompaniesContainer.innerHTML = ''; // Clear previous entries
+        
+            // Get saved companies from local storage
+
+            savedCompanies.forEach((company, index) => {
+                const companyDiv = document.createElement('div');
+                companyDiv.style.border = '1px solid #ccc';
+                companyDiv.style.padding = '10px';
+                companyDiv.style.margin = '10px';
+                companyDiv.style.borderRadius = '5px';
+                  companyDiv.innerHTML = `<div class="company-info">
+                        <h3>${company.name}</h3>
+                        <p><strong>Address:</strong> ${company.address}</p>
+                        <p><strong>Phone:</strong> ${company.phone}</p>
+                        <p><strong>Website:</strong> ${company.website}</p>
+                        <p><strong>Industry Details:</strong> ${company.industryDetails}</p></div>
+                `;
+                 companyDiv.onclick = async () => {
+                        // Clear existing markers
+                        clearMarkers();
+                        
+                        // Construct search query using company name and address
+                        const searchQuery = `${company.name} ${company.address}`;
+                        
+                        // Search for the exact company location
+                        const request = {
+                            query: searchQuery,
+                            fields: ['name', 'geometry', 'place_id', 'formatted_address']
+                        };
+                        
+                        try {
+                            placesService.findPlaceFromQuery(request, (results, status) => {
+                                if (status === google.maps.places.PlacesServiceStatus.OK && results.length > 0) {
+                                    const place = results[0];
+                                    
+                                    // Center map on company location
+                                    map.setCenter(place.geometry.location);
+                                    map.setZoom(16);
+                                    
+                                    // Create marker for company location
+                                    const marker = new google.maps.Marker({
+                                        position: place.geometry.location,
+                                        map: map,
+                                        title: company.name,
+                                        animation: google.maps.Animation.DROP
+                                    });
+                                    
+                                    markers.push(marker);
+                                    
+                                    // Get detailed place information
+                                    placesService.getDetails({
+                                        placeId: place.place_id,
+                                        fields: ['name', 'formatted_address', 'website', 'formatted_phone_number', 'photos', 'opening_hours']
+                                    }, (placeDetail, detailStatus) => {
+                                        if (detailStatus === google.maps.places.PlacesServiceStatus.OK) {
+                                            const content = document.createElement('div');
+                                            content.style.maxWidth = '400px';
+                                            content.innerHTML = `
+                                                <div style="padding: 15px;">
+                                                    <h3 style="color: #2c3e50; margin-bottom: 10px;">${company.name}</h3>
+                                                    <div style="margin: 10px 0;">
+                                                        <p><i class="fas fa-map-marker-alt" style="color: #e74c3c;"></i> <strong>Address:</strong> ${placeDetail.formatted_address}</p>
+                                                        ${company.phone ? `
+                                                            <p><i class="fas fa-phone" style="color: #27ae60;"></i> <strong>Phone:</strong> ${company.phone}</p>
+                                                        ` : ''}
+                                                        ${company.website ? `
+                                                            <p><i class="fas fa-globe" style="color: #9b59b6;"></i> <strong>Website:</strong> <a href="${company.website}" target="_blank">Visit Website</a></p>
+                                                        ` : ''}
+                                                        ${company.industryDetails ? `
+                                                            <p><i class="fas fa-industry" style="color: #f39c12;"></i> <strong>Industry Details:</strong> ${company.industryDetails}</p>
+                                                        ` : ''}
+                                                        ${placeDetail.opening_hours ? `
+                                                            <div style="margin-top: 10px;">
+                                                                <p><strong><i class="fas fa-clock" style="color: #e67e22;"></i> Hours:</strong></p>
+                                                                <p>${placeDetail.opening_hours.weekday_text.join('<br>')}</p>
+                                                            </div>
+                                                        ` : ''}
+                                                    </div>
+                                                </div>
+                                            `;
+                                            
+                                            // Open info window at marker position
+                                            infoWindow.setContent(content);
+                                            infoWindow.open(map, marker);
+                                            
+                                            // Add click listener to marker
+                                            marker.addListener('click', () => {
+                                                infoWindow.setContent(content);
+                                                infoWindow.open(map, marker);
+                                            });
+                                        }
+                                    });
+                                } else {
+                                    // Fallback to geocoding if place search fails
+                                    geocoder.geocode({ address: company.address }, (results, status) => {
+                                        if (status === 'OK') {
+                                            const location = results[0].geometry.location;
+                                            map.setCenter(location);
+                                            map.setZoom(15);
+                                            
+                                            const marker = new google.maps.Marker({
+                                                position: location,
+                                                map: map,
+                                                title: company.name,
+                                                animation: google.maps.Animation.DROP
+                                            });
+                                            
+                                            markers.push(marker);
+                                            
+                                            // Show basic info window
+                                            const content = `
+                                                <div style="padding: 15px;">
+                                                    <h3 style="color: #2c3e50; margin-bottom: 10px;">${company.name}</h3>
+                                                    <p><i class="fas fa-map-marker-alt" style="color: #e74c3c;"></i> <strong>Address:</strong> ${company.address}</p>
+                                                    ${company.phone ? `<p><i class="fas fa-phone" style="color: #27ae60;"></i> <strong>Phone:</strong> ${company.phone}</p>` : ''}
+                                                    ${company.website ? `<p><i class="fas fa-globe" style="color: #9b59b6;"></i> <strong>Website:</strong> <a href="${company.website}" target="_blank">Visit Website</a></p>` : ''}
+                                                    ${company.industryDetails ? `<p><i class="fas fa-industry" style="color: #f39c12;"></i> <strong>Industry Details:</strong> ${company.industryDetails}</p>` : ''}
+                                                </div>
+                                            `;
+                                            
+                                            infoWindow.setContent(content);
+                                            infoWindow.open(map, marker);
+                                            
+                                            marker.addListener('click', () => {
+                                                infoWindow.open(map, marker);
+                                            });
+                                        } else {
+                                            alert('Could not locate company on map');
+                                        }
+                                    });
+                                }
+                            });
+                        } catch (error) {
+                            console.error('Error finding place:', error);
+                            alert('Error locating company on map');
+                        }
+                    };
+                  // Add a remove button
+                const removeButton = document.createElement('button');
+                removeButton.textContent = 'Remove';
+                 removeButton.style.margin = '10px'
+                removeButton.onclick = () => {
+                    savedCompanies.splice(index, 1); // Remove from array
+                    localStorage.setItem('savedCompanies', JSON.stringify(savedCompanies)); // Update local storage
+                    displaySavedCompanies(); // Refresh the list
+                };
+                companyDiv.appendChild(removeButton);
+                savedCompaniesContainer.appendChild(companyDiv);
+            });
+        }
+        function convertAddressToLatLng(address, callback) {
+            geocoder.geocode({ address: address }, callback);
+
+        }
+
+
+
+       // Custom icon for the live location marker
+        const liveLocationIcon = {
+            path: 'M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-10 10-10S17.52 2 12 2zm0 18c-4.41 0-8-3.59-8-8s3.59-8 8-8 8-8 8-8-3.59-8-8-8zM10 10v4l4 2.4V10h-4z', // This is a simple shape for a person. You can customize it further.
+            fillColor: 'blue',
+            fillOpacity: 1,
+            strokeWeight: 0,
+        };
+
+        function clearMarkers() {
+            for (let i = 0; i < markers.length; i++) {
+                markers[i].setMap(null);
+            }
+        }
+
+           searchButton.addEventListener('click', () => {
+                const city = document.getElementById('city-search').value;
+                    geocoder.geocode({ 'address': city }, function(results, status) {
+                       if (status === 'OK') {
+                        map.setCenter(results[0].geometry.location);
+                         } else {
+                                alert('Geocode was not successful for the following reason: ' + status);
+                            }
+                    });
+    });
+       document.getElementById('industry-filter').addEventListener('change', (event) => {
+        clearMarkers();
+        const selectedIndustry = event.target.value;
+        if (selectedIndustry !== 'all') {
+            performPlacesSearch(selectedIndustry);
+        }
+    });
+        
+     addIndustryButton.addEventListener('click', () => {
+            const customIndustry = customIndustryInput.value.trim();
+            if (customIndustry) {
+                addIndustryToFilter(customIndustry);
+                 customIndustryInput.value='';
+                 industryFilter.value = customIndustry;
+                 performPlacesSearch(customIndustry)
+                 
+            }
+     });
+      function addIndustryToFilter(industry) {
+         
+          
+            if (industryFilter.querySelector(`option[value="${industry}"]`)) return;
+            const newOption = document.createElement('option');
+            newOption.value = industry;
+            newOption.textContent = industry;
+            industryFilter.appendChild(newOption);
+            addFilterElement(industry)
+         
+        }
+          function addFilterElement(industry) {
+            const filterElement = document.createElement('div');
+            filterElement.style.backgroundColor = '#e9ecef';
+            filterElement.style.color = '#212529';
+            filterElement.style.padding = '5px 10px';
+            filterElement.style.borderRadius = '5px';
+            filterElement.style.display = 'inline-flex';
+            filterElement.style.alignItems = 'center';
+            filterElement.style.marginRight = '5px';
+            filterElement.textContent = industry;
+
+            // Close button
+            const closeButton = document.createElement('span');
+            closeButton.textContent = 'x';
+            closeButton.style.marginLeft = '5px';
+            closeButton.style.cursor = 'pointer';
+            closeButton.onclick = () => {
+                filterElement.remove();
+            };
+
+            filterElement.appendChild(closeButton);
+            appliedFiltersContainer.appendChild(filterElement);
+
+            filterElement.addEventListener('click', () => {
+                
+            });
+        }
+         
+         document.addEventListener('DOMContentLoaded', () => {
+            addFilterElement("all");
+            const industrySuggestions = ["Recruitment Agency", "Technology", "Healthcare", "Education", "Finance", "Retail"];
+            const industrySuggestionsContainer = document.getElementById("industry-suggestions-container");
+
+            industrySuggestions.forEach(industry => {
+                const button = document.createElement("button");
+                button.textContent = industry;
+                button.className = "industry-suggestion-button";
+                button.style.backgroundColor = "#007bff";
+                button.style.color = "white";
+                button.style.padding = "5px 10px";
+                button.style.borderRadius = "5px";
+                button.style.marginRight = "5px";
+                button.style.border = "none";
+                button.style.cursor = "pointer";
+                button.onclick = () => { addFilterElement(industry); performPlacesSearch(industry); };
+                industrySuggestionsContainer.appendChild(button);
+            });
+            displaySavedCompanies();
+            firebase.auth().onAuthStateChanged((user) => {
+                if (user) {
+                    loadSavedCompanies();
+                } else {
+                    savedCompanies = [];
+                    displaySavedCompanies();
+                }
+            });
+         });
+
+        const degreeSearchInput = document.getElementById('degree-search-input');
+        const degreeSearchButton = document.getElementById('degree-search-button');
+        const degreeSearchSuggestions = document.getElementById('degree-search-suggestions');
+
+        degreeSearchButton.addEventListener('click', () => {
+            const degree = degreeSearchInput.value.trim();
+            if (degree) {
+                generateIndustrySuggestions(degree);
+            }
+        });
+
+        async function generateIndustrySuggestions(degree) {
+            const suggestionsContainer = document.getElementById('degree-search-suggestions');
+            suggestionsContainer.innerHTML = '';
+
+            try {
+                let suggestions = searchTagsGenerator(degree);
+                suggestions.slice(0, 10).forEach(suggestion => {
+                    const button = document.createElement('button');
+                     button.textContent = suggestion;
+                    button.className = 'industry-suggestion-button';
+                    button.style.cssText = 'background-color: #5dade2; color: white; padding: 5px 10px; border-radius: 5px; margin-right: 5px; border:none; cursor: pointer;';
+                    button.onclick = () => { addFilterElement(suggestion); performPlacesSearch(suggestion); };
+                    suggestionsContainer.appendChild(button);
+                });
+            } catch (error) {
+                console.error('Error generating search tags:', error);
+                suggestionsContainer.textContent = 'Error generating suggestions.';
+            }
+        }
+         let liveLocationMarker;
+        async function goToLiveLocation() {
+            if (navigator.geolocation) {
+                navigator.geolocation.getCurrentPosition(function(position) {
+                    const pos = {
+                        lat: position.coords.latitude,
+                        lng: position.coords.longitude
+                    };
+                    map.setCenter(pos);
+                    map.setZoom(15);
+                    if (liveLocationMarker) {
+                         liveLocationMarker.setMap(null);
+                    }
+
+                    // Create a new marker with the custom icon
+                     liveLocationMarker = new google.maps.Marker({
+                        position: pos,
+                        map: map,
+                        title: 'Your Live Location',
+                        icon: {
+                            url: 'https://maps.google.com/mapfiles/ms/icons/blue-dot.png',
+                            scaledSize: new google.maps.Size(30, 30), // Adjust size as needed
+                        }
+                    });
+                }, function() {
+                    alert('Error: The Geolocation service failed.');
+                });
+            } else {
+                alert('Error: Your browser doesn\'t support geolocation.');
+            }
+        }
+
+         liveLocationButton.addEventListener('click', () => {
+            goToLiveLocation();
+        });
+
+         document.getElementById('degree-search-button').addEventListener('click', () => {
+          const degree = document.getElementById('degree-search-input').value.trim().toLowerCase();
+          const suggestionsContainer = document.getElementById('degree-search-suggestions');
+          
+          generateIndustrySuggestions(degree)
+      });
+
+        // Logout functionality
+        function handleLogout() {
+            auth.signOut()
+                .then(() => {
+                    window.location.href = 'auth.html';
+                })
+                .catch((error) => {
+                    console.error('Logout failed:', error);
+                });
+        }
+
+        async function saveCompany(company) {
+            try {
+                const user = auth.currentUser;
+                if (!user) {
+                    alert('Please login to save companies');
+                    return;
+                }
+
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                const userData = userDoc.data();
+                const plan = userData.plan || 'free';
+
+                if (plan === 'free' && savedCompanies.length >= 3) {
+                    alert('Free users can only save up to 3 companies. Upgrade to premium for unlimited saves!');
+                    return;
+                }
+
+                // First ensure user document exists
+                await db.collection('users').doc(user.uid).set({
+                    email: user.email,
+                    lastUpdated: firebase.firestore.FieldValue.serverTimestamp()
+                }, { merge: true });
+
+                // Then save the company
+                const companyData = {
+                    ...company,
+                    savedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    userId: user.uid
+                };
+
+                // Create a new document with auto-generated ID
+                const docRef = await db.collection('users')
+                    .doc(user.uid)
+                    .collection('savedCompanies')
+                    .add(companyData);
+
+                savedCompanies.unshift({ id: docRef.id, ...companyData });
+                displaySavedCompanies();
+                alert('Company saved successfully!');
+
+            } catch (error) {
+                console.error('Error saving company:', error);
+                if (error.code === 'permission-denied') {
+                    alert('Permission denied. Please try logging out and back in.');
+                } else {
+                    alert('Failed to save company. Please try again.');
+                }
+            }
+        }
+
+        // Update loadSavedCompanies function
+        async function loadSavedCompanies() {
+            try {
+                const user = auth.currentUser;
+                if (!user) {
+                    console.log('No user logged in');
+                    return;
+                }
+
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                const userData = userDoc.data();
+                const plan = userData.plan || 'free';
+
+                const snapshot = await db.collection('users')
+                    .doc(user.uid)
+                    .collection('savedCompanies')
+                    .orderBy('savedAt', 'desc')
+                    .get();
+
+                let companies = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+
+                if (plan === 'free') {
+                    savedCompanies = companies.slice(0, 3);
+                } else {
+                    savedCompanies = companies;
+                }
+                
+                displaySavedCompanies();
+            } catch (error) {
+                console.error('Error loading saved companies:', error);
+            }
+        }
+
+        // Add auth state observer
+        document.addEventListener('DOMContentLoaded', () => {
+            // ...existing DOMContentLoaded code...
+            
+            auth.onAuthStateChanged((user) => {
+                if (user) {
+                    console.log('User is logged in:', user.uid);
+                    loadSavedCompanies();
+                } else {
+                    console.log('No user logged in');
+                    window.location.href = 'auth.html';
+                }
+            });
+        });
+
+        let savedLocations = [];
+
+        // Function to save a location
+        async function saveLocation(location) {
+            try {
+                const user = auth.currentUser;
+                if (!user) {
+                    alert('Please login to save locations');
+                    return;
+                }
+
+                const locationData = {
+                    name: location.name || 'Custom Location',
+                    address: location.address,
+                    coordinates: {
+                        lat: location.coordinates.lat,
+                        lng: location.coordinates.lng
+                    },
+                    savedAt: firebase.firestore.FieldValue.serverTimestamp(),
+                    userId: user.uid
+                };
+
+                const docRef = await db.collection('users')
+                    .doc(user.uid)
+                    .collection('savedRegions')
+                    .add(locationData);
+
+                savedLocations.unshift({ id: docRef.id, ...locationData });
+                displaySavedLocations();
+                alert('Location saved successfully!');
+            } catch (error) {
+                console.error('Error saving location:', error);
+                alert('Failed to save location');
+            }
+        }
+
+        // Function to load saved locations
+        async function loadSavedLocations() {
+            try {
+                const user = auth.currentUser;
+                if (!user) return;
+
+                const snapshot = await db.collection('users')
+                    .doc(user.uid)
+                    .collection('savedRegions')
+                    .orderBy('savedAt', 'desc')
+                    .get();
+
+                savedLocations = snapshot.docs.map(doc => ({
+                    id: doc.id,
+                    ...doc.data()
+                }));
+                displaySavedLocations();
+            } catch (error) {
+                console.error('Error loading saved locations:', error);
+            }
+        }
+
+        // Function to display saved locations
+        function displaySavedLocations() {
+            const savedLocationsContainer = document.getElementById('saved-locations');
+            savedLocationsContainer.innerHTML = '';
+
+            savedLocations.forEach((location) => {
+                const locationDiv = document.createElement('div');
+                locationDiv.className = 'job-card';
+                locationDiv.style.cssText = `
+                    background: white;
+                    padding: 20px;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+                    margin-bottom: 15px;
+                    cursor: pointer;
+                `;
+
+                const savedDate = location.savedAt ? new Date(location.savedAt.toDate()).toLocaleDateString() : 'N/A';
+                
+                // Handle potential undefined values with fallbacks
+                const jobTitle = location.title || 'No Title';
+                const companyName = location.companyName || 'No Company Name';
+                const locationName = location.location?.displayName || 'Location not specified';
+                const city = location.location?.city || 'City not specified';
+                const country = location.location?.country || 'Country not specified';
+                const salary = location.salary || 'Salary not specified';
+                const jobType = location.jobType || 'Job type not specified';
+
+                locationDiv.innerHTML = `
+                    <div class="location-info">
+                        <div class="location-header">
+                            <h3 style="color: #2c3e50; margin-bottom: 10px;">${jobTitle}</h3>
+                            <div style="color: #95a5a6; font-size: 0.9em;">
+                                Saved: ${savedDate}
+                            </div>
+                        </div>
+                        <div class="location-details" style="margin-top: 15px;">
+                            <p><i class="fas fa-building" style="color: #3498db;"></i> <strong>Company:</strong> ${companyName}</p>
+                            <p><i class="fas fa-map-marker-alt" style="color: #e74c3c;"></i> <strong>Location:</strong> ${locationName}</p>
+                            <p><i class="fas fa-city" style="color: #9b59b6;"></i> <strong>City:</strong> ${city}</p>
+                            <p><i class="fas fa-globe" style="color: #2ecc71;"></i> <strong>Country:</strong> ${country}</p>
+                            <p><i class="fas fa-money-bill" style="color: #f1c40f;"></i> <strong>Salary:</strong> ${salary}</p>
+                            <p><i class="fas fa-briefcase" style="color: #34495e;"></i> <strong>Job Type:</strong> ${jobType}</p>
+                            <button class="search-here-btn" style="
+                                background: #3498db;
+                                color: white;
+                                border: none;
+                                padding: 8px 16px;
+                                border-radius: 4px;
+                                cursor: pointer;
+                                margin-top: 10px;
+                            ">View on Map</button>
+                        </div>
+                    </div>
+                `;
+
+                // Add click handler to center map on location
+                locationDiv.querySelector('.search-here-btn').addEventListener('click', async (e) => {
+                    e.stopPropagation();
+                    
+                    // Construct search query using company name and location
+                    const searchQuery = `${companyName} ${locationName}`;
+                    
+                    // Clear existing markers
+                    clearMarkers();
+                    
+                    // Search for the exact company location
+                    const request = {
+                        query: searchQuery,
+                        fields: ['name', 'geometry', 'place_id', 'formatted_address']
+                    };
+                    
+                    try {
+                        placesService.findPlaceFromQuery(request, (results, status) => {
+                            if (status === google.maps.places.PlacesServiceStatus.OK && results.length > 0) {
+                                const place = results[0];
+                                
+                                // Center map on company location
+                                map.setCenter(place.geometry.location);
+                                map.setZoom(16);
+                                
+                                // Create marker for company location
+                                const marker = new google.maps.Marker({
+                                    position: place.geometry.location,
+                                    map: map,
+                                    title: companyName,
+                                    animation: google.maps.Animation.DROP
+                                });
+                                
+                                markers.push(marker);
+                                
+                                // Get detailed place information
+                                placesService.getDetails({
+                                    placeId: place.place_id,
+                                    fields: ['name', 'formatted_address', 'website', 'formatted_phone_number', 'photos', 'opening_hours']
+                                }, (placeDetail, detailStatus) => {
+                                    if (detailStatus === google.maps.places.PlacesServiceStatus.OK) {
+                                        // Create info window content with rich company details
+                                        const content = document.createElement('div');
+                                        content.style.maxWidth = '400px';
+                                        content.innerHTML = `
+                                            <div style="padding: 15px;">
+                                                <h3 style="color: #2c3e50; margin-bottom: 10px;">${jobTitle}</h3>
+                                                <div style="margin: 10px 0;">
+                                                    <p><i class="fas fa-building" style="color: #3498db;"></i> <strong>Company:</strong> ${companyName}</p>
+                                                    <p><i class="fas fa-map-marker-alt" style="color: #e74c3c;"></i> <strong>Address:</strong> ${placeDetail.formatted_address}</p>
+                                                    <p><i class="fas fa-briefcase" style="color: #34495e;"></i> <strong>Job Type:</strong> ${jobType}</p>
+                                                    <p><i class="fas fa-money-bill" style="color: #f1c40f;"></i> <strong>Salary:</strong> ${salary}</p>
+                                                    ${placeDetail.formatted_phone_number ? 
+                                                        `<p><i class="fas fa-phone" style="color: #27ae60;"></i> <strong>Phone:</strong> ${placeDetail.formatted_phone_number}</p>` : ''}
+                                                    ${placeDetail.website ? 
+                                                        `<p><i class="fas fa-globe" style="color: #9b59b6;"></i> <strong>Website:</strong> <a href="${placeDetail.website}" target="_blank">Visit Website</a></p>` : ''}
+                                                </div>
+                                                ${placeDetail.opening_hours ? `
+                                                    <div style="margin-top: 10px;">
+                                                        <p><strong><i class="fas fa-clock" style="color: #e67e22;"></i> Hours:</strong></p>
+                                                        <p>${placeDetail.opening_hours.weekday_text ? 
+                                                            placeDetail.opening_hours.weekday_text.join('<br>') : 
+                                                            'Hours not available'}</p>
+                                                    </div>
+                                                ` : ''}
+                                            </div>
+                                        `;
+                                        
+                                        // Open info window at marker position
+                                        infoWindow.setContent(content);
+                                        infoWindow.open(map, marker);
+                                        
+                                        // Add click listener to marker
+                                        marker.addListener('click', () => {
+                                            infoWindow.setContent(content);
+                                            infoWindow.open(map, marker);
+                                        });
+                                    }
+                                });
+                            } else {
+                                // Fallback to coordinates if place search fails
+                                map.setCenter(location.coordinates);
+                                map.setZoom(15);
+                                
+                                const marker = new google.maps.Marker({
+                                    position: location.coordinates,
+                                    map: map,
+                                    title: companyName,
+                                    animation: google.maps.Animation.DROP
+                                });
+                                
+                                markers.push(marker);
+                                
+                                // Show basic info window with available information
+                                const content = `
+                                    <div style="padding: 15px;">
+                                        <h3 style="color: #2c3e50; margin-bottom: 10px;">${jobTitle}</h3>
+                                        <p><i class="fas fa-building" style="color: #3498db;"></i> <strong>Company:</strong> ${companyName}</p>
+                                        <p><i class="fas fa-map-marker-alt" style="color: #e74c3c;"></i> <strong>Location:</strong> ${locationName}</p>
+                                        <p><i class="fas fa-briefcase" style="color: #34495e;"></i> <strong>Job Type:</strong> ${jobType}</p>
+                                        <p><i class="fas fa-money-bill" style="color: #f1c40f;"></i> <strong>Salary:</strong> ${salary}</p>
+                                    </div>
+                                `;
+                                
+                                infoWindow.setContent(content);
+                                infoWindow.open(map, marker);
+                                
+                                marker.addListener('click', () => {
+                                    infoWindow.open(map, marker);
+                                });
+                            }
+                        });
+                    } catch (error) {
+                        console.error('Error finding place:', error);
+                        alert('Error locating company on map');
+                    }
+                });
+
+                // Add remove button
+                const removeButton = document.createElement('button');
+                removeButton.textContent = 'Remove';
+                removeButton.style.cssText = `
+                    background: #e74c3c;
+                    color: white;
+                    border: none;
+                    padding: 8px 16px;
+                    border-radius: 4px;
+                    cursor: pointer;
+                    margin-top: 10px;
+                    float: right;
+                `;
+
+                removeButton.onclick = async (e) => {
+                    e.stopPropagation();
+                    try {
+                        const user = auth.currentUser;
+                        if (!user) return;
+
+                        await db.collection('users').doc(user.uid)
+                            .collection('savedRegions')
+                            .doc(location.id)
+                            .delete();
+
+                        savedLocations = savedLocations.filter(l => l.id !== location.id);
+                        displaySavedLocations();
+                    } catch (error) {
+                        console.error('Error removing location:', error);
+                        alert('Failed to remove location');
+                    }
+                };
+
+                locationDiv.appendChild(removeButton);
+                savedLocationsContainer.appendChild(locationDiv);
+            });
+        }
+
+        // Update the DOMContentLoaded event listener to include loading saved locations
+        document.addEventListener('DOMContentLoaded', () => {
+            // ...existing code...
+            firebase.auth().onAuthStateChanged((user) => {
+                if (user) {
+                    loadSavedCompanies();
+                    loadSavedLocations(); // Add this line
+                } else {
+                    savedCompanies = [];
+                    savedLocations = []; // Add this line
+                    displaySavedCompanies();
+                    displaySavedLocations(); // Add this line
+                }
+            });
+        });
+
+        // Add location saving capability to the map search
+        searchButton.addEventListener('click', () => {
+            const city = document.getElementById('city-search').value;
+            geocoder.geocode({ 'address': city }, function(results, status) {
+                if (status === 'OK') {
+                    const location = {
+                        name: city,
+                        address: results[0].formatted_address,
+                        coordinates: {
+                            lat: results[0].geometry.location.lat(),
+                            lng: results[0].geometry.location.lng()
+                        }
+                    };
+                    
+                    const saveLocationBtn = document.createElement('button');
+                    saveLocationBtn.textContent = 'Save This Location';
+                    saveLocationBtn.onclick = () => saveLocation(location);
+                    
+                    const content = document.createElement('div');
+                    content.innerHTML = `
+                        <h3>${city}</h3>
+                        <p>${results[0].formatted_address}</p>
+                    `;
+                    content.appendChild(saveLocationBtn);
+                    
+                    infoWindow.setContent(content);
+                    infoWindow.setPosition(results[0].geometry.location);
+                    infoWindow.open(map);
+                    map.setCenter(results[0].geometry.location);
+                } else {
+                    alert('Geocode was not successful for the following reason: ' + status);
+                }
+            });
+        });
+
+        // Function to close the popup when clicking outside
+        document.getElementById('popup-overlay').addEventListener('click', function() {
+            document.getElementById('credit-popup').style.display = 'none';
+            document.getElementById('popup-overlay').style.display = 'none';
+        });
+    </script>
+</body>
+</html>
