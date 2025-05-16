@@ -196,13 +196,10 @@
                             firstName: firstName,
                             lastName: lastName,
                             email: email,
-                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                            plan: 'free',
-                            tokenBalance: 100
-
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp()
                         })
                         .then(() => {
-                            window.location.href = '/codes/index.html';
+                            window.location.href = 'index.html';
                         })
                         .catch((error) => {
                             console.error('Error saving user data:', error);
@@ -219,7 +216,7 @@
                         const user = userCredential.user;
                         console.log('User logged in:', user);
                         // Redirect after successful login
-                        window.location.href = '/codes/index.html';
+                        window.location.href = 'index.html';
                     })
                     .catch((error) => {
                         console.error('Login error:', error);
@@ -235,7 +232,7 @@
                 const result = await firebase.auth().signInWithPopup(provider);
                 const user = result.user;
                 console.log('Google sign-in success:', user);
-                window.location.href = '/codes/index.html';
+                window.location.href = 'index.html';
             } catch (error) {
                 console.error('Google sign-in error:', error);
                 alert('Google sign-in failed: ' + error.message);
