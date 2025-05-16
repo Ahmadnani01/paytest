@@ -1,229 +1,252 @@
 <!DOCTYPE html>
-<html lang="en">
+<html>
+
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Job Seeker Dashboard</title>
-    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
-    <link href="styles/main.css" rel="stylesheet">
-    <!-- Add Firebase SDK -->
+    <title>Authentication</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f6fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .auth-container {
+            width: 400px;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        .error-message {
+            color: red;
+        }
+
+        button {
+            background-color: #f0f0f0;
+            color: #2c3e50;
+            padding: 10px 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #e0e0e0;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+
+        .form-container {
+            display: none;
+        }
+
+        .form-container.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <h1>Authentication</h1>
+        <div class="button-container">
+            <button onclick="showForm('login')">Login</button>
+            <button onclick="showForm('signup')">Signup</button>
+        </div>
+        <button onclick="signInWithGoogle()">Sign up with Google</button>
+
+        <div id="login-form" class="form-container">
+            <h2>Login</h2>
+            <form id="login-form-submit">
+                <label for="login-email">Email:</label>
+                <input type="email" id="login-email" name="login-email">
+                <label for="login-password">Password:</label>
+                <input type="password" id="login-password" name="login-password">
+                <p id="login-error-message" class="error-message"></p>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+
+        <div id="signup-form" class="form-container">
+            <h2>Signup</h2>
+            <form id="signup-form-submit">
+                <label for="signup-firstname">First Name:</label>
+                <input type="text" id="signup-firstname" name="signup-firstname">
+                <label for="signup-lastname">Last Name:</label>
+                <input type="text" id="signup-lastname" name="signup-lastname">
+                
+                <label for="signup-email">Email:</label>
+                <input type="email" id="signup-email" name="signup-email">
+                <label for="signup-password">Password:</label>
+                <input type="password" id="signup-password" name="signup-password">
+                <label for="signup-confirm-password">Confirm Password:</label>
+                <input type="password" id="signup-confirm-password" name="signup-confirm-password">
+                <button type="submit">Signup</button>
+                <p id="signup-error-message" class="error-message"></p>
+            </form>
+            <p id="success-message" style="display:none; color: green;">Welcome!</p>
+        </div>
+
+    </div>
+
+    <script>
+        const loginForm = document.getElementById('login-form');
+        const signupForm = document.getElementById('signup-form');
+
+        loginForm.style.display = 'none';
+        signupForm.style.display = 'none';
+
+        function showForm(formId) {
+            loginForm.style.display = 'none';
+            signupForm.style.display = 'none';
+
+            document.getElementById(formId + '-form').style.display = 'block';
+        }
+
+    </script>
+    <!-- Add Firebase SDKs -->
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
-</head>
-<body>
-<script>
-  // Check if the user is logged in using Firebase
-  function isLoggedIn() {
-    return firebase.auth().currentUser !== null;
-  }
-
-</script>
-    <nav class="sidebar">
-        <button class="toggle-btn">
-            <i class="fas fa-chevron-left"></i>
-        </button>
-        <div class="logo">
-            <img src="logo/tinywow_change_bg_photo_79922413.png" alt="CVTailor.CC Logo" style="width: 150px; height: auto;">
-        </div>
-        <ul class="nav-links">
-            <li class="active"><i class="fas fa-home"></i><span>Home</span></li>
-            <li onclick="window.location.href='marketplace.html'"><i class="fas fa-store"></i><span>Marketplace</span></li>
-            <li onclick="window.location.href='region.html'"><i class="fas fa-globe"></i><span>Region</span></li>
-            <li onclick="window.location.href='cv-section.html'"><i class="fas fa-file-alt"></i><span>CV & Cover Letter</span></li>
-            <li onclick="window.location.href='job-board.html'"><i class="fas fa-briefcase"></i><span>Job Board</span></li>
-            <li><i class="fas fa-tasks"></i><span>Application Tracker <span style="color: grey;">(Coming Soon)</span></span></li>
-            <li onclick="window.location.href='profile.html'" ><i class="fas fa-user"></i><span>Profile</span></li>
-            <li><i class="fas fa-comments"></i><span>Consultation <span style="color: grey;">(Coming Soon)</span></span></li>
-            <li onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i><span>Logout</span></li>
-            <li onclick="window.location.href='plan.html'" class="subscription-plan"><i class="fas fa-credit-card"></i><span>Subscription Plan</span><span id="nav-credit-display" style="font-size: 0.8em; color: #fff; margin-left: 5px;">(Credit: Loading...)</span></li>
-        </ul>
-    </nav>
-
-    <main class="main-content">
-        <div class="welcome-section">
-            <h1 id="welcome-title">Welcome to Your Dashboard</h1>
-            <p id="welcome-message">Start your job search journey here</p>
-        </div>
-
-        <div class="features-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; padding: 20px;">
-            <!-- Job Board Feature -->
-            <div class="feature-card" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                <i class="fas fa-briefcase" style="font-size: 24px; color: #3498db; margin-bottom: 15px;"></i>
-                <h3>Job Board</h3>
-                <p>Search and filter job listings tailored to your preferences. Track applications and save interesting positions.</p>
-                <button onclick="window.location.href='job-board.html'" style="background: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 4px; margin-top: 15px; cursor: pointer;">
-                    Explore Jobs
-                </button>
-            </div>
-
-            <!-- Region Search Feature -->
-            <div class="feature-card" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                <i class="fas fa-globe" style="font-size: 24px; color: #2ecc71; margin-bottom: 15px;"></i>
-                <h3>Region Search</h3>
-                <p>Find businesses and opportunities in your area. Filter by industry and save locations of interest.</p>
-                <button onclick="window.location.href='region.html'" style="background: #2ecc71; color: white; border: none; padding: 10px 20px; border-radius: 4px; margin-top: 15px; cursor: pointer;">
-                    Explore Regions
-                </button>
-            </div>
-
-            <!-- CV & Cover Letter Feature -->
-            <div class="feature-card" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                <i class="fas fa-file-alt" style="font-size: 24px; color: #9b59b6; margin-bottom: 15px;"></i>
-                <h3>CV & Cover Letter</h3>
-                <p>AI-powered CV and cover letter tailoring. Generate customized documents for each application.</p>
-                <button onclick="window.location.href='cv-section.html'" style="background: #9b59b6; color: white; border: none; padding: 10px 20px; border-radius: 4px; margin-top: 15px; cursor: pointer;">
-                    Customize Documents
-                </button>
-            </div>
-
-            <!-- Profile Management -->
-            <div class="feature-card" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                <i class="fas fa-user" style="font-size: 24px; color: #e74c3c; margin-bottom: 15px;"></i>
-                <h3>Profile Management</h3>
-                <p>Manage your professional profile, skills, and preferences. Keep your information up to date.</p>
-                <button onclick="window.location.href='profile.html'" style="background: #e74c3c; color: white; border: none; padding: 10px 20px; border-radius: 4px; margin-top: 15px; cursor: pointer;">
-                    Update Profile
-                </button>
-            </div>
-
-            <!-- Marketplace  -->
-            <div class="feature-card" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
-                <i class="fas fa-store" style="font-size: 24px; color: #f39c12; margin-bottom: 15px;"></i>
-                <h3>Marketplace</h3>
-                <p>Access professional services, templates, and resources to enhance your job search.</p>
-                <button onclick="window.location.href='marketplace.html'" style="background: #f39c12; color: white; border: none; padding: 10px 20px; border-radius: 4px; margin-top: 15px; cursor: pointer;">
-                    Explore Marketplace
-                </button>
-            </div>
-
-            <!-- Consultation -->
-            <div class="feature-card" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); opacity: 0.7;">
-                <i class="fas fa-comments" style="font-size: 24px; color: #27ae60; margin-bottom: 15px;"></i>
-                <h3>Consultation</h3>
-                <p>Coming soon! Schedule a consultation with a career expert to get personalized advice.</p>
-                <button disabled style="background: #27ae60; color: white; border: none; padding: 10px 20px; border-radius: 4px; margin-top: 15px; opacity: 0.7; cursor: not-allowed;">
-                    Coming Soon
-                </button> 
-            </div>
-
-
-            <!-- Application Tracker Coming Soon -->
-            <div class="feature-card" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); opacity: 0.7;">
-                <i class="fas fa-tasks" style="font-size: 24px; color: #1abc9c; margin-bottom: 15px;"></i>
-                <h3>Application Tracker</h3>
-                <p>Coming soon! Track your job applications, interviews, and follow-ups in one place.</p>
-                <button disabled style="background: #1abc9c; color: white; border: none; padding: 10px 20px; border-radius: 4px; margin-top: 15px; opacity: 0.7; cursor: not-allowed;">
-                    Coming Soon
-                </button>
-            </div>
-        </div>
-    </main>
-
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-analytics-compat.js"></script>
     <script>
         // Firebase configuration
         const firebaseConfig = {
-            apiKey: "AIzaSyCCoH_alBrRE_LrrE_nR-edbJXqy1pjfCU",
-            authDomain: "quick-test-aac28.firebaseapp.com",
-            projectId: "quick-test-aac28",
-            storageBucket: "quick-test-aac28.firebasestorage.app",
-            messagingSenderId: "892247718936",
-            appId: "1:892247718936:web:e74b78c6897ef081e3d76d",
-            measurementId: "G-0KXC6TQCEE"
+          apiKey: "AIzaSyCCoH_alBrRE_LrrE_nR-edbJXqy1pjfCU",
+          authDomain: "quick-test-aac28.firebaseapp.com",
+          projectId: "quick-test-aac28",
+          storageBucket: "quick-test-aac28.firebasestorage.app",
+          messagingSenderId: "892247718936",
+          appId: "1:892247718936:web:e74b78c6897ef081e3d76d",
+          measurementId: "G-0KXC6TQCEE"
         };
 
         // Initialize Firebase
-        if (!firebase.apps.length) {
-            firebase.initializeApp(firebaseConfig);
-        }
+        const app = firebase.initializeApp(firebaseConfig);
+        const analytics = firebase.analytics();
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // Check auth state and fetch user data
-        auth.onAuthStateChanged((user) => {
-            if (!user) {
-                window.location.href = 'auth.html';
-            } else {
-                db.collection('users').doc(user.uid).get()
-                .then((doc) => {
-                    if (doc.exists) {
-                        const userData = doc.data();
-                        const fullName = userData.lastName 
-                            ? `${userData.firstName} ${userData.lastName}`
-                            : userData.firstName;
-                        document.getElementById('welcome-title').textContent = 
-                            `Welcome to Your Dashboard, ${fullName}`;
-                        document.getElementById('welcome-message').textContent = 
-                            'We\'re glad to have you back!';
-                    }
-                })
-                .catch((error) => {
-                    console.error('Error fetching user data:', error);
-                });
-            }
-        });
+        // Get the form submission elements
+        const loginSubmitForm = document.getElementById('login-form-submit');
+        const signupSubmitForm = document.getElementById('signup-form-submit');
 
-         // Sidebar toggle functionality
-        const sidebar = document.querySelector('.sidebar');
-        const mainContent = document.querySelector('.main-content');
-        const toggleBtn = document.querySelector('.toggle-btn');
-        const toggleIcon = toggleBtn.querySelector('i');
+        // Function to handle form submissions
+        function handleFormSubmit(event, formType) {
+            event.preventDefault();
 
-        toggleBtn.addEventListener('click', () => {
-            sidebar.classList.toggle('collapsed');
-            mainContent.classList.toggle('expanded');
-            toggleIcon.classList.toggle('fa-chevron-left');
-            toggleIcon.classList.toggle('fa-chevron-right');
-        });
+            // Get form values based on form type
+            const email = document.getElementById(`${formType}-email`).value;
+            const password = document.getElementById(`${formType}-password`).value;
+            const errorMessage = document.getElementById(`${formType}-error-message`);
+            
+            errorMessage.textContent = ''; // Clear previous errors
 
-        // Logout functionality
-        function handleLogout() {
-            auth.signOut()
-                .then(() => {
-                    window.location.href = 'auth.html';
-                })
-                .catch((error) => {
-                    console.error('Logout failed:', error);
-                });
-        }
+            if (formType === 'signup') {
+              
+                firebase.auth().createUserWithEmailAndPassword(email, password)
+                    .then((userCredential) => {
+                        // Signed up
+                        const user = userCredential.user;
+                        console.log('User signed up:', user);
+                        document.getElementById('success-message').style.display = 'block';
+                        // Redirect or handle success
+                        // Save user data to Firestore
+                        const firstName = document.getElementById('signup-firstname').value;
+                        const lastName = document.getElementById('signup-lastname').value;
+                        const email = document.getElementById('signup-email').value;
+                        
+                        db.collection('users').doc(user.uid).set({
+                            firstName: firstName,
+                            lastName: lastName,
+                            email: email,
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                            plan: 'free',
+                            tokenBalance: 100
 
-        // Function to update credit display in the subscription button
-        async function updateCreditDisplayInButton(credits) {
-            const navCreditDisplay = document.getElementById('nav-credit-display');
-            if (navCreditDisplay) {
-                const user = auth.currentUser;
-                if (user) {
-                    const userDoc = await db.collection('users').doc(user.uid).get();
-                    if (userDoc.exists) {
-                        const userData = userDoc.data();
-                        const currentPlan = userData.plan || 'free';
-
-                        if (currentPlan === 'premium') {
-                            navCreditDisplay.textContent = 'Premium';
-                        } else {
-                            navCreditDisplay.textContent = `(Credit: ${credits})`;
-                        }
-                    }
-                }
+                        })
+                        .then(() => {
+                            window.location.href = '/codes/index.html';
+                        })
+                        .catch((error) => {
+                            console.error('Error saving user data:', error);
+                        });
+                    })
+                    .catch((error) => {
+                        console.error('Signup error:', error);
+                        errorMessage.textContent = 'Signup failed: ' + error.message;
+                    });
+            } else if (formType === 'login') {
+                firebase.auth().signInWithEmailAndPassword(email, password)
+                    .then((userCredential) => {
+                        // Signed in
+                        const user = userCredential.user;
+                        console.log('User logged in:', user);
+                        // Redirect after successful login
+                        window.location.href = '/codes/index.html';
+                    })
+                    .catch((error) => {
+                        console.error('Login error:', error);
+                        errorMessage.textContent = 'Login failed: ' + error.message;
+                    });
             }
         }
 
-        // Call this function after fetching user data
-        auth.onAuthStateChanged(async (user) => {
-            if (!user) {
-                window.location.href = 'auth.html';
-            } else {
-                const userDoc = await db.collection('users').doc(user.uid).get();
-                if (userDoc.exists) {
-                    const userData = userDoc.data();
-                    userCredits = userData.credits || 0; // Default to 0 if credits don't exist
-                    const currentPlan = userData.plan || 'free'; // Default to free if no plan exists
-                    updateCreditDisplayInButton(userCredits); // Update the button
-                } else {
-                    console.error('Error fetching user data: Document does not exist');
-                }
+        // Google Sign-In implementation
+        async function signInWithGoogle() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            try {
+                const result = await firebase.auth().signInWithPopup(provider);
+                const user = result.user;
+                console.log('Google sign-in success:', user);
+                window.location.href = '/codes/index.html';
+            } catch (error) {
+                console.error('Google sign-in error:', error);
+                alert('Google sign-in failed: ' + error.message);
             }
-        });
+        }
+
+        // Add event listeners for form submissions
+        loginSubmitForm.addEventListener('submit', (event) => handleFormSubmit(event, 'login'));
+        signupSubmitForm.addEventListener('submit', (event) => handleFormSubmit(event, 'signup'));
+
     </script>
 </body>
+
 </html>
