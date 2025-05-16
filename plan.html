@@ -2,7 +2,7 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale: 1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Job Seeker Dashboard</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="styles/main.css" rel="stylesheet">
@@ -10,6 +10,7 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=AdMphLDeo2qDTJ2JcFhlAhW32al2RCmKPB97TVzohEaw8GMcnW5TtF7ssNrDYI5mReC7rUQ_yDr4oIdM&currency=GBP"></script>
 </head>
 <body>
 <script>
@@ -153,25 +154,19 @@
             <div id="credit-bundle-50" class="credit-bundle-card" style="background: #f8f8f8; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); text-align: center; width: 200px; transition: transform 0.2s ease-in-out;">
                 <h4 style="color: #333; font-weight: bold; margin-bottom: 10px;">50 Credits</h4>
                 <p style="color: #555; font-size: 16px; margin-bottom: 10px;">£3.99</p>
-                <a href="https://www.sandbox.paypal.com/ncp/payment/AV9BZWCVS8CRE" target="_blank">
-                    <button class="buy-now-btn" style="background: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 14px;">Buy Now</button>
-                </a>
+                <div id="paypal-button-50"></div>
             </div>
             <!-- Credit Bundle Card 2 -->
             <div id="credit-bundle-100" class="credit-bundle-card" style="background: #f8f8f8; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); text-align: center; width: 200px; transition: transform 0.2s ease-in-out;">
                 <h4 style="color: #333; font-weight: bold; margin-bottom: 10px;">100 Credits</h4>
                 <p style="color: #555; font-size: 16px; margin-bottom: 10px;">£6.99</p>
-                <a href="https://www.sandbox.paypal.com/ncp/payment/NJHYPGGY9AVZG" target="_blank">
-                    <button class="buy-now-btn" style="background: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 14px;">Buy Now</button>
-                </a>
+                <div id="paypal-button-100"></div>
             </div>
             <!-- Credit Bundle Card 3 -->
             <div id="credit-bundle-200" class="credit-bundle-card" style="background: #f8f8f8; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); text-align: center; width: 200px; transition: transform 0.2s ease-in-out;">
                 <h4 style="color: #333; font-weight: bold; margin-bottom: 10px;">200 Credits</h4>
                 <p style="color: #555; font-size: 16px; margin-bottom: 10px;">£12.99</p>
-                <a href="https://www.sandbox.paypal.com/ncp/payment/EMMLR6TNK9APE" target="_blank">
-                    <button class="buy-now-btn" style="background: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 14px;">Buy Now</button>
-                </a>
+                <div id="paypal-button-200"></div>
             </div>
 
         
@@ -442,6 +437,89 @@
                 }
             }
             updateCreditDisplay();
+        });
+
+        function initPayPalButtons() {
+            const buttonConfigs = [
+                { containerId: 'paypal-button-50', amount: '3.99', credits: 50 },
+                { containerId: 'paypal-button-100', amount: '6.99', credits: 100 },
+                { containerId: 'paypal-button-200', amount: '12.99', credits: 200 }
+            ];
+
+            buttonConfigs.forEach(config => {
+                paypal.Buttons({
+                    createOrder: function(data, actions) {
+                        return actions.order.create({
+                            application_context: {
+                                return_url: 'https://congenial-carnival-x559wj44jrjjhvw9r-5500.app.github.dev/plan.html',
+                                cancel_url: 'https://congenial-carnival-x559wj44jrjjhvw9r-5500.app.github.dev/plan.html'
+                            },
+                            purchase_units: [{
+                                amount: {
+                                    currency_code: 'GBP',
+                                    value: config.amount
+                                },
+                                custom_id: JSON.stringify({
+                                    userId: auth.currentUser.uid,
+                                    credits: config.credits,
+                                    timestamp: Date.now()
+                                })
+                            }]
+                        });
+                    },
+                    onApprove: async function(data, actions) {
+                        // Show loading state
+                        const loadingDiv = document.createElement('div');
+                        loadingDiv.innerHTML = '<p>Processing payment...</p>';
+                        document.querySelector(`#${config.containerId}`).appendChild(loadingDiv);
+
+                        try {
+                            // Capture the order
+                            const details = await actions.order.capture();
+                            
+                            if (details.status === 'COMPLETED') {
+                                // Update credits in Firestore only after confirmed payment
+                                const user = auth.currentUser;
+                                if (user) {
+                                    await db.collection('users').doc(user.uid).update({
+                                        credits: firebase.firestore.FieldValue.increment(config.credits),
+                                        transactions: firebase.firestore.FieldValue.arrayUnion({
+                                            orderId: details.id,
+                                            amount: config.amount,
+                                            credits: config.credits,
+                                            timestamp: Date.now()
+                                        })
+                                    });
+                                    alert(`Successfully added ${config.credits} credits!`);
+                                    updateCreditDisplay();
+                                }
+                            } else {
+                                throw new Error('Payment not completed');
+                            }
+                        } catch (error) {
+                            console.error('Payment error:', error);
+                            alert('There was an error processing your payment. Please contact support.');
+                        } finally {
+                            // Remove loading state
+                            loadingDiv.remove();
+                        }
+                    },
+                    onError: function(err) {
+                        console.error('PayPal error:', err);
+                        alert('There was an error with PayPal. Please try again later.');
+                    },
+                    onCancel: function() {
+                        alert('Payment cancelled. No credits were added.');
+                    }
+                }).render(`#${config.containerId}`);
+            });
+        }
+
+        // Initialize PayPal buttons after Firebase auth
+        auth.onAuthStateChanged((user) => {
+            if (user) {
+                initPayPalButtons();
+            }
         });
     </script>
 </body>
