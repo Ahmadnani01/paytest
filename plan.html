@@ -1,0 +1,461 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale: 1.0">
+    <title>Job Seeker Dashboard</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="styles/main.css" rel="stylesheet">
+    <!-- Add Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+<script>
+  // Check if the user is logged in using Firebase
+  function isLoggedIn() {
+    return firebase.auth().currentUser !== null;
+  }
+
+</script>
+    <nav class="sidebar">
+        <button class="toggle-btn">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <div class="logo">
+            <img src="logo/tinywow_change_bg_photo_79922413.png" alt="CVTailor.CC Logo" style="width: 150px; height: auto;">
+        </div>
+        <ul class="nav-links">
+            <li onclick="window.location.href='index.html'"><i class="fas fa-home"></i><span>Home</span></li>
+            <li onclick="window.location.href='marketplace.html'"><i class="fas fa-store"></i><span>Marketplace</span></li>
+            <li onclick="window.location.href='region.html'"><i class="fas fa-globe"></i><span>Region</span></li>
+            <li onclick="window.location.href='cv-section.html'"><i class="fas fa-file-alt"></i><span>CV & Cover Letter</span></li>
+            <li onclick="window.location.href='job-board.html'"><i class="fas fa-briefcase"></i><span>Job Board</span></li>
+            <li><i class="fas fa-tasks"></i><span>Application Tracker <span style="color: grey;">(Coming Soon)</span></span></li>
+            <li onclick="window.location.href='profile.html'" ><i class="fas fa-user"></i><span>Profile</span></li>
+            <li><i class="fas fa-comments"></i><span>Consultation <span style="color: grey;">(Coming Soon)</span></span></li>
+            <li onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i><span>Logout</span></li>
+            <li onclick="window.location.href='plan.html'" class="subscription-plan"><i class="fas fa-credit-card"></i><span>Subscription Plan</span><span id="nav-credit-display" style="font-size: 0.8em; color: #fff; margin-left: 5px;">(Credit: Loading...)</span></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <div class="welcome-section">
+            <h1 id="welcome-title">Payment Plans</h1>
+            <p id="welcome-message">Choose the plan that's right for you.</p>
+        </div>
+
+        <div class="payment-plans-section" style="display: flex; justify-content: space-around; padding: 40px; flex-wrap:wrap;">
+            <div id="free-plan" class="payment-card" style="background: linear-gradient(to bottom, #ffffff, #f2f2f2); padding: 30px; border-radius: 12px; box-shadow: 0 6px 12px rgba(0,0,0,0.15); width: 400px; transition: transform 0.2s ease-in-out; font-family: 'Roboto', sans-serif; cursor: pointer;">
+                <h3 style="font-size: 26px; margin-bottom: 20px; color: #333; font-weight: bold;">Free Plan</h3>
+                <p style="font-size: 17px; color: #555;">Explore basic features with limited tokens.</p>
+                <ul style="list-style: none; padding: 0; margin-bottom: 20px;">
+                    <li style="margin-bottom: 12px;">
+                        <i class="fas fa-arrow-right" style="color: #3498db; margin-right: 8px;"></i>
+                        Region Section (2 credits for 3 searches)
+                        <ul style="padding-left: 20px; margin-top: 5px;">
+                            <li style="font-size: 15px; color: #777; margin-bottom: 5px;">3 Searches for industries and businesses</li>
+                            <li style="font-size: 15px; color: #777; margin-bottom: 5px;">Use industry search function</li>
+                            <li style="font-size: 15px; color: #777; margin-bottom: 5px;">Save locations (up to 2)</li>
+                             <li style="font-size: 15px; color: #777; margin-bottom: 5px;">View business details (limited)</li>
+                        </ul>
+                    </li>
+                    <li style="margin-bottom: 12px;">
+                        <i class="fas fa-arrow-right" style="color: #3498db; margin-right: 8px;"></i>
+                        CV & Cover Letter Tailoring
+                        <ul style="padding-left: 20px; margin-top: 5px;">
+                            <li style="font-size: 15px; color: #777; margin-bottom: 5px;">CV generation (2 credits)</li>
+                            <li style="font-size: 15px; color: #777; margin-bottom: 5px;">Cover letter generation (2 credits)</li>
+                            <li style="font-size: 15px; color: #777; margin-bottom: 5px;">Regeneration (2 credits)</li>
+                             <li style="font-size: 15px; color: #777; margin-bottom: 5px;">Application Q&A (1 credit)
+                                <ul>
+                                    <li>AI answers to application questions</li>
+                                </ul>
+                            </li>
+                            <li style="font-size: 15px; color: #777; margin-bottom: 5px;">Email generation (1 credit)</li>
+                            <li style="font-size: 15px; color: #777; margin-bottom: 5px;">Autofill document placeholders (1 credit)</li>
+                        </ul>
+                    </li>
+                    <li style="margin-bottom: 12px;">
+                        <i class="fas fa-arrow-right" style="color: #3498db; margin-right: 8px;"></i>
+                        Job Board (limited listings)
+                        <ul style="padding-left: 20px; margin-top: 5px;">
+                            <li style="font-size: 15px; color: #777; margin-bottom: 5px;">Browse job listings</li>
+                        </ul>
+                    </li>
+                </ul>
+                <p style="font-size: 14px; color: #777;">Tokens can be purchased or earned.</p>
+                <p style="font-size: 15px; color: #777; margin-bottom: 10px;" id="credit-balance">Current Credits: Loading...</p>
+                 <button id="buy-credit-button" style="background: #f39c12; color: white; border: none; padding: 14px 28px; border-radius: 8px; margin-top: 10px; cursor: pointer; font-size: 17px;" onclick="buyCredit()">
+                    Buy Credit
+                </button>
+            </div>
+
+        <script>
+        function buyCredit() {
+            const creditBundlesSection = document.querySelector('.credit-bundles-section');
+            if (creditBundlesSection) {
+                creditBundlesSection.scrollIntoView({ behavior: 'smooth' });
+            }
+        }
+        </script>
+
+            <div id="premium-plan" class="payment-card" style="background: linear-gradient(to bottom, #e8f5e9, #f0fdfa); padding: 30px; border-radius: 12px; box-shadow: 0 6px 12px rgba(0,0,0,0.15); width: 400px; transition: transform 0.2s ease-in-out; border: 2px solid #2ecc71; font-family: 'Roboto', sans-serif;">
+                <h3 style="font-size: 26px; margin-bottom: 20px; color: #333; font-weight: bold;">Premium Plan</h3>
+                <p style="font-size: 17px; color: #555;">Unlock unlimited access to all features.</p>
+                <ul style="list-style: none; padding: 0; margin-bottom: 20px;">
+                    <li style="margin-bottom: 12px;">
+                        <i class="fas fa-arrow-right" style="color: #2ecc71; margin-right: 8px;"></i>
+                        Unlimited Region Section access
+                        <ul style="padding-left: 20px; margin-top: 5px;">
+                            <li style="font-size: 15px; color: #777; margin-bottom: 5px;">Unlimited map searches and saves</li>
+                            <li style="font-size: 15px; color: #777; margin-bottom: 5px;">Use industry search function</li>
+                            <li style="font-size: 15px; color: #777; margin-bottom: 5px;">Direct job applications</li>
+                             <li style="font-size: 15px; color: #777; margin-bottom: 5px;">View business details (unlimited)</li>
+                            <li style="font-size: 15px; color: #777; margin-bottom: 5px;">Contact businesses directly</li>
+                             <li style="font-size: 15px; color: #777; margin-bottom: 5px;">See user reviews</li>
+                        </ul>
+                    </li>
+                    <li style="margin-bottom: 12px;">
+                        <i class="fas fa-arrow-right" style="color: #2ecc71; margin-right: 8px;"></i>
+                        Full CV & Cover Letter Tailoring
+                        <ul style="padding-left: 20px; margin-top: 5px;">
+                            <li style="font-size: 15px; color: #777; margin-bottom: 5px;">AI-driven tailoring to job descriptions</li>
+                            <li style="font-size: 15px; color: #777; margin-bottom: 5px;">Quick Email Generator</li>
+                            <li style="font-size: 15px; color: #777; margin-bottom: 5px;">Unlimited document regeneration</li>
+                        </ul>
+                    </li>
+                    <li style="margin-bottom: 12px;">
+                        <i class="fas fa-arrow-right" style="color: #2ecc71; margin-right: 8px;"></i>
+                        Job Board (unlimited listings, Save to Region)
+                        <ul style="padding-left: 20px; margin-top: 5px;">
+                            <li style="font-size: 15px; color: #777; margin-bottom: 5px;">Save job listings to the region section</li>
+                            <li style="font-size: 15px; color: #777; margin-bottom: 5px;">Apply directly through company websites</li>
+                        </ul>
+                    </li>
+                    <li style="margin-bottom: 12px;">
+                        <i class="fas fa-arrow-right" style="color: #2ecc71; margin-right: 8px;"></i>
+                        Marketplace Access
+                        <ul style="padding-left: 20px; margin-top: 5px;">
+                            <li style="font-size: 15px; color: #777; margin-bottom: 5px;">Explore courses and training programs</li>
+                        </ul>
+                    </li>
+                </ul>
+                <p style="font-size: 20px; color: #777; margin-bottom: 10px;">Price: £9.99/month</p>
+                <button style="background: #2ecc71; color: white; border: none; padding: 14px 28px; border-radius: 8px; margin-top: 20px; cursor: pointer; font-size: 17px;" onclick="selectPlan('premium')">
+                    Upgrade Now
+                </button>
+            </div>
+        </div>
+        <div class="credit-bundles-section" style="display: flex; justify-content: center; gap: 20px; padding: 20px; flex-wrap: wrap;">
+            <!-- Credit Bundle Card 1 -->
+            <div id="credit-bundle-50" class="credit-bundle-card" style="background: #f8f8f8; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); text-align: center; width: 200px; transition: transform 0.2s ease-in-out;">
+                <h4 style="color: #333; font-weight: bold; margin-bottom: 10px;">50 Credits</h4>
+                <p style="color: #555; font-size: 16px; margin-bottom: 10px;">£3.99</p>
+                <a href="https://www.sandbox.paypal.com/ncp/payment/AV9BZWCVS8CRE" target="_blank">
+                    <button class="buy-now-btn" style="background: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 14px;">Buy Now</button>
+                </a>
+            </div>
+            <!-- Credit Bundle Card 2 -->
+            <div id="credit-bundle-100" class="credit-bundle-card" style="background: #f8f8f8; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); text-align: center; width: 200px; transition: transform 0.2s ease-in-out;">
+                <h4 style="color: #333; font-weight: bold; margin-bottom: 10px;">100 Credits</h4>
+                <p style="color: #555; font-size: 16px; margin-bottom: 10px;">£6.99</p>
+                <a href="https://www.sandbox.paypal.com/ncp/payment/NJHYPGGY9AVZG" target="_blank">
+                    <button class="buy-now-btn" style="background: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 14px;">Buy Now</button>
+                </a>
+            </div>
+            <!-- Credit Bundle Card 3 -->
+            <div id="credit-bundle-200" class="credit-bundle-card" style="background: #f8f8f8; padding: 20px; border-radius: 10px; box-shadow: 0 4px 8px rgba(0,0,0,0.1); text-align: center; width: 200px; transition: transform 0.2s ease-in-out;">
+                <h4 style="color: #333; font-weight: bold; margin-bottom: 10px;">200 Credits</h4>
+                <p style="color: #555; font-size: 16px; margin-bottom: 10px;">£12.99</p>
+                <a href="https://www.sandbox.paypal.com/ncp/payment/EMMLR6TNK9APE" target="_blank">
+                    <button class="buy-now-btn" style="background: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 5px; cursor: pointer; font-size: 14px;">Buy Now</button>
+                </a>
+            </div>
+
+        
+
+
+
+
+
+
+
+
+        </div>
+    </main>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCCoH_alBrRE_LrrE_nR-edbJXqy1pjfCU",
+            authDomain: "quick-test-aac28.firebaseapp.com",
+            projectId: "quick-test-aac28",
+            storageBucket: "quick-test-aac28.firebasestorage.app",
+            messagingSenderId: "892247718936",
+            appId: "1:892247718936:web:e74b78c6897ef081e3d76d",
+            measurementId: "G-0KXC6TQCEE"
+        };
+
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+        let userCredits = 0;
+
+        // Check auth state and fetch user data
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = 'auth.html';
+            } else {
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    userCredits = userData.credits || 0; // Default to 0 if credits don't exist
+                    updateCreditDisplay();
+                } else {
+                    console.error('Error fetching user data: Document does not exist');
+                }
+            }
+        });
+
+        async function updateCreditDisplay() {
+            document.getElementById('credit-balance').textContent = `Current Credits: ${userCredits}`;
+            updateCreditDisplayInButton(userCredits);
+
+            const user = auth.currentUser;
+            if (user) {
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    const currentPlan = userData.plan || 'free';
+
+                    const upgradeButton = document.querySelector('#premium-plan button');
+                    if (upgradeButton) {
+                        if (currentPlan === 'premium') {
+                            upgradeButton.textContent = 'Cancel Plan';
+                            upgradeButton.onclick = cancelPlan;
+                        } else {
+                            upgradeButton.textContent = 'Upgrade Now';
+                            upgradeButton.onclick = function() { selectPlan('premium'); };
+                        }
+                    }
+                }
+            }
+        }
+
+        async function cancelPlan() {
+            const user = auth.currentUser;
+            if (!user) {
+                window.location.href = 'auth.html';
+                return;
+            }
+
+            try {
+                await db.collection('users').doc(user.uid).update({
+                    plan: 'free'
+                });
+
+                alert('Plan cancelled successfully!');
+                updateCreditDisplay(); // Update button text and onclick
+                highlightSelectedPlan('free');
+                window.location.reload();
+            } catch (error) {
+                console.error('Error cancelling plan:', error);
+                alert('Failed to cancel plan. Please try again.');
+            }
+        }
+
+        async function buy50Credit() {
+            const user = auth.currentUser;
+            if (user) {
+                // Implement your credit purchase logic here (e.g., using a payment gateway)
+                userCredits += 50;
+                await db.collection('users').doc(user.uid).update({
+                    credits: userCredits
+                });
+                updateCreditDisplay();
+                alert('50 Credits added successfully!');
+            } else {
+                alert('No user is logged in.');
+            }
+        }
+
+        async function buy100Credit() {
+            const user = auth.currentUser;
+            if (user) {
+                // Implement your credit purchase logic here (e.g., using a payment gateway)
+                userCredits += 100;
+                await db.collection('users').doc(user.uid).update({
+                    credits: userCredits
+                });
+                updateCreditDisplay();
+                alert('100 Credits added successfully!');
+            } else {
+                alert('No user is logged in.');
+            }
+        }
+
+        async function buy200Credit() {
+            const user = auth.currentUser;
+            if (user) {
+                // Implement your credit purchase logic here (e.g., using a payment gateway)
+                userCredits += 200;
+                await db.collection('users').doc(user.uid).update({
+                    credits: userCredits
+                });
+                updateCreditDisplay();
+                alert('200 Credits added successfully!');
+            } else {
+                alert('No user is logged in.');
+            }
+        }
+
+         // Sidebar toggle functionality
+        const sidebar = document.querySelector('.sidebar');
+        const mainContent = document.querySelector('.main-content');
+        const toggleBtn = document.querySelector('.toggle-btn');
+        const toggleIcon = toggleBtn.querySelector('i');
+
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('expanded');
+            toggleIcon.classList.toggle('fa-chevron-left');
+            toggleIcon.classList.toggle('fa-chevron-right');
+        });
+
+        // Logout functionality
+        function handleLogout() {
+            auth.signOut()
+                .then(() => {
+                    window.location.href = 'auth.html';
+                })
+                .catch((error) => {
+                    console.error('Logout failed:', error);
+                });
+        }
+
+        // Function to update credit display in the subscription button
+        async function updateCreditDisplayInButton(credits) {
+            const navCreditDisplay = document.getElementById('nav-credit-display');
+            if (navCreditDisplay) {
+                const user = auth.currentUser;
+                if (user) {
+                    const userDoc = await db.collection('users').doc(user.uid).get();
+                    if (userDoc.exists) {
+                        const userData = userDoc.data();
+                        const currentPlan = userData.plan || 'free';
+
+                        if (currentPlan === 'premium') {
+                            navCreditDisplay.textContent = 'Premium';
+                        } else {
+                            navCreditDisplay.textContent = `(Credit: ${credits})`;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Function to select a plan
+        async function selectPlan(planType) {
+            const user = auth.currentUser;
+            if (!user) {
+                window.location.href = 'auth.html';
+                return;
+            }
+
+            try {
+                // Save plan to user data
+                await db.collection('users').doc(user.uid).update({
+                    plan: planType
+                });
+
+                // Highlight selected plan
+                highlightSelectedPlan(planType);
+
+                alert(`Plan updated to ${planType === 'premium' ? 'Premium' : 'Free'} successfully!`);
+                window.location.reload();
+            } catch (error) {
+                console.error('Error updating plan:', error);
+                alert('Failed to update plan. Please try again.');
+            }
+        }
+
+        // Function to highlight selected plan
+        function highlightSelectedPlan(planType) {
+            const freePlan = document.getElementById('free-plan');
+            const premiumPlan = document.getElementById('premium-plan');
+
+            if (planType === 'premium') {
+                freePlan.style.border = '2px solid #ddd';
+                premiumPlan.style.border = '2px solid #2ecc71';
+            } else {
+                freePlan.style.border = '2px solid #3498db';
+                premiumPlan.style.border = '2px solid #ddd';
+            }
+        }
+
+        // Call this function after fetching user data
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = 'auth.html';
+            } else {
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    userCredits = userData.credits || 0; // Default to 0 if credits don't exist
+                    const currentPlan = userData.plan || 'free'; // Default to free if no plan exists
+
+                    // Hide the "Buy Credit" button if the user is on the premium plan
+                    const buyCreditButton = document.getElementById('buy-credit-button');
+                    if (buyCreditButton) {
+                        if (currentPlan === 'premium') {
+                            buyCreditButton.style.display = 'none';
+                        } else {
+                            buyCreditButton.style.display = 'block';
+                        }
+                    }
+
+                    // Hide credit bundles if the user is on the premium plan
+                    const creditBundle50 = document.getElementById('credit-bundle-50');
+                    const creditBundle100 = document.getElementById('credit-bundle-100');
+                    const creditBundle200 = document.getElementById('credit-bundle-200');
+
+                    if (currentPlan === 'premium') {
+                        if (creditBundle50) creditBundle50.style.display = 'none';
+                        if (creditBundle100) creditBundle100.style.display = 'none';
+                        if (creditBundle200) creditBundle200.style.display = 'none';
+                    } else {
+                        if (creditBundle50) creditBundle50.style.display = 'block';
+                        if (creditBundle100) creditBundle100.style.display = 'block';
+                        if (creditBundle200) creditBundle200.style.display = 'block';
+                    }
+
+                    updateCreditDisplay();
+                    updateCreditDisplayInButton(userCredits);
+                    highlightSelectedPlan(currentPlan);
+                } else {
+                    console.error('Error fetching user data: Document does not exist');
+                }
+            }
+            updateCreditDisplay();
+        });
+    </script>
+</body>
+<style>
+.payment-card:hover {
+    transform: scale(1.05);
+}
+.credit-bundle-card:hover {
+    transform: scale(1.05);
+}
+
+
+
+
+</style>
+</html>
+
