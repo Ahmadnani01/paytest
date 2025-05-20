@@ -10,7 +10,11 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.paypal.com/sdk/js?client-id=AdMphLDeo2qDTJ2JcFhlAhW32al2RCmKPB97TVzohEaw8GMcnW5TtF7ssNrDYI5mReC7rUQ_yDr4oIdM&currency=GBP"></script>
+    <!-- Replace sandbox Client ID with live Client ID -->
+    <!-- PayPal SDK for premium subscription (namespace: paypal_sub) -->
+    <script src="https://www.paypal.com/sdk/js?client-id=AYmP4Sr0rcHo8I15l50jjrb702Kjg-Qf5LsnzBd-uTM_DEDqmToDElVSxnGoZnRvX7GpEU1onKP70xqu&vault=true&intent=subscription" data-namespace="paypal_sub"></script>
+    <!-- PayPal SDK for credit bundles (namespace: paypal_credit) -->
+    <script src="https://www.paypal.com/sdk/js?client-id=AYmP4Sr0rcHo8I15l50jjrb702Kjg-Qf5LsnzBd-uTM_DEDqmToDElVSxnGoZnRvX7GpEU1onKP70xqu&currency=GBP" data-namespace="paypal_credit"></script>
 </head>
 <body>
 <script>
@@ -25,7 +29,7 @@
             <i class="fas fa-chevron-left"></i>
         </button>
         <div class="logo">
-            <img src="logo/tinywow_change_bg_photo_79922413.png" alt="CVTailor.CC Logo" style="width: 150px; height: auto;">
+            <img src="logo/tinywow_change_bg_photo_79922413 (1).png" alt="CVTailor.CC" style="width: 150px; height: auto; margin: 10px 0;">
         </div>
         <ul class="nav-links">
             <li onclick="window.location.href='index.html'"><i class="fas fa-home"></i><span>Home</span></li>
@@ -144,9 +148,14 @@
                     </li>
                 </ul>
                 <p style="font-size: 20px; color: #777; margin-bottom: 10px;">Price: £9.99/month</p>
-                <button style="background: #2ecc71; color: white; border: none; padding: 14px 28px; border-radius: 8px; margin-top: 20px; cursor: pointer; font-size: 17px;" onclick="selectPlan('premium')">
-                    Upgrade Now
-                </button>
+                <div id="premium-plan-buttons">
+                    <div id="paypal-button-container-P-9742741686212842ANAVGBIQ"></div>
+                    <button id="cancel-premium-btn" 
+                            onclick="cancelPremiumSubscription()"
+                            style="background: #e74c3c; color: white; border: none; padding: 14px 28px; border-radius: 8px; margin-top: 15px; cursor: pointer; font-size: 17px; width: 100%; display: none;">
+                        Cancel Premium Plan
+                    </button>
+                </div>
             </div>
         </div>
         <div class="credit-bundles-section" style="display: flex; justify-content: center; gap: 20px; padding: 20px; flex-wrap: wrap;">
@@ -439,88 +448,172 @@
             updateCreditDisplay();
         });
 
+        // Render PayPal subscription button for premium plan
+        function renderPremiumSubscriptionButton() {
+            paypal_sub.Buttons({
+                style: {
+                    shape: 'rect',
+                    color: 'gold',
+                    layout: 'vertical',
+                    label: 'subscribe'
+                },
+                createSubscription: function(data, actions) {
+                    const user = auth.currentUser;
+                    if (!user) {
+                        alert('Please log in first');
+                        return;
+                    }
+                    return actions.subscription.create({
+                        plan_id: 'P-9742741686212842ANAVGBIQ',
+                        custom_id: user.uid
+                    });
+                },
+                onApprove: async function(data, actions) {
+                    const user = auth.currentUser;
+                    if (user) {
+                        await db.collection('users').doc(user.uid).update({
+                            plan: 'premium',
+                            subscriptionId: data.subscriptionID,
+                            subscriptionStatus: 'ACTIVE',
+                            lastBillingDate: Date.now()
+                        });
+                        alert('Successfully upgraded to Premium!');
+                        window.location.reload();
+                    }
+                },
+                onError: function(err) {
+                    console.error('PayPal error:', err);
+                    alert('Payment error occurred');
+                }
+            }).render('#paypal-button-container-P-9742741686212842ANAVGBIQ');
+        }
+
+        // Render PayPal credit buttons for credit bundles
         function initPayPalButtons() {
             const buttonConfigs = [
-                { containerId: 'paypal-button-50', amount: '3.99', credits: 50 },
-                { containerId: 'paypal-button-100', amount: '6.99', credits: 100 },
-                { containerId: 'paypal-button-200', amount: '12.99', credits: 200 }
+                { containerId: 'paypal-button-50', amount: '1.00', credits: 50 },
+                { containerId: 'paypal-button-100', amount: '1.00', credits: 100, hostedPaymentLink: 'https://www.paypal.com/ncp/payment/B34K8WUQXKJ3J' },
+                { containerId: 'paypal-button-200', amount: '1.00', credits: 200, hostedPaymentLink: 'https://www.paypal.com/ncp/payment/7ADVBCQCVURVA' }
             ];
 
             buttonConfigs.forEach(config => {
-                paypal.Buttons({
+                paypal_credit.Buttons({
                     createOrder: function(data, actions) {
                         return actions.order.create({
-                            application_context: {
-                                return_url: 'https://congenial-carnival-x559wj44jrjjhvw9r-5500.app.github.dev/plan.html',
-                                cancel_url: 'https://congenial-carnival-x559wj44jrjjhvw9r-5500.app.github.dev/plan.html'
-                            },
+                            intent: 'CAPTURE',
                             purchase_units: [{
                                 amount: {
                                     currency_code: 'GBP',
                                     value: config.amount
-                                },
-                                custom_id: JSON.stringify({
-                                    userId: auth.currentUser.uid,
-                                    credits: config.credits,
-                                    timestamp: Date.now()
-                                })
-                            }]
-                        });
-                    },
-                    onApprove: async function(data, actions) {
-                        // Show loading state
-                        const loadingDiv = document.createElement('div');
-                        loadingDiv.innerHTML = '<p>Processing payment...</p>';
-                        document.querySelector(`#${config.containerId}`).appendChild(loadingDiv);
-
-                        try {
-                            // Capture the order
-                            const details = await actions.order.capture();
-                            
-                            if (details.status === 'COMPLETED') {
-                                // Update credits in Firestore only after confirmed payment
-                                const user = auth.currentUser;
-                                if (user) {
-                                    await db.collection('users').doc(user.uid).update({
-                                        credits: firebase.firestore.FieldValue.increment(config.credits),
-                                        transactions: firebase.firestore.FieldValue.arrayUnion({
-                                            orderId: details.id,
-                                            amount: config.amount,
-                                            credits: config.credits,
-                                            timestamp: Date.now()
-                                        })
-                                    });
-                                    alert(`Successfully added ${config.credits} credits!`);
-                                    updateCreditDisplay();
-                                }
-                            } else {
-                                throw new Error('Payment not completed');
-                            }
-                        } catch (error) {
-                            console.error('Payment error:', error);
-                            alert('There was an error processing your payment. Please contact support.');
-                        } finally {
-                            // Remove loading state
-                            loadingDiv.remove();
+                            },
+                            description: `${config.credits} Credits Purchase`
+                        }],
+                        application_context: {
+                            shipping_preference: 'NO_SHIPPING'
                         }
-                    },
-                    onError: function(err) {
-                        console.error('PayPal error:', err);
-                        alert('There was an error with PayPal. Please try again later.');
-                    },
-                    onCancel: function() {
-                        alert('Payment cancelled. No credits were added.');
+                    });
+                },
+                onApprove: async function(data, actions) {
+                    try {
+                        const details = await actions.order.capture();
+                        if (details.status === 'COMPLETED') {
+                            const user = auth.currentUser;
+                            if (user) {
+                                await db.collection('users').doc(user.uid).update({
+                                    credits: firebase.firestore.FieldValue.increment(config.credits),
+                                    transactions: firebase.firestore.FieldValue.arrayUnion({
+                                        orderId: details.id,
+                                        amount: config.amount,
+                                        credits: config.credits,
+                                        timestamp: Date.now()
+                                    })
+                                });
+                                alert(`Successfully added ${config.credits} credits!`);
+                                updateCreditDisplay();
+                            }
+                        }
+                    } catch (err) {
+                        console.error('Payment error:', err);
+                        alert('Payment failed. Please try again.');
                     }
-                }).render(`#${config.containerId}`);
-            });
+                },
+                onError: function(err) {
+                    console.error('PayPal error:', err);
+                    alert('Payment error occurred. Please try again.');
+                },
+                onCancel: function() {
+                    alert('Payment cancelled');
+                }
+            }).render(`#${config.containerId}`);
+        });
+    }
+
+    // Initialize PayPal buttons after Firebase auth
+    auth.onAuthStateChanged((user) => {
+        if (user) {
+            initPayPalButtons();
+            renderPremiumSubscriptionButton();
+        }
+    });
+
+    // Add cancel subscription function
+    async function cancelPremiumSubscription() {
+        if (!confirm('Are you sure you want to cancel your premium subscription?')) {
+            return;
         }
 
-        // Initialize PayPal buttons after Firebase auth
-        auth.onAuthStateChanged((user) => {
-            if (user) {
-                initPayPalButtons();
+        const user = auth.currentUser;
+        if (!user) return;
+
+        try {
+            const userDoc = await db.collection('users').doc(user.uid).get();
+            const userData = userDoc.data();
+            
+            if (!userData.subscriptionId) {
+                throw new Error('No active subscription found');
             }
-        });
+
+            // Cancel PayPal subscription
+            await paypal_sub.Subscription.revise(userData.subscriptionId, {
+                status: 'CANCELLED'
+            });
+
+            // Update user's subscription status in Firebase
+            await db.collection('users').doc(user.uid).update({
+                plan: 'free',
+                subscriptionId: null,
+                subscriptionStatus: 'CANCELLED',
+                cancelDate: Date.now()
+            });
+
+            alert('Your premium subscription has been cancelled.');
+            window.location.reload();
+        } catch (error) {
+            console.error('Error:', error);
+            alert('Failed to cancel subscription. Please try again.');
+        }
+    }
+
+    // Update auth state change listener
+    auth.onAuthStateChanged(async (user) => {
+        if (user) {
+            const userDoc = await db.collection('users').doc(user.uid).get();
+            if (userDoc.exists) {
+                const userData = userDoc.data();
+                const cancelBtn = document.getElementById('cancel-premium-btn');
+                const paypalContainer = document.getElementById('paypal-button-container-P-9742741686212842ANAVGBIQ');
+                
+                if (userData.plan === 'premium' && userData.subscriptionId) {
+                    cancelBtn.style.display = 'block';
+                    paypalContainer.style.display = 'none';
+                } else {
+                    cancelBtn.style.display = 'none';
+                    paypalContainer.style.display = 'block';
+                }
+            }
+            // ...rest of existing auth state handler code...
+        }
+    });
     </script>
 </body>
 <style>
