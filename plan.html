@@ -11,10 +11,10 @@
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
     <!-- Replace sandbox Client ID with live Client ID -->
-    <!-- PayPal SDK for premium subscription (namespace: paypal_sub) -->
-    <script src="https://www.paypal.com/sdk/js?client-id=AYmP4Sr0rcHo8I15l50jjrb702Kjg-Qf5LsnzBd-uTM_DEDqmToDElVSxnGoZnRvX7GpEU1onKP70xqu&vault=true&intent=subscription" data-namespace="paypal_sub"></script>
+    <!-- PayPal SDK for premium subscription -->
+    <script src="https://www.paypal.com/sdk/js?client-id=AdMphLDeo2qDTJ2JcFhlAhW32al2RCmKPB97TVzohEaw8GMcnW5TtF7ssNrDYI5mReC7rUQ_yDr4oIdM&vault=true&intent=subscription" data-sdk-integration-source="button-factory"></script>
     <!-- PayPal SDK for credit bundles (namespace: paypal_credit) -->
-    <script src="https://www.paypal.com/sdk/js?client-id=AYmP4Sr0rcHo8I15l50jjrb702Kjg-Qf5LsnzBd-uTM_DEDqmToDElVSxnGoZnRvX7GpEU1onKP70xqu&currency=GBP" data-namespace="paypal_credit"></script>
+    <script src="https://www.paypal.com/sdk/js?client-id=AdMphLDeo2qDTJ2JcFhlAhW32al2RCmKPB97TVzohEaw8GMcnW5TtF7ssNrDYI5mReC7rUQ_yDr4oIdM&currency=GBP" data-namespace="paypal_credit"></script>
 </head>
 <body>
 <script>
@@ -29,7 +29,7 @@
             <i class="fas fa-chevron-left"></i>
         </button>
         <div class="logo">
-            <img src="logo/tinywow_change_bg_photo_79922413 (1).png" alt="CVTailor.CC" style="width: 150px; height: auto; margin: 10px 0;">
+            <img src="logo/tinywow_change_bg_photo_79922413.png" alt="CVTailor.CC Logo" style="width: 150px; height: auto;">
         </div>
         <ul class="nav-links">
             <li onclick="window.location.href='index.html'"><i class="fas fa-home"></i><span>Home</span></li>
@@ -91,7 +91,7 @@
                     </li>
                 </ul>
                 <p style="font-size: 14px; color: #777;">Tokens can be purchased or earned.</p>
-                <p style="font-size: 15px; color: #777; margin-bottom: 10px;" id="credit-balance">Current Credits: Loading...</p>
+                <p style="font-size: 15px, color: #777; margin-bottom: 10px;" id="credit-balance">Current Credits: Loading...</p>
                  <button id="buy-credit-button" style="background: #f39c12; color: white; border: none; padding: 14px 28px; border-radius: 8px; margin-top: 10px; cursor: pointer; font-size: 17px;" onclick="buyCredit()">
                     Buy Credit
                 </button>
@@ -149,10 +149,8 @@
                 </ul>
                 <p style="font-size: 20px; color: #777; margin-bottom: 10px;">Price: £9.99/month</p>
                 <div id="premium-plan-buttons">
-                    <div id="paypal-button-container-P-9742741686212842ANAVGBIQ"></div>
-                    <button id="cancel-premium-btn" 
-                            onclick="cancelPremiumSubscription()"
-                            style="background: #e74c3c; color: white; border: none; padding: 14px 28px; border-radius: 8px; margin-top: 15px; cursor: pointer; font-size: 17px; width: 100%; display: none;">
+                    <div id="paypal-button-container-P-37218378D9133050GNAVIA7I"></div>
+                    <button id="cancel-premium-button" style="background: #e74c3c; color: white; border: none; padding: 14px 28px; border-radius: 8px; margin-top: 10px; cursor: pointer; font-size: 17px; width: 100%; display: none;">
                         Cancel Premium Plan
                     </button>
                 </div>
@@ -251,6 +249,33 @@
             }
         }
 
+        async function getPayPalAccessToken() {
+            const clientId = 'AdMphLDeo2qDTJ2JcFhlAhW32al2RCmKPB97TVzohEaw8GMcnW5TtF7ssNrDYI5mReC7rUQ_yDr4oIdM';
+            const clientSecret = 'EMakWUAaZpGai_q9BfF0zqn9Cb8YV-IoUXZTJDrRERnUVpBD28vH91aCsdN-CQGYx5Usy3JQvVQ6sCy5';
+            
+            try {
+                const auth = btoa(`${clientId}:${clientSecret}`);
+                const response = await fetch('https://api-m.sandbox.paypal.com/v1/oauth2/token', {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Basic ${auth}`,
+                        'Content-Type': 'application/x-www-form-urlencoded'
+                    },
+                    body: 'grant_type=client_credentials'
+                });
+
+                const data = await response.json();
+                if (data.access_token) {
+                    return data.access_token;
+                } else {
+                    throw new Error('Failed to get access token');
+                }
+            } catch (error) {
+                console.error('Error getting PayPal access token:', error);
+                throw error;
+            }
+        }
+
         async function cancelPlan() {
             const user = auth.currentUser;
             if (!user) {
@@ -258,18 +283,56 @@
                 return;
             }
 
+            if (!confirm('Are you sure you want to cancel your premium subscription?')) {
+                return;
+            }
+
+            const cancelButton = document.getElementById('cancel-premium-button');
+            cancelButton.disabled = true;
+            cancelButton.textContent = 'Cancelling...';
+
             try {
-                await db.collection('users').doc(user.uid).update({
-                    plan: 'free'
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                const userData = userDoc.data();
+                
+                if (!userData.subscriptionId) {
+                    alert('No active subscription found');
+                    return;
+                }
+
+                const accessToken = await getPayPalAccessToken();
+                
+                // Call PayPal API to cancel subscription
+                const response = await fetch(`https://api-m.sandbox.paypal.com/v1/billing/subscriptions/${userData.subscriptionId}/cancel`, {
+                    method: 'POST',
+                    headers: {
+                        'Authorization': `Bearer ${accessToken}`,
+                        'Content-Type': 'application/json',
+                        'Accept': 'application/json'
+                    },
+                    body: JSON.stringify({
+                        "reason": "Customer requested cancellation"
+                    })
                 });
 
-                alert('Plan cancelled successfully!');
-                updateCreditDisplay(); // Update button text and onclick
-                highlightSelectedPlan('free');
-                window.location.reload();
+                if (response.status === 204) {
+                    // Update user's plan in Firebase
+                    await db.collection('users').doc(user.uid).update({
+                        plan: 'free',
+                        subscriptionStatus: 'CANCELLED',
+                        subscriptionCancelDate: Date.now()
+                    });
+
+                    alert('Subscription cancelled successfully!');
+                    window.location.reload();
+                } else {
+                    throw new Error('Failed to cancel PayPal subscription');
+                }
             } catch (error) {
-                console.error('Error cancelling plan:', error);
-                alert('Failed to cancel plan. Please try again.');
+                console.error('Error cancelling subscription:', error);
+                alert('Failed to cancel subscription. Please try again.');
+                cancelButton.disabled = false;
+                cancelButton.textContent = 'Cancel Premium Plan';
             }
         }
 
@@ -450,7 +513,7 @@
 
         // Render PayPal subscription button for premium plan
         function renderPremiumSubscriptionButton() {
-            paypal_sub.Buttons({
+            paypal.Buttons({
                 style: {
                     shape: 'rect',
                     color: 'gold',
@@ -464,7 +527,7 @@
                         return;
                     }
                     return actions.subscription.create({
-                        plan_id: 'P-9742741686212842ANAVGBIQ',
+                        plan_id: 'P-37218378D9133050GNAVIA7I',
                         custom_id: user.uid
                     });
                 },
@@ -485,15 +548,30 @@
                     console.error('PayPal error:', err);
                     alert('Payment error occurred');
                 }
-            }).render('#paypal-button-container-P-9742741686212842ANAVGBIQ');
+            }).render('#paypal-button-container-P-37218378D9133050GNAVIA7I');
         }
 
         // Render PayPal credit buttons for credit bundles
         function initPayPalButtons() {
             const buttonConfigs = [
-                { containerId: 'paypal-button-50', amount: '1.00', credits: 50 },
-                { containerId: 'paypal-button-100', amount: '1.00', credits: 100, hostedPaymentLink: 'https://www.paypal.com/ncp/payment/B34K8WUQXKJ3J' },
-                { containerId: 'paypal-button-200', amount: '1.00', credits: 200, hostedPaymentLink: 'https://www.paypal.com/ncp/payment/7ADVBCQCVURVA' }
+                { 
+                    containerId: 'paypal-button-50', 
+                    amount: '3.99', 
+                    credits: 50,
+                    hostedPaymentLink: 'https://www.sandbox.paypal.com/ncp/payment/AV9BZWCVS8CRE'
+                },
+                { 
+                    containerId: 'paypal-button-100', 
+                    amount: '6.99', 
+                    credits: 100, 
+                    hostedPaymentLink: 'https://www.sandbox.paypal.com/ncp/payment/NJHYPGGY9AVZG'
+                },
+                { 
+                    containerId: 'paypal-button-200', 
+                    amount: '12.99', 
+                    credits: 200, 
+                    hostedPaymentLink: 'https://www.sandbox.paypal.com/ncp/payment/EMMLR6TNK9APE'
+                }
             ];
 
             buttonConfigs.forEach(config => {
@@ -519,6 +597,7 @@
                         if (details.status === 'COMPLETED') {
                             const user = auth.currentUser;
                             if (user) {
+                                // Update the credits in Firestore
                                 await db.collection('users').doc(user.uid).update({
                                     credits: firebase.firestore.FieldValue.increment(config.credits),
                                     transactions: firebase.firestore.FieldValue.arrayUnion({
@@ -528,8 +607,17 @@
                                         timestamp: Date.now()
                                     })
                                 });
+
+                                // Fetch the updated user document to get the new credit balance
+                                const updatedUserDoc = await db.collection('users').doc(user.uid).get();
+                                const updatedUserData = updatedUserDoc.data();
+                                userCredits = updatedUserData.credits || 0;
+
+                                // Update the credit displays
+                                document.getElementById('credit-balance').textContent = `Current Credits: ${userCredits}`;
+                                updateCreditDisplayInButton(userCredits);
+
                                 alert(`Successfully added ${config.credits} credits!`);
-                                updateCreditDisplay();
                             }
                         }
                     } catch (err) {
@@ -556,62 +644,24 @@
         }
     });
 
-    // Add cancel subscription function
-    async function cancelPremiumSubscription() {
-        if (!confirm('Are you sure you want to cancel your premium subscription?')) {
-            return;
-        }
-
-        const user = auth.currentUser;
-        if (!user) return;
-
-        try {
-            const userDoc = await db.collection('users').doc(user.uid).get();
-            const userData = userDoc.data();
-            
-            if (!userData.subscriptionId) {
-                throw new Error('No active subscription found');
-            }
-
-            // Cancel PayPal subscription
-            await paypal_sub.Subscription.revise(userData.subscriptionId, {
-                status: 'CANCELLED'
-            });
-
-            // Update user's subscription status in Firebase
-            await db.collection('users').doc(user.uid).update({
-                plan: 'free',
-                subscriptionId: null,
-                subscriptionStatus: 'CANCELLED',
-                cancelDate: Date.now()
-            });
-
-            alert('Your premium subscription has been cancelled.');
-            window.location.reload();
-        } catch (error) {
-            console.error('Error:', error);
-            alert('Failed to cancel subscription. Please try again.');
-        }
-    }
-
-    // Update auth state change listener
+    // Update the auth state change listener to handle button visibility
     auth.onAuthStateChanged(async (user) => {
         if (user) {
             const userDoc = await db.collection('users').doc(user.uid).get();
             if (userDoc.exists) {
                 const userData = userDoc.data();
-                const cancelBtn = document.getElementById('cancel-premium-btn');
-                const paypalContainer = document.getElementById('paypal-button-container-P-9742741686212842ANAVGBIQ');
+                const paypalContainer = document.getElementById('paypal-button-container-P-37218378D9133050GNAVIA7I');
+                const cancelButton = document.getElementById('cancel-premium-button');
                 
                 if (userData.plan === 'premium' && userData.subscriptionId) {
-                    cancelBtn.style.display = 'block';
                     paypalContainer.style.display = 'none';
+                    cancelButton.style.display = 'block';
+                    cancelButton.onclick = cancelPlan;
                 } else {
-                    cancelBtn.style.display = 'none';
                     paypalContainer.style.display = 'block';
+                    cancelButton.style.display = 'none';
                 }
             }
-            // ...rest of existing auth state handler code...
         }
     });
     </script>
