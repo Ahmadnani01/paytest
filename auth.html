@@ -1,252 +1,358 @@
-<!DOCTYPE html>
 <html>
+  <head>
+    <link rel="preconnect" href="https://fonts.gstatic.com/" crossorigin="" />
+    <link
+      rel="stylesheet"
+      as="style"
+      onload="this.rel='stylesheet'"
+      href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B700%3B900&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900"
+    />
 
-<head>
-    <title>Authentication</title>
-    <style>
-        body {
-            font-family: Arial, sans-serif;
-            background-color: #f5f6fa;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            height: 100vh;
-            margin: 0;
-        }
+    <title>Stitch Design</title>
+    <link rel="icon" type="image/x-icon" href="data:image/x-icon;base64," />
 
-        .auth-container {
-            width: 400px;
-            padding: 30px;
-            background-color: #fff;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
-        }
-
-        h1 {
-            text-align: center;
-            color: #2c3e50;
-            margin-bottom: 20px;
-        }
-
-        label {
-            display: block;
-            margin-bottom: 8px;
-            color: #2c3e50;
-            font-weight: bold;
-        }
-
-        input[type="text"],
-        input[type="password"],
-        input[type="email"] {
-            width: 100%;
-            padding: 10px;
-            margin-bottom: 15px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            box-sizing: border-box;
-            font-size: 14px;
-        }
-
-        .error-message {
-            color: red;
-        }
-
-        button {
-            background-color: #f0f0f0;
-            color: #2c3e50;
-            padding: 10px 20px;
-            border: 1px solid #ccc;
-            border-radius: 4px;
-            cursor: pointer;
-            width: 100%;
-            font-size: 16px;
-            transition: background-color 0.3s ease;
-        }
-
-        button:hover {
-            background-color: #e0e0e0;
-        }
-
-        .button-container {
-            display: flex;
-            justify-content: space-around;
-            margin-bottom: 20px;
-        }
-
-        .form-container {
-            display: none;
-        }
-
-        .form-container.active {
-            display: block;
-        }
-    </style>
-</head>
-<body>
-    <div class="auth-container">
-        <h1>Authentication</h1>
-        <div class="button-container">
-            <button onclick="showForm('login')">Login</button>
-            <button onclick="showForm('signup')">Signup</button>
+    <script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" integrity="sha512-9usAa10IRO0HhonpyAIVpjrylPvoDwiPUiKdWk5t3PyolY1cOd4DSE0Ga+ri4AuTroPR5aQvXU9xC6qOPnzFeg==" crossorigin="anonymous" referrerpolicy="no-referrer" />
+  </head>
+  <body>
+    <div class="relative flex size-full min-h-screen flex-col bg-gray-50 group/design-root overflow-x-hidden" style='font-family: Inter, "Noto Sans", sans-serif;'>
+      <div class="layout-container flex h-full grow flex-col">
+        <header class="flex items-center justify-between whitespace-nowrap border-b border-solid border-b-[#ebedf0] px-10 py-3">
+          <div class="flex items-center gap-4 text-[#121417]">
+            <h2 class="text-[#121417] text-lg font-bold leading-tight tracking-[-0.015em]">CVtailor.uk</h2>
+          </div>
+          <div class="flex flex-1 justify-end gap-8">
+            <div class="flex items-center gap-9">
+              <a class="text-[#121417] text-sm font-medium leading-normal" href="#">Features</a>
+              <a class="text-[#121417] text-sm font-medium leading-normal" href="#">Templates</a>
+              <a class="text-[#121417] text-sm font-medium leading-normal" href="#">Pricing</a>
+              <a class="text-[#121417] text-sm font-medium leading-normal" href="#">Contact</a>
+            </div>
+            <div class="flex gap-2">
+              <button
+                class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 bg-[#213345] text-gray-50 text-sm font-bold leading-normal tracking-[0.015em]"
+              >
+                <span class="truncate">Create My Resume</span>
+              </button>
+              <button
+                class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 bg-[#ebedf0] text-[#121417] text-sm font-bold leading-normal tracking-[0.015em]"
+                onclick="window.location.href='signin.html';"
+              >
+                <span class="truncate">Login</span>
+              </button>
+            </div>
+          </div>
+        </header>
+        <div class="px-40 flex flex-1 justify-center py-5">
+          <div class="layout-content-container flex flex-col max-w-[960px] flex-1">
+            <div class="@container">
+              <div class="@[480px]:p-4">
+                <div
+                  class="flex min-h-[480px] flex-col gap-6 bg-cover bg-center bg-no-repeat @[480px]:gap-8 @[480px]:rounded-xl items-start justify-end px-4 pb-10 @[480px]:px-10"
+                  style='background-image: linear-gradient(rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.4) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuDDOrInN9GKLazcY-K5tkzbKTdKYRGU-lt-Xmb4dJDhAYRklG6mWVGtMrbMBEibx1jcjFGuMq2X2wkQ-8qhhsYObNixwAJxmBJEfVz18_66t2GgITiw6qesiBgsuvOTMA5BzvP6T6oKvEI_dEchJ_KdUDnyiKkWixKcGxjwzrElT5ywyAQpAo0F-1mMzyS9clCHoNMMfFduOqI_kOSFWqX5xGjQQRsAJ5cQ5oQQkyG_qMSQ8FSi30yNv_Dvbb-tXoRDShOQNef7bsM");'
+                >
+                  <div class="flex flex-col gap-2 text-left">
+                    <h1
+                      class="text-white text-4xl font-black leading-tight tracking-[-0.033em] @[480px]:text-5xl @[480px]:font-black @[480px]:leading-tight @[480px]:tracking-[-0.033em]"
+                    >
+                      Craft a Resume That Gets You Hired in the UK
+                    </h1>
+                    <h2 class="text-white text-sm font-normal leading-normal @[480px]:text-base @[480px]:font-normal @[480px]:leading-normal">
+                      CVtailor.uk helps you create a professional resume that highlights your skills and experience, making you stand out to potential employers in the UK job
+                      market.
+                    </h2>
+                  </div>
+                  <button
+                    class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 @[480px]:h-12 @[480px]:px-5 bg-[#213345] text-gray-50 text-sm font-bold leading-normal tracking-[0.015em] @[480px]:text-base @[480px]:font-bold @[480px]:leading-normal @[480px]:tracking-[0.015em]"
+                  >
+                    <span class="truncate">Start Creating</span>
+                  </button>
+                </div>
+              </div>
+            </div>
+            <div class="flex flex-col gap-10 px-4 py-10 @container">
+              <div class="flex flex-col gap-4">
+                <h1
+                  class="text-[#121417] tracking-light text-[32px] font-bold leading-tight @[480px]:text-4xl @[480px]:font-black @[480px]:leading-tight @[480px]:tracking-[-0.033em] max-w-[720px]"
+                >
+                  Key Features
+                </h1>
+                <p class="text-[#121417] text-base font-normal leading-normal max-w-[720px]">
+                  CVtailor.uk offers a range of features designed to help you create a standout resume and navigate the UK job market effectively.
+                </p>
+              </div>
+              <div class="grid grid-cols-[repeat(auto-fit,minmax(158px,1fr))] gap-3 p-0">
+                <div class="flex flex-1 gap-3 rounded-lg border border-[#d6dbe0] bg-gray-50 p-4 flex-col">
+                  <div class="text-[#121417]" data-icon="File" data-size="24px" data-weight="regular">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                      <path
+                        d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Z"
+                      ></path>
+                    </svg>
+                  </div>
+                  <div class="flex flex-col gap-1">
+                    <h2 class="text-[#121417] text-base font-bold leading-tight">Professional Templates</h2>
+                    <p class="text-[#637383] text-sm font-normal leading-normal">
+                      Choose from a variety of professionally designed templates to suit your industry and experience level in the UK.
+                    </p>
+                  </div>
+                </div>
+                <div class="flex flex-1 gap-3 rounded-lg border border-[#d6dbe0] bg-gray-50 p-4 flex-col">
+                  <div class="text-[#121417]" data-icon="PencilSimple" data-size="24px" data-weight="regular">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                      <path
+                        d="M227.31,73.37,182.63,28.68a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H92.69A15.86,15.86,0,0,0,104,219.31L227.31,96a16,16,0,0,0,0-22.63ZM92.69,208H48V163.31l88-88L180.69,120ZM192,108.68,147.31,64l24-24L216,84.68Z"
+                      ></path>
+                    </svg>
+                  </div>
+                  <div class="flex flex-col gap-1">
+                    <h2 class="text-[#121417] text-base font-bold leading-tight">Easy Customization</h2>
+                    <p class="text-[#637383] text-sm font-normal leading-normal">
+                      Easily customize your resume with our user-friendly editor, ensuring your resume reflects your unique qualifications for the UK market.
+                    </p>
+                  </div>
+                </div>
+                <div class="flex flex-1 gap-3 rounded-lg border border-[#d6dbe0] bg-gray-50 p-4 flex-col">
+                  <div class="text-[#121417]" data-icon="Envelope" data-size="24px" data-weight="regular">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                      <path
+                        d="M224,48H32a8,8,0,0,0-8,8V192a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A8,8,0,0,0,224,48Zm-96,85.15L52.57,64H203.43ZM98.71,128,40,181.81V74.19Zm11.84,10.85,12,11.05a8,8,0,0,0,10.82,0l12-11.05,58,53.15H52.57ZM157.29,128,216,74.18V181.82Z"
+                      ></path>
+                    </svg>
+                  </div>
+                  <div class="flex flex-col gap-1">
+                    <h2 class="text-[#121417] text-base font-bold leading-tight">Tailored Outreach Emails</h2>
+                    <p class="text-[#637383] text-sm font-normal leading-normal">
+                      Craft personalized outreach emails to accompany your resume, increasing your chances of getting noticed by UK employers.
+                    </p>
+                  </div>
+                </div>
+                <div class="flex flex-1 gap-3 rounded-lg border border-[#d6dbe0] bg-gray-50 p-4 flex-col">
+                  <div class="text-[#121417]" data-icon="Question" data-size="24px" data-weight="regular">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                      <path
+                        d="M140,180a12,12,0,1,1-12-12A12,12,0,0,1,140,180ZM128,72c-22.06,0-40,16.15-40,36v4a8,8,0,0,0,16,0v-4c0-11,10.77-20,24-20s24,9,24,20-10.77,20-24,20a8,8,0,0,0-8,8v8a8,8,0,0,0,16,0v-.72c18.24-3.35,32-17.9,32-35.28C168,88.15,150.06,72,128,72Zm104,56A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"
+                      ></path>
+                    </svg>
+                  </div>
+                  <div class="flex flex-col gap-1">
+                    <h2 class="text-[#121417] text-base font-bold leading-tight">Common Interview Questions</h2>
+                    <p class="text-[#637383] text-sm font-normal leading-normal">
+                      Access a curated list of commonly asked interview questions in the UK, helping you prepare thoroughly.
+                    </p>
+                  </div>
+                </div>
+                <div class="flex flex-1 gap-3 rounded-lg border border-[#d6dbe0] bg-gray-50 p-4 flex-col">
+                  <div class="text-[#121417]" data-icon="MapPin" data-size="24px" data-weight="regular">
+                    <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
+                      <path
+                        d="M128,64a40,40,0,1,0,40,40A40,40,0,0,0,128,64Zm0,64a24,24,0,1,1,24-24A24,24,0,0,1,128,128Zm0-112a88.1,88.1,0,0,0-88,88c0,31.4,14.51,64.68,42,96.25a254.19,254.19,0,0,0,41.45,38.3,8,8,0,0,0,9.18,0A254.19,254.19,0,0,0,174,200.25c27.45-31.57,42-64.85,42-96.25A88.1,88.1,0,0,0,128,16Zm0,206c-16.53-13-72-60.75-72-118a72,72,0,0,1,144,0C200,161.23,144.53,209,128,222Z"
+                      ></path>
+                    </svg>
+                  </div>
+                  <div class="flex flex-col gap-1">
+                    <h2 class="text-[#121417] text-base font-bold leading-tight">Regional Job Opportunities</h2>
+                    <p class="text-[#637383] text-sm font-normal leading-normal">
+                      Explore job opportunities specific to different regions within the UK, ensuring you find the right fit.
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <h2 class="text-[#121417] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Job Board</h2>
+            <div class="p-4">
+              <div class="flex items-stretch justify-between gap-4 rounded-xl">
+                <div class="flex flex-[2_2_0px] flex-col gap-4">
+                  <div class="flex flex-col gap-1">
+                    <p class="text-[#121417] text-base font-bold leading-tight">Latest Job Listings Across the UK</p>
+                    <p class="text-[#637383] text-sm font-normal leading-normal">
+                      Browse up-to-date job listings from various industries and locations across the UK. Find your next career opportunity with CVtailor.uk.
+                    </p>
+                  </div>
+                  <button
+                    class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-8 px-4 flex-row-reverse bg-[#ebedf0] text-[#121417] text-sm font-medium leading-normal w-fit"
+                  >
+                    <span class="truncate">View Job Listings</span>
+                  </button>
+                </div>
+                <div
+                  class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-xl flex-1"
+                  style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAjTJx1g8BdOLc-yKCELLHu4WKWmyBdZ5GxEJGWSCmqxSbm_59t2U7rv8bS4f7ctk7zqi5Eip4zTy1boFjMvwOjakQwLhDkQJxit-OKqYx4rMRfbiVKNpmDhnci11sOBapgPvgXsunrrJIGqJCNEi9sewDhKtG7w_KuT6bNl8BPy4hGtvna59qfpfIFL5cHG4jpALBgEJ_UXtSR-osLGTu2arUTV4VeVl8x8taJUge18qC7PPbPeFy-qJ7Me5nA6nrsl0P0pVGpwqo");'
+                ></div>
+              </div>
+            </div>
+            <h2 class="text-[#121417] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Market Insights</h2>
+            <div class="p-4">
+              <div class="flex items-stretch justify-between gap-4 rounded-xl">
+                <div class="flex flex-[2_2_0px] flex-col gap-4">
+                  <div class="flex flex-col gap-1">
+                    <p class="text-[#121417] text-base font-bold leading-tight">UK Job Market Trends and Resources</p>
+                    <p class="text-[#637383] text-sm font-normal leading-normal">
+                      Stay informed about the latest job market trends in the UK. Access valuable resources and insights to help you make informed career decisions.
+                    </p>
+                  </div>
+                  <button
+                    class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-8 px-4 flex-row-reverse bg-[#ebedf0] text-[#121417] text-sm font-medium leading-normal w-fit"
+                  >
+                    <span class="truncate">Explore Market Insights</span>
+                  </button>
+                </div>
+                <div
+                  class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-xl flex-1"
+                  style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA6kEy56o-ONXK9MBCf10SUaw-A24QpibApDqKbYsLM8aCVqZtran4LSY0Rb-7MqXePOn6UsxoT0qDw3LyVq1cvcwo98qLEfwY-sleg0KeXpewOgM7quHNHjaiOuO31u2PeDdk1rJy4fOKfbIpP_gvAA_BiObALlFJbMKSkeygRt1VlvODLBdZkJqfYbgkpaFnGsuWDNJv4tRcbURBM3HA_EUImblDjjpwrW0ABRwVqChZW2UYShrcoQnzJtXUW7sPOzglluDAYYRc");'
+                ></div>
+              </div>
+            </div>
+            <h2 class="text-[#121417] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Testimonials</h2>
+            <div class="flex overflow-y-auto [-ms-scrollbar-style:none] [scrollbar-width:none] [&amp;::-webkit-scrollbar]:hidden">
+              <div class="flex items-stretch p-4 gap-3">
+                <div class="flex h-full flex-1 flex-col gap-4 rounded-lg min-w-60">
+                  <div
+                    class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-xl flex flex-col"
+                    style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA89YUzBbSbDDtwJ1hkM3-ngdZCqkOA_NMJwx-HXCS3zbOxbpPziccVTGC9m1ed3JpF3T1bvxtnFPX3WNtofcOtY6iKMtuiM3ii7ad_KLaZCSNrZUQr34FDWav7NJN8weUvYLKXc_Hr7Wz0d0AYUXOJF5ihJt0fPZk-sVGWwSIiRmhna8YuwLi2PPqlETdNdDWrdVDCgPtgOJldtqvkTOZvIpm7m4ULpE2FXxdsP1mMku2H1IsYs2YH5WoQvCJe-EaadxoFiYRx_D4");'
+                  ></div>
+                  <div>
+                    <p class="text-[#121417] text-base font-medium leading-normal">
+                      "CVtailor.uk helped me land my dream job in London! The templates are modern and easy to use, and I was able to create a professional resume in minutes."
+                    </p>
+                    <p class="text-[#637383] text-sm font-normal leading-normal">Olivia Bennett, Marketing Manager</p>
+                  </div>
+                </div>
+                <div class="flex h-full flex-1 flex-col gap-4 rounded-lg min-w-60">
+                  <div
+                    class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-xl flex flex-col"
+                    style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAQKL1OOJoQi-iTk43jEjj6ntJENLU8x2KiGtydY5l-7PzZGKE243IrdurZrUwWftveRZF8XpX4eVBe70TwjUvSfZjKjz4SGLG3f23aKYepGtTumlnnACxXj6_T_quhMIT7ZnyygtbjK1tnWb9ybsI5m55Sv7-l5bqDKT0eR9Vtr_Z3mo3L_usEsIARskUbYojtKXxOmb2MRl0mBjKD3VWypzRdZdEW_RTXEJiZTs8Z6BpjeASYOMJ4wYe7LNNu6HLto9kCT3Arpas");'
+                  ></div>
+                  <div>
+                    <p class="text-[#121417] text-base font-medium leading-normal">
+                      "I was struggling to update my resume for the UK market until I found CVtailor.uk. The customization options are fantastic, and I love that I can tailor my
+                      application to specific regions."
+                    </p>
+                    <p class="text-[#637383] text-sm font-normal leading-normal">Ethan Davies, Software Engineer</p>
+                  </div>
+                </div>
+                <div class="flex h-full flex-1 flex-col gap-4 rounded-lg min-w-60">
+                  <div
+                    class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-xl flex flex-col"
+                    style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBOClLv2GkUJo1G5SrrKAiLalIZrT8T2eUFPsTZR-wbsXGTFP3NZXZYOHErV70LeaoSsSxku8mXktqYPrQ0wy2ZBVe35k7txohD8LnCQMM8LkgfmjU8ePLUbkOluMzlkDUQSc9jz4CRqVQ1nU1To7quw3rmtx2lqO-Qrcfo5LMFdohUqOXO1zRoUztC-dNQUiHDIF6fifs7BTjdN2JsMEKrn8KFYFcAv1L8NurvgTiWeZcwhIis5Gvn21qoJYiCtEhzeQO_RfzuM6g");'
+                  ></div>
+                  <div>
+                    <p class="text-[#121417] text-base font-medium leading-normal">
+                      "The support team at CVtailor.uk is amazing. They helped me choose the right template for my industry, and I got an interview within a week of applying."
+                    </p>
+                    <p class="text-[#637383] text-sm font-normal leading-normal">Chloe Walker, Project Coordinator</p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <div class="@container">
+              <div class="flex flex-col justify-end gap-6 px-4 py-10 @[480px]:gap-8 @[480px]:px-10 @[480px]:py-20">
+                <div class="flex flex-col gap-2 text-center">
+                  <h1
+                    class="text-[#121417] tracking-light text-[32px] font-bold leading-tight @[480px]:text-4xl @[480px]:font-black @[480px]:leading-tight @[480px]:tracking-[-0.033em] max-w-[720px]"
+                  >
+                    Ready to Take the Next Step in Your UK Career?
+                  </h1>
+                </div>
+                <div class="flex flex-1 justify-center">
+                  <div class="flex justify-center">
+                    <button
+                      class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 @[480px]:h-12 @[480px]:px-5 bg-[#213345] text-gray-50 text-sm font-bold leading-normal tracking-[0.015em] @[480px]:text-base @[480px]:font-bold @[480px]:leading-normal @[480px]:tracking-[0.015em] grow"
+                    >
+                      <span class="truncate">Create My Resume</span>
+                    </button>
+                  </div>
+                </div>
+              </div>
+            </div>
+          </div>
         </div>
-        <button onclick="signInWithGoogle()">Sign up with Google</button>
-
-        <div id="login-form" class="form-container">
-            <h2>Login</h2>
-            <form id="login-form-submit">
-                <label for="login-email">Email:</label>
-                <input type="email" id="login-email" name="login-email">
-                <label for="login-password">Password:</label>
-                <input type="password" id="login-password" name="login-password">
-                <p id="login-error-message" class="error-message"></p>
-                <button type="submit">Login</button>
-            </form>
-        </div>
-
-        <div id="signup-form" class="form-container">
-            <h2>Signup</h2>
-            <form id="signup-form-submit">
-                <label for="signup-firstname">First Name:</label>
-                <input type="text" id="signup-firstname" name="signup-firstname">
-                <label for="signup-lastname">Last Name:</label>
-                <input type="text" id="signup-lastname" name="signup-lastname">
-                
-                <label for="signup-email">Email:</label>
-                <input type="email" id="signup-email" name="signup-email">
-                <label for="signup-password">Password:</label>
-                <input type="password" id="signup-password" name="signup-password">
-                <label for="signup-confirm-password">Confirm Password:</label>
-                <input type="password" id="signup-confirm-password" name="signup-confirm-password">
-                <button type="submit">Signup</button>
-                <p id="signup-error-message" class="error-message"></p>
-            </form>
-            <p id="success-message" style="display:none; color: green;">Welcome!</p>
-        </div>
-
+      </div>
     </div>
+  <footer class="footer">
+    <div class="footer-content">
+      <div class="footer-logo">
+        <img src="logo /tinywow_change_bg_photo_79922413 (1).png" alt="Logo" style="height: 100px;">
+      </div>
+      <div class="footer-contact">
+        <p><a href="mailto:grh@cvtailor.uk">grg@cvtailor.uk</a></p>
+        <p><a href="https://cvtailor.cc">cvtailor.cc</a></p>
+      </div>
+      <div class="footer-button">
+        <button>Contact Us</button>
+      </div>
+    </div>
+    <div class="footer-bottom">
+      <p>© cvtailor.cc 2021</p>
+      <div class="footer-social">
+        <a href="#"><i class="fab fa-twitter"></i></a>
+        <a href="#"><i class="fab fa-linkedin"></i></a>
+        <a href="#"><i class="fab fa-whatsapp"></i></a>
+      </div>
+    </div>
+  </footer>
+  <style>
+    .footer {
+      background-color: #333;
+      color: white;
+    }
 
-    <script>
-        const loginForm = document.getElementById('login-form');
-        const signupForm = document.getElementById('signup-form');
+    .footer-content {
+      display: flex;
+      justify-content: space-around;
+      align-items: center;
+      padding: 20px;
+      background-color: #444;
+    }
 
-        loginForm.style.display = 'none';
-        signupForm.style.display = 'none';
+    .footer-logo {
+      display: flex;
+      align-items: center;
+    }
 
-        function showForm(formId) {
-            loginForm.style.display = 'none';
-            signupForm.style.display = 'none';
+    .footer-logo img {
+      margin-right: 10px;
+    }
 
-            document.getElementById(formId + '-form').style.display = 'block';
-        }
+    .footer-contact {
+      text-align: center;
+    }
 
-    </script>
-    <!-- Add Firebase SDKs -->
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
-    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-analytics-compat.js"></script>
-    <script>
-        // Firebase configuration
-        const firebaseConfig = {
-          apiKey: "AIzaSyCCoH_alBrRE_LrrE_nR-edbJXqy1pjfCU",
-          authDomain: "quick-test-aac28.firebaseapp.com",
-          projectId: "quick-test-aac28",
-          storageBucket: "quick-test-aac28.firebasestorage.app",
-          messagingSenderId: "892247718936",
-          appId: "1:892247718936:web:e74b78c6897ef081e3d76d",
-          measurementId: "G-0KXC6TQCEE"
-        };
+    .footer-contact a {
+      color: white;
+      text-decoration: none;
+    }
 
-        // Initialize Firebase
-        const app = firebase.initializeApp(firebaseConfig);
-        const analytics = firebase.analytics();
-        const auth = firebase.auth();
-        const db = firebase.firestore();
+    .footer-button button {
+      background-color: #555;
+      color: white;
+      border: none;
+      padding: 10px 20px;
+      cursor: pointer;
+    }
 
-        // Get the form submission elements
-        const loginSubmitForm = document.getElementById('login-form-submit');
-        const signupSubmitForm = document.getElementById('signup-form-submit');
+    .footer-bottom {
+      background-color: #222;
+      padding: 10px;
+      text-align: center;
+    }
 
-        // Function to handle form submissions
-        function handleFormSubmit(event, formType) {
-            event.preventDefault();
+    .footer-social {
+      display: flex;
+      justify-content: flex-end;
+    }
 
-            // Get form values based on form type
-            const email = document.getElementById(`${formType}-email`).value;
-            const password = document.getElementById(`${formType}-password`).value;
-            const errorMessage = document.getElementById(`${formType}-error-message`);
-            
-            errorMessage.textContent = ''; // Clear previous errors
-
-            if (formType === 'signup') {
-              
-                firebase.auth().createUserWithEmailAndPassword(email, password)
-                    .then((userCredential) => {
-                        // Signed up
-                        const user = userCredential.user;
-                        console.log('User signed up:', user);
-                        document.getElementById('success-message').style.display = 'block';
-                        // Redirect or handle success
-                        // Save user data to Firestore
-                        const firstName = document.getElementById('signup-firstname').value;
-                        const lastName = document.getElementById('signup-lastname').value;
-                        const email = document.getElementById('signup-email').value;
-                        
-                        db.collection('users').doc(user.uid).set({
-                            firstName: firstName,
-                            lastName: lastName,
-                            email: email,
-                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
-                            plan: 'free',
-                            tokenBalance: 100
-
-                        })
-                        .then(() => {
-                            window.location.href = 'index.html';
-                        })
-                        .catch((error) => {
-                            console.error('Error saving user data:', error);
-                        });
-                    })
-                    .catch((error) => {
-                        console.error('Signup error:', error);
-                        errorMessage.textContent = 'Signup failed: ' + error.message;
-                    });
-            } else if (formType === 'login') {
-                firebase.auth().signInWithEmailAndPassword(email, password)
-                    .then((userCredential) => {
-                        // Signed in
-                        const user = userCredential.user;
-                        console.log('User logged in:', user);
-                        // Redirect after successful login
-                        window.location.href = 'index.html';
-                    })
-                    .catch((error) => {
-                        console.error('Login error:', error);
-                        errorMessage.textContent = 'Login failed: ' + error.message;
-                    });
-            }
-        }
-
-        // Google Sign-In implementation
-        async function signInWithGoogle() {
-            const provider = new firebase.auth.GoogleAuthProvider();
-            try {
-                const result = await firebase.auth().signInWithPopup(provider);
-                const user = result.user;
-                console.log('Google sign-in success:', user);
-                window.location.href = 'index.html';
-            } catch (error) {
-                console.error('Google sign-in error:', error);
-                alert('Google sign-in failed: ' + error.message);
-            }
-        }
-
-        // Add event listeners for form submissions
-        loginSubmitForm.addEventListener('submit', (event) => handleFormSubmit(event, 'login'));
-        signupSubmitForm.addEventListener('submit', (event) => handleFormSubmit(event, 'signup'));
-
-    </script>
-</body>
-
+    .footer-social a {
+      display: inline-block;
+      margin-left: 10px;
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+      background-color: #555;
+      color: white;
+      text-align: center;
+      line-height: 30px;
+    }
+  </style>
+  </body>
 </html>
