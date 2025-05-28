@@ -1,0 +1,251 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <title>Authentication</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #f5f6fa;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            margin: 0;
+        }
+
+        .auth-container {
+            width: 400px;
+            padding: 30px;
+            background-color: #fff;
+            border-radius: 8px;
+            box-shadow: 0 2px 4px rgba(0, 0, 0, 0.1);
+        }
+
+        h1 {
+            text-align: center;
+            color: #2c3e50;
+            margin-bottom: 20px;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 8px;
+            color: #2c3e50;
+            font-weight: bold;
+        }
+
+        input[type="text"],
+        input[type="password"],
+        input[type="email"] {
+            width: 100%;
+            padding: 10px;
+            margin-bottom: 15px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            box-sizing: border-box;
+            font-size: 14px;
+        }
+
+        .error-message {
+            color: red;
+        }
+
+        button {
+            background-color: #f0f0f0;
+            color: #2c3e50;
+            padding: 10px 20px;
+            border: 1px solid #ccc;
+            border-radius: 4px;
+            cursor: pointer;
+            width: 100%;
+            font-size: 16px;
+            transition: background-color 0.3s ease;
+        }
+
+        button:hover {
+            background-color: #e0e0e0;
+        }
+
+        .button-container {
+            display: flex;
+            justify-content: space-around;
+            margin-bottom: 20px;
+        }
+
+        .form-container {
+            display: none;
+        }
+
+        .form-container.active {
+            display: block;
+        }
+    </style>
+</head>
+<body>
+    <div class="auth-container">
+        <h1>Authentication</h1>
+        <div class="button-container">
+            <button onclick="showForm('login')">Login</button>
+            <button onclick="showForm('signup')">Signup</button>
+        </div>
+        <button onclick="signInWithGoogle()">Sign up with Google</button>
+
+        <div id="login-form" class="form-container">
+            <h2>Login</h2>
+            <form id="login-form-submit">
+                <label for="login-email">Email:</label>
+                <input type="email" id="login-email" name="login-email">
+                <label for="login-password">Password:</label>
+                <input type="password" id="login-password" name="login-password">
+                <p id="login-error-message" class="error-message"></p>
+                <button type="submit">Login</button>
+            </form>
+        </div>
+
+        <div id="signup-form" class="form-container">
+            <h2>Signup</h2>
+            <form id="signup-form-submit">
+                <label for="signup-firstname">First Name:</label>
+                <input type="text" id="signup-firstname" name="signup-firstname">
+                <label for="signup-lastname">Last Name:</label>
+                <input type="text" id="signup-lastname" name="signup-lastname">
+                
+                <label for="signup-email">Email:</label>
+                <input type="email" id="signup-email" name="signup-email">
+                <label for="signup-password">Password:</label>
+                <input type="password" id="signup-password" name="signup-password">
+                <label for="signup-confirm-password">Confirm Password:</label>
+                <input type="password" id="signup-confirm-password" name="signup-confirm-password">
+                <button type="submit">Signup</button>
+                <p id="signup-error-message" class="error-message"></p>
+            </form>
+            <p id="success-message" style="display:none; color: green;">Welcome!</p>
+        </div>
+
+    </div>
+
+    <script>
+        const loginForm = document.getElementById('login-form');
+        const signupForm = document.getElementById('signup-form');
+
+        loginForm.style.display = 'none';
+        signupForm.style.display = 'none';
+
+        function showForm(formId) {
+            loginForm.style.display = 'none';
+            signupForm.style.display = 'none';
+
+            document.getElementById(formId + '-form').style.display = 'block';
+        }
+
+    </script>
+    <!-- Add Firebase SDKs -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-analytics-compat.js"></script>
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+          apiKey: "AIzaSyCCoH_alBrRE_LrrE_nR-edbJXqy1pjfCU",
+          authDomain: "quick-test-aac28.firebaseapp.com",
+          projectId: "quick-test-aac28",
+          storageBucket: "quick-test-aac28.firebasestorage.app",
+          messagingSenderId: "892247718936",
+          appId: "1:892247718936:web:e74b78c6897ef081e3d76d",
+          measurementId: "G-0KXC6TQCEE"
+        };
+
+        // Initialize Firebase
+        const app = firebase.initializeApp(firebaseConfig);
+        const analytics = firebase.analytics();
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Get the form submission elements
+        const loginSubmitForm = document.getElementById('login-form-submit');
+        const signupSubmitForm = document.getElementById('signup-form-submit');
+
+        // Function to handle form submissions
+        function handleFormSubmit(event, formType) {
+            event.preventDefault();
+
+            // Get form values based on form type
+            const email = document.getElementById(`${formType}-email`).value;
+            const password = document.getElementById(`${formType}-password`).value;
+            const errorMessage = document.getElementById(`${formType}-error-message`);
+            
+            errorMessage.textContent = ''; // Clear previous errors
+
+            if (formType === 'signup') {
+                firebase.auth().createUserWithEmailAndPassword(email, password)
+                    .then((userCredential) => {
+                        const user = userCredential.user;
+                        console.log('User signed up:', user);
+                        document.getElementById('success-message').style.display = 'block';
+                        
+                        const firstName = document.getElementById('signup-firstname').value;
+                        const lastName = document.getElementById('signup-lastname').value;
+                        const email = document.getElementById('signup-email').value;
+                        
+                        db.collection('users').doc(user.uid).set({
+                            firstName: firstName,
+                            lastName: lastName,
+                            email: email,
+                            createdAt: firebase.firestore.FieldValue.serverTimestamp(),
+                            plan: 'free',
+                            credits: 20,
+                            subscriptionStatus: null,
+                            subscriptionId: null,
+                            isNewUser: true // Add this flag
+                        })
+                        .then(() => {
+                            window.location.href = 'index.html?newUser=true'; // Add query parameter
+                        })
+                        .catch((error) => {
+                            console.error('Error saving user data:', error);
+                        });
+                    })
+                    .catch((error) => {
+                        console.error('Signup error:', error);
+                        errorMessage.textContent = 'Signup failed: ' + error.message;
+                    });
+            } else if (formType === 'login') {
+                firebase.auth().signInWithEmailAndPassword(email, password)
+                    .then((userCredential) => {
+                        // Signed in
+                        const user = userCredential.user;
+                        console.log('User logged in:', user);
+                        // Redirect after successful login
+                        window.location.href = 'index.html';
+                    })
+                    .catch((error) => {
+                        console.error('Login error:', error);
+                        errorMessage.textContent = 'Login failed: ' + error.message;
+                    });
+            }
+        }
+
+        // Google Sign-In implementation
+        async function signInWithGoogle() {
+            const provider = new firebase.auth.GoogleAuthProvider();
+            try {
+                const result = await firebase.auth().signInWithPopup(provider);
+                const user = result.user;
+                console.log('Google sign-in success:', user);
+                window.location.href = 'index.html';
+            } catch (error) {
+                console.error('Google sign-in error:', error);
+                alert('Google sign-in failed: ' + error.message);
+            }
+        }
+
+        // Add event listeners for form submissions
+        loginSubmitForm.addEventListener('submit', (event) => handleFormSubmit(event, 'login'));
+        signupSubmitForm.addEventListener('submit', (event) => handleFormSubmit(event, 'signup'));
+
+    </script>
+</body>
+
+</html>
