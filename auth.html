@@ -23,16 +23,16 @@
           </div>
           <div class="flex flex-1 justify-end gap-8">
             <div class="flex items-center gap-9">
-              <a class="text-[#121417] text-sm font-medium leading-normal" href="#">Features</a>
-              <a class="text-[#121417] text-sm font-medium leading-normal" href="#">Templates</a>
-              <a class="text-[#121417] text-sm font-medium leading-normal" href="#">Pricing</a>
-              <a class="text-[#121417] text-sm font-medium leading-normal" href="#">Contact</a>
+              <a class="text-[#121417] text-sm font-medium leading-normal" href="#features-section" onclick="scrollToSection(event, 'features-section')">Features</a>
+              <a class="text-[#121417] text-sm font-medium leading-normal" href="#pricing-section" onclick="scrollToSection(event, 'pricing-section')">Pricing</a>
+              <a class="text-[#121417] text-sm font-medium leading-normal" href="#" onclick="showContactCard(event)">Contact</a>
             </div>
             <div class="flex gap-2">
               <button
                 class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 bg-[#213345] text-gray-50 text-sm font-bold leading-normal tracking-[0.015em]"
+                onclick="window.location.href='signin.html';"
               >
-                <span class="truncate">Create My Resume</span>
+                <span class="truncate">Start Now</span>
               </button>
               <button
                 class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 bg-[#ebedf0] text-[#121417] text-sm font-bold leading-normal tracking-[0.015em]"
@@ -48,204 +48,592 @@
             <div class="@container">
               <div class="@[480px]:p-4">
                 <div
-                  class="flex min-h-[480px] flex-col gap-6 bg-cover bg-center bg-no-repeat @[480px]:gap-8 @[480px]:rounded-xl items-start justify-end px-4 pb-10 @[480px]:px-10"
-                  style='background-image: linear-gradient(rgba(0, 0, 0, 0.1) 0%, rgba(0, 0, 0, 0.4) 100%), url("https://lh3.googleusercontent.com/aida-public/AB6AXuDDOrInN9GKLazcY-K5tkzbKTdKYRGU-lt-Xmb4dJDhAYRklG6mWVGtMrbMBEibx1jcjFGuMq2X2wkQ-8qhhsYObNixwAJxmBJEfVz18_66t2GgITiw6qesiBgsuvOTMA5BzvP6T6oKvEI_dEchJ_KdUDnyiKkWixKcGxjwzrElT5ywyAQpAo0F-1mMzyS9clCHoNMMfFduOqI_kOSFWqX5xGjQQRsAJ5cQ5oQQkyG_qMSQ8FSi30yNv_Dvbb-tXoRDShOQNef7bsM");'
+                  class="flex min-h-[580px] flex-col gap-6 bg-cover bg-center bg-no-repeat @[480px]:gap-8 @[480px]:rounded-xl items-start justify-end px-4 pb-10 @[480px]:px-10"
+                  style='background-image: linear-gradient(rgba(0, 0, 0, 0.6) 0%, rgba(0, 0, 0, 0.8) 100%), url("https://images.unsplash.com/photo-1521737711867-e3b97375f902?q=80&w=2000&auto=format&fit=crop");'
                 >
-                  <div class="flex flex-col gap-2 text-left">
-                    <h1
-                      class="text-white text-4xl font-black leading-tight tracking-[-0.033em] @[480px]:text-5xl @[480px]:font-black @[480px]:leading-tight @[480px]:tracking-[-0.033em]"
-                    >
-                      Craft a Resume That Gets You Hired in the UK
+                  <div class="flex flex-col gap-4 text-left max-w-[720px]">
+                    <span class="text-[#2ecc71] text-sm font-semibold tracking-wider uppercase">AI-Powered Job Search Platform</span>
+                    <h1 class="text-white text-4xl font-black leading-tight tracking-[-0.033em] @[480px]:text-5xl @[480px]:font-black @[480px]:leading-tight @[480px]:tracking-[-0.033em]">
+                      Your Complete UK Job Search & Career Development Hub
                     </h1>
-                    <h2 class="text-white text-sm font-normal leading-normal @[480px]:text-base @[480px]:font-normal @[480px]:leading-normal">
-                      CVtailor.uk helps you create a professional resume that highlights your skills and experience, making you stand out to potential employers in the UK job
-                      market.
-                    </h2>
+                    <div class="flex flex-col gap-4">
+                      <h2 class="text-white text-base font-normal leading-relaxed @[480px]:text-lg">
+                        CVtailor.uk combines AI technology with local job market expertise to streamline your job search in the United Kingdom:
+                      </h2>
+                      <ul class="grid grid-cols-1 md:grid-cols-2 gap-3 text-white">
+                        <li class="flex items-center gap-2">
+                          <i class="fas fa-check-circle text-[#2ecc71]"></i>
+                          <span>AI-powered CV & Cover Letter Generation</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                          <i class="fas fa-check-circle text-[#2ecc71]"></i>
+                          <span>Region-specific Job Opportunities</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                          <i class="fas fa-check-circle text-[#2ecc71]"></i>
+                          <span>Interview Preparation Tools</span>
+                        </li>
+                        <li class="flex items-center gap-2">
+                          <i class="fas fa-check-circle text-[#2ecc71]"></i>
+                          <span>Professional Skills Courses</span>
+                        </li>
+                      </ul>
+                    </div>
+                    <div class="flex flex-wrap gap-4 mt-4">
+                      <button class="flex min-w-[84px] cursor-pointer items-center justify-center gap-2 overflow-hidden rounded-xl h-12 px-6 bg-[#2ecc71] text-white text-base font-bold leading-normal tracking-[0.015em] hover:bg-[#27ae60] transition-colors"
+                        onclick="window.location.href='signin.html';">
+                        <span class="truncate">Start Now</span>
+                        <i class="fas fa-arrow-right"></i>
+                      </button>
+                      <div class="flex items-center gap-3">
+                        <div class="flex -space-x-2">
+                          <div class="w-8 h-8 rounded-full border-2 border-white bg-[#2ecc71] flex items-center justify-center text-white text-xs">1K+</div>
+                          <div class="w-8 h-8 rounded-full border-2 border-white bg-[#3498db] flex items-center justify-center text-white text-xs">UK</div>
+                        </div>
+                        <span class="text-white text-sm">Joined by 1000+ UK job seekers</span>
+                      </div>
+                    </div>
                   </div>
-                  <button
-                    class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 @[480px]:h-12 @[480px]:px-5 bg-[#213345] text-gray-50 text-sm font-bold leading-normal tracking-[0.015em] @[480px]:text-base @[480px]:font-bold @[480px]:leading-normal @[480px]:tracking-[0.015em]"
-                  >
-                    <span class="truncate">Start Creating</span>
-                  </button>
                 </div>
               </div>
             </div>
-            <div class="flex flex-col gap-10 px-4 py-10 @container">
-              <div class="flex flex-col gap-4">
-                <h1
-                  class="text-[#121417] tracking-light text-[32px] font-bold leading-tight @[480px]:text-4xl @[480px]:font-black @[480px]:leading-tight @[480px]:tracking-[-0.033em] max-w-[720px]"
-                >
-                  Key Features
+            <div class="flex flex-col gap-10 px-4 py-16 @container bg-gradient-to-b from-gray-50 to-gray-100" id="features-section">
+              <div class="flex flex-col gap-6 text-center">
+                <span class="text-[#2ecc71] text-sm font-semibold tracking-wider uppercase">Why Choose CVtailor.uk</span>
+                <h1 class="text-[#121417] text-4xl md:text-5xl font-extrabold leading-tight tracking-tight max-w-[800px] mx-auto">
+                  Everything You Need to Land Your Dream Job
                 </h1>
-                <p class="text-[#121417] text-base font-normal leading-normal max-w-[720px]">
-                  CVtailor.uk offers a range of features designed to help you create a standout resume and navigate the UK job market effectively.
+                <p class="text-[#637383] text-lg md:text-xl font-normal leading-relaxed max-w-[720px] mx-auto">
+                  Our AI-powered platform combines cutting-edge technology with UK market expertise to streamline your job search journey.
                 </p>
               </div>
-              <div class="grid grid-cols-[repeat(auto-fit,minmax(158px,1fr))] gap-3 p-0">
-                <div class="flex flex-1 gap-3 rounded-lg border border-[#d6dbe0] bg-gray-50 p-4 flex-col">
-                  <div class="text-[#121417]" data-icon="File" data-size="24px" data-weight="regular">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
-                      <path
-                        d="M213.66,82.34l-56-56A8,8,0,0,0,152,24H56A16,16,0,0,0,40,40V216a16,16,0,0,0,16,16H200a16,16,0,0,0,16-16V88A8,8,0,0,0,213.66,82.34ZM160,51.31,188.69,80H160ZM200,216H56V40h88V88a8,8,0,0,0,8,8h48V216Z"
-                      ></path>
-                    </svg>
+
+              <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-8 max-w-[1200px] mx-auto">
+                <!-- AI-Powered CV Builder -->
+                <div class="group flex flex-col gap-5 p-8 rounded-2xl bg-white shadow-sm hover:shadow-xl transition-all duration-300">
+                  <div class="flex items-center gap-4">
+                    <div class="flex-shrink-0 w-14 h-14 flex items-center justify-center rounded-xl bg-[#edfbf3] group-hover:bg-[#2ecc71] transition-colors duration-300">
+                      <svg class="w-7 h-7 text-[#2ecc71] group-hover:text-white transition-colors duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M9 12h6m-6 4h6m2 5H7a2 2 0 01-2-2V5a2 2 0 012-2h5.586a1 1 0 01.707.293l5.414 5.414a1 1 0 01.293.707V19a2 2 0 01-2 2z" />
+                      </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-[#121417]">AI-Powered CV Builder</h3>
                   </div>
-                  <div class="flex flex-col gap-1">
-                    <h2 class="text-[#121417] text-base font-bold leading-tight">Professional Templates</h2>
-                    <p class="text-[#637383] text-sm font-normal leading-normal">
-                      Choose from a variety of professionally designed templates to suit your industry and experience level in the UK.
-                    </p>
-                  </div>
+                  <p class="text-[#637383] text-base leading-relaxed">
+                    Create professionally tailored CVs in minutes. Our AI analyzes job descriptions to highlight your most relevant skills and experiences.
+                  </p>
+                  <ul class="space-y-2">
+                    <li class="flex items-center gap-2 text-sm text-[#637383]">
+                      <i class="fas fa-check text-[#2ecc71]"></i>
+                      <span>Smart content suggestions</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-sm text-[#637383]">
+                      <i class="fas fa-check text-[#2ecc71]"></i>
+                      <span>ATS-optimized templates</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-sm text-[#637383]">
+                      <i class="fas fa-check text-[#2ecc71]"></i>
+                      <span>Industry-specific formatting</span>
+                    </li>
+                  </ul>
                 </div>
-                <div class="flex flex-1 gap-3 rounded-lg border border-[#d6dbe0] bg-gray-50 p-4 flex-col">
-                  <div class="text-[#121417]" data-icon="PencilSimple" data-size="24px" data-weight="regular">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
-                      <path
-                        d="M227.31,73.37,182.63,28.68a16,16,0,0,0-22.63,0L36.69,152A15.86,15.86,0,0,0,32,163.31V208a16,16,0,0,0,16,16H92.69A15.86,15.86,0,0,0,104,219.31L227.31,96a16,16,0,0,0,0-22.63ZM92.69,208H48V163.31l88-88L180.69,120ZM192,108.68,147.31,64l24-24L216,84.68Z"
-                      ></path>
-                    </svg>
+
+                <!-- UK Job Market Integration -->
+                <div class="group flex flex-col gap-5 p-8 rounded-2xl bg-white shadow-sm hover:shadow-xl transition-all duration-300">
+                  <div class="flex items-center gap-4">
+                    <div class="flex-shrink-0 w-14 h-14 flex items-center justify-center rounded-xl bg-[#ebf5fd] group-hover:bg-[#3498db] transition-colors duration-300">
+                      <svg class="w-7 h-7 text-[#3498db] group-hover:text-white transition-colors duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 12a9 9 0 01-9 9m9-9a9 9 0 00-9-9m9 9H3m9 9a9 9 0 01-9-9m9 9c1.657 0 3-4.03 3-9s-1.343-9-3-9m0 18c-1.657 0-3-4.03-3-9s1.343-9 3-9m-9 9a9 9 0 019-9" />
+                      </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-[#121417]">UK Job Market Integration</h3>
                   </div>
-                  <div class="flex flex-col gap-1">
-                    <h2 class="text-[#121417] text-base font-bold leading-tight">Easy Customization</h2>
-                    <p class="text-[#637383] text-sm font-normal leading-normal">
-                      Easily customize your resume with our user-friendly editor, ensuring your resume reflects your unique qualifications for the UK market.
-                    </p>
-                  </div>
+                  <p class="text-[#637383] text-base leading-relaxed">
+                    Access real-time job opportunities across the UK through our partnership with Adzuna. Find roles that match your skills and location preferences.
+                  </p>
+                  <ul class="space-y-2">
+                    <li class="flex items-center gap-2 text-sm text-[#637383]">
+                      <i class="fas fa-check text-[#3498db]"></i>
+                      <span>200,000+ active listings</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-sm text-[#637383]">
+                      <i class="fas fa-check text-[#3498db]"></i>
+                      <span>Regional job search</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-sm text-[#637383]">
+                      <i class="fas fa-check text-[#3498db]"></i>
+                      <span>Salary insights</span>
+                    </li>
+                  </ul>
                 </div>
-                <div class="flex flex-1 gap-3 rounded-lg border border-[#d6dbe0] bg-gray-50 p-4 flex-col">
-                  <div class="text-[#121417]" data-icon="Envelope" data-size="24px" data-weight="regular">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
-                      <path
-                        d="M224,48H32a8,8,0,0,0-8,8V192a16,16,0,0,0,16,16H216a16,16,0,0,0,16-16V56A8,8,0,0,0,224,48Zm-96,85.15L52.57,64H203.43ZM98.71,128,40,181.81V74.19Zm11.84,10.85,12,11.05a8,8,0,0,0,10.82,0l12-11.05,58,53.15H52.57ZM157.29,128,216,74.18V181.82Z"
-                      ></path>
-                    </svg>
+
+                <!-- Easy Customization -->
+                <div class="group flex flex-col gap-5 p-8 rounded-2xl bg-white shadow-sm hover:shadow-xl transition-all duration-300">
+                  <div class="flex items-center gap-4">
+                    <div class="flex-shrink-0 w-14 h-14 flex items-center justify-center rounded-xl bg-[#ebf5fd] group-hover:bg-[#3498db] transition-colors duration-300">
+                      <svg class="w-7 h-7 text-[#3498db] group-hover:text-white transition-colors duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15.232 5.232l3.536 3.536m-2.036-5.036a2.5 2.5 0 113.536 3.536L6.5 21.036H3v-3.572L16.732 3.732z" />
+                      </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-[#121417]">Easy Customization</h3>
                   </div>
-                  <div class="flex flex-col gap-1">
-                    <h2 class="text-[#121417] text-base font-bold leading-tight">Tailored Outreach Emails</h2>
-                    <p class="text-[#637383] text-sm font-normal leading-normal">
-                      Craft personalized outreach emails to accompany your resume, increasing your chances of getting noticed by UK employers.
-                    </p>
-                  </div>
+                  <p class="text-[#637383] text-base leading-relaxed">
+                    Customize your CV and cover letter with our intuitive editor to perfectly match job requirements.
+                  </p>
+                  <ul class="space-y-2">
+                    <li class="flex items-center gap-2 text-sm text-[#637383]">
+                      <i class="fas fa-check text-[#3498db]"></i>
+                      <span>One-click formatting</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-sm text-[#637383]">
+                      <i class="fas fa-check text-[#3498db]"></i>
+                      <span>Real-time preview</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-sm text-[#637383]">
+                      <i class="fas fa-check text-[#3498db]"></i>
+                      <span>Smart suggestions</span>
+                    </li>
+                  </ul>
                 </div>
-                <div class="flex flex-1 gap-3 rounded-lg border border-[#d6dbe0] bg-gray-50 p-4 flex-col">
-                  <div class="text-[#121417]" data-icon="Question" data-size="24px" data-weight="regular">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
-                      <path
-                        d="M140,180a12,12,0,1,1-12-12A12,12,0,0,1,140,180ZM128,72c-22.06,0-40,16.15-40,36v4a8,8,0,0,0,16,0v-4c0-11,10.77-20,24-20s24,9,24,20-10.77,20-24,20a8,8,0,0,0-8,8v8a8,8,0,0,0,16,0v-.72c18.24-3.35,32-17.9,32-35.28C168,88.15,150.06,72,128,72Zm104,56A104,104,0,1,1,128,24,104.11,104.11,0,0,1,232,128Zm-16,0a88,88,0,1,0-88,88A88.1,88.1,0,0,0,216,128Z"
-                      ></path>
-                    </svg>
+
+                <!-- Tailored Outreach -->
+                <div class="group flex flex-col gap-5 p-8 rounded-2xl bg-white shadow-sm hover:shadow-xl transition-all duration-300">
+                  <div class="flex items-center gap-4">
+                    <div class="flex-shrink-0 w-14 h-14 flex items-center justify-center rounded-xl bg-[#f5ebfd] group-hover:bg-[#9b59b6] transition-colors duration-300">
+                      <svg class="w-7 h-7 text-[#9b59b6] group-hover:text-white transition-colors duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z"/>
+                      </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-[#121417]">Tailored Outreach</h3>
                   </div>
-                  <div class="flex flex-col gap-1">
-                    <h2 class="text-[#121417] text-base font-bold leading-tight">Common Interview Questions</h2>
-                    <p class="text-[#637383] text-sm font-normal leading-normal">
-                      Access a curated list of commonly asked interview questions in the UK, helping you prepare thoroughly.
-                    </p>
-                  </div>
+                  <p class="text-[#637383] text-base leading-relaxed">
+                    Create personalized and impactful outreach messages that resonate with UK employers and increase your response rate.
+                  </p>
+                  <ul class="space-y-2">
+                    <li class="flex items-center gap-2 text-sm text-[#637383]">
+                      <i class="fas fa-check text-[#9b59b6]"></i>
+                      <span>AI-powered email generation</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-sm text-[#637383]">
+                      <i class="fas fa-check text-[#9b59b6]"></i>
+                      <span>Industry-specific templates</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-sm text-[#637383]">
+                      <i class="fas fa-check text-[#9b59b6]"></i>
+                      <span>Response optimization</span>
+                    </li>
+                  </ul>
                 </div>
-                <div class="flex flex-1 gap-3 rounded-lg border border-[#d6dbe0] bg-gray-50 p-4 flex-col">
-                  <div class="text-[#121417]" data-icon="MapPin" data-size="24px" data-weight="regular">
-                    <svg xmlns="http://www.w3.org/2000/svg" width="24px" height="24px" fill="currentColor" viewBox="0 0 256 256">
-                      <path
-                        d="M128,64a40,40,0,1,0,40,40A40,40,0,0,0,128,64Zm0,64a24,24,0,1,1,24-24A24,24,0,0,1,128,128Zm0-112a88.1,88.1,0,0,0-88,88c0,31.4,14.51,64.68,42,96.25a254.19,254.19,0,0,0,41.45,38.3,8,8,0,0,0,9.18,0A254.19,254.19,0,0,0,174,200.25c27.45-31.57,42-64.85,42-96.25A88.1,88.1,0,0,0,128,16Zm0,206c-16.53-13-72-60.75-72-118a72,72,0,0,1,144,0C200,161.23,144.53,209,128,222Z"
-                      ></path>
-                    </svg>
+
+                <!-- Smart Interview Prep -->
+                <div class="group flex flex-col gap-5 p-8 rounded-2xl bg-white shadow-sm hover:shadow-xl transition-all duration-300">
+                  <div class="flex items-center gap-4">
+                    <div class="flex-shrink-0 w-14 h-14 flex items-center justify-center rounded-xl bg-[#fef6e4] group-hover:bg-[#e67e22] transition-colors duration-300">
+                      <svg class="w-7 h-7 text-[#e67e22] group-hover:text-white transition-colors duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8.228 9c.549-1.165 2.03-2 3.772-2 2.21 0 4 1.343 4 3 0 1.4-1.278 2.575-3.006 2.907-.542.104-.994.54-.994 1.093m0 3h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                      </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-[#121417]">Smart Interview Prep</h3>
                   </div>
-                  <div class="flex flex-col gap-1">
-                    <h2 class="text-[#121417] text-base font-bold leading-tight">Regional Job Opportunities</h2>
-                    <p class="text-[#637383] text-sm font-normal leading-normal">
-                      Explore job opportunities specific to different regions within the UK, ensuring you find the right fit.
-                    </p>
+                  <p class="text-[#637383] text-base leading-relaxed">
+                    AI-powered interview preparation based on your CV and the specific job requirements.
+                  </p>
+                  <ul class="space-y-2">
+                    <li class="flex items-center gap-2 text-sm text-[#637383]">
+                      <i class="fas fa-check text-[#e67e22]"></i>
+                      <span>Job-specific questions</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-sm text-[#637383]">
+                      <i class="fas fa-check text-[#e67e22]"></i>
+                      <span>Answer suggestions</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-sm text-[#637383]">
+                      <i class="fas fa-check text-[#e67e22]"></i>
+                      <span>Practice mode</span>
+                    </li>
+                  </ul>
+                </div>
+
+                <!-- Smart Application Q&A -->
+                <div class="group flex flex-col gap-5 p-8 rounded-2xl bg-white shadow-sm hover:shadow-xl transition-all duration-300">
+                  <div class="flex items-center gap-4">
+                    <div class="flex-shrink-0 w-14 h-14 flex items-center justify-center rounded-xl bg-[#fef6e4] group-hover:bg-[#e67e22] transition-colors duration-300">
+                      <svg class="w-7 h-7 text-[#e67e22] group-hover:text-white transition-colors duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z"/>
+                    </div>
+                    <h3 class="text-xl font-bold text-[#121417]">Smart Application Q&A</h3>
                   </div>
+                  <p class="text-[#637383] text-base leading-relaxed">
+                    Generate tailored responses to application questions using AI that aligns with your CV and the specific job requirements.
+                  </p>
+                  <ul class="space-y-2">
+                    <li class="flex items-center gap-2 text-sm text-[#637383]">
+                      <i class="fas fa-check text-[#e67e22]"></i>
+                      <span>Job-specific answer generation</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-sm text-[#637383]">
+                      <i class="fas fa-check text-[#e67e22]"></i>
+                      <span>CV-aligned responses</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-sm text-[#637383]">
+                      <i class="fas fa-check text-[#e67e22]"></i>
+                      <span>Professional tone matching</span>
+                    </li>
+                  </ul>
+                </div>
+
+                <!-- Regional Job Search -->
+                <div class="group flex flex-col gap-5 p-8 rounded-2xl bg-white shadow-sm hover:shadow-xl transition-all duration-300">
+                  <div class="flex items-center gap-4">
+                    <div class="flex-shrink-0 w-14 h-14 flex items-center justify-center rounded-xl bg-[#e8f4fd] group-hover:bg-[#3498db] transition-colors duration-300">
+                      <svg class="w-7 h-7 text-[#3498db] group-hover:text-white transition-colors duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z"/>
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z"/>
+                      </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-[#121417]">Location-Based Search</h3>
+                  </div>
+                  <p class="text-[#637383] text-base leading-relaxed">
+                    Find opportunities in your preferred UK locations with our advanced regional search capabilities.
+                  </p>
+                  <ul class="space-y-2">
+                    <li class="flex items-center gap-2 text-sm text-[#637383]">
+                      <i class="fas fa-check text-[#3498db]"></i>
+                      <span>City and region filtering</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-sm text-[#637383]">
+                      <i class="fas fa-check text-[#3498db]"></i>
+                      <span>Commute radius search</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-sm text-[#637383]">
+                      <i class="fas fa-check text-[#3498db]"></i>
+                      <span>Remote work options</span>
+                    </li>
+                  </ul>
+                </div>
+
+                <!-- Career Resources -->
+                <div class="group flex flex-col gap-5 p-8 rounded-2xl bg-white shadow-sm hover:shadow-xl transition-all duration-300">
+                  <div class="flex items-center gap-4">
+                    <div class="flex-shrink-0 w-14 h-14 flex items-center justify-center rounded-xl bg-[#f0e7f7] group-hover:bg-[#9b59b6] transition-colors duration-300">
+                      <svg class="w-7 h-7 text-[#9b59b6] group-hover:text-white transition-colors duration-300" xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6.253v13m0-13C10.832 5.477 9.246 5 7.5 5S4.168 5.477 3 6.253v13C4.168 18.477 5.754 18 7.5 18s3.332.477 4.5 1.253m0-13C13.168 5.477 14.754 5 16.5 5c1.747 0 3.332.477 4.5 1.253v13C19.832 18.477 18.247 18 16.5 18c-1.746 0-3.332.477-4.5 1.253"/>
+                      </svg>
+                    </div>
+                    <h3 class="text-xl font-bold text-[#121417]">Professional Development</h3>
+                  </div>
+                  <p class="text-[#637383] text-base leading-relaxed">
+                    Access comprehensive resources to enhance your professional growth and career progression.
+                  </p>
+                  <ul class="space-y-2">
+                    <li class="flex items-center gap-2 text-sm text-[#637383]">
+                      <i class="fas fa-check text-[#9b59b6]"></i>
+                      <span>Industry insights</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-sm text-[#637383]">
+                      <i class="fas fa-check text-[#9b59b6]"></i>
+                      <span>Skills assessment</span>
+                    </li>
+                    <li class="flex items-center gap-2 text-sm text-[#637383]">
+                      <i class="fas fa-check text-[#9b59b6]"></i>
+                      <span>Career path guidance</span>
+                    </li>
+                  </ul>
                 </div>
               </div>
             </div>
             <h2 class="text-[#121417] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Job Board</h2>
-            <div class="p-4">
-              <div class="flex items-stretch justify-between gap-4 rounded-xl">
-                <div class="flex flex-[2_2_0px] flex-col gap-4">
-                  <div class="flex flex-col gap-1">
-                    <p class="text-[#121417] text-base font-bold leading-tight">Latest Job Listings Across the UK</p>
-                    <p class="text-[#637383] text-sm font-normal leading-normal">
-                      Browse up-to-date job listings from various industries and locations across the UK. Find your next career opportunity with CVtailor.uk.
-                    </p>
+            <div class="p-4 bg-white rounded-xl shadow-lg">
+              <div class="flex flex-col lg:flex-row items-stretch justify-between gap-8">
+                <div class="flex flex-[2_2_0px] flex-col gap-6">
+                  <div class="flex items-center gap-3">
+                    <div class="flex flex-col gap-1">
+                      <h3 class="text-[#121417] text-xl font-bold leading-tight">UK Job Board</h3>
+                      <p class="text-[#637383] text-base">In Partnership with <span class="font-semibold text-blue-600">Adzuna</span></p>
+                    </div>
                   </div>
-                  <button
-                    class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-8 px-4 flex-row-reverse bg-[#ebedf0] text-[#121417] text-sm font-medium leading-normal w-fit"
-                  >
-                    <span class="truncate">View Job Listings</span>
-                  </button>
+                  <div class="flex flex-col gap-4">
+                    <p class="text-[#121417] text-base leading-relaxed">
+                      Access thousands of UK job listings through our integration with Adzuna. Get real-time updates on:
+                    </p>
+                    <ul class="grid grid-cols-1 md:grid-cols-2 gap-3">
+                      <li class="flex items-center gap-2">
+                        <i class="fas fa-check text-green-500"></i>
+                        <span class="text-[#637383]">Latest job postings</span>
+                      </li>
+                      <li class="flex items-center gap-2">
+                        <i class="fas fa-check text-green-500"></i>
+                        <span class="text-[#637383]">Salary insights</span>
+                      </li>
+                      <li class="flex items-center gap-2">
+                        <i class="fas fa-check text-green-500"></i>
+                        <span class="text-[#637383]">Industry trends</span>
+                      </li>
+                      <li class="flex items-center gap-2">
+                        <i class="fas fa-check text-green-500"></i>
+                        <span class="text-[#637383]">Direct applications</span>
+                      </li>
+                    </ul>
+                  </div>
+                  <div class="flex gap-3">
+                    <button class="flex items-center gap-2 px-6 py-3 bg-[#213345] text-white rounded-xl hover:bg-[#1a2835] transition-colors">
+                      <span>Explore Jobs</span>
+                      <i class="fas fa-arrow-right"></i>
+                    </button>
+                    <button class="flex items-center gap-2 px-6 py-3 bg-[#ebedf0] text-[#121417] rounded-xl hover:bg-gray-200 transition-colors">
+                      <span>View Statistics</span>
+                      <i class="fas fa-chart-bar"></i>
+                    </button>
+                  </div>
                 </div>
-                <div
-                  class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-xl flex-1"
-                  style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAjTJx1g8BdOLc-yKCELLHu4WKWmyBdZ5GxEJGWSCmqxSbm_59t2U7rv8bS4f7ctk7zqi5Eip4zTy1boFjMvwOjakQwLhDkQJxit-OKqYx4rMRfbiVKNpmDhnci11sOBapgPvgXsunrrJIGqJCNEi9sewDhKtG7w_KuT6bNl8BPy4hGtvna59qfpfIFL5cHG4jpALBgEJ_UXtSR-osLGTu2arUTV4VeVl8x8taJUge18qC7PPbPeFy-qJ7Me5nA6nrsl0P0pVGpwqo");'
-                ></div>
+                <div class="lg:flex-1">
+                  <div class="relative h-full min-h-[300px] bg-gradient-to-r from-blue-50 to-indigo-50 rounded-xl overflow-hidden">
+                    <div class="absolute inset-0 bg-center bg-cover bg-no-repeat opacity-90"
+                      style='background-image: url("https://images.unsplash.com/photo-1486406146926-c627a92ad1ab?q=80&w=1200&auto=format&fit=crop");'>
+                    </div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-[rgba(0,0,0,0.7)] to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 p-6 text-white">
+                      <p class="text-2xl font-bold mb-2">200,000+</p>
+                      <p class="text-sm opacity-90">Active job listings across the UK</p>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-            <h2 class="text-[#121417] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Market Insights</h2>
-            <div class="p-4">
-              <div class="flex items-stretch justify-between gap-4 rounded-xl">
-                <div class="flex flex-[2_2_0px] flex-col gap-4">
-                  <div class="flex flex-col gap-1">
-                    <p class="text-[#121417] text-base font-bold leading-tight">UK Job Market Trends and Resources</p>
-                    <p class="text-[#637383] text-sm font-normal leading-normal">
-                      Stay informed about the latest job market trends in the UK. Access valuable resources and insights to help you make informed career decisions.
-                    </p>
+            <h2 class="text-[#121417] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Career Development Hub</h2>
+            <div class="p-4 bg-white rounded-xl shadow-lg">
+              <div class="flex flex-col lg:flex-row items-stretch justify-between gap-8">
+                <div class="flex flex-[2_2_0px] flex-col gap-6">
+                  <div class="flex items-center gap-3">
+                    <div class="flex flex-col gap-1">
+                      <h3 class="text-[#121417] text-xl font-bold leading-tight">Elevate Your Career Journey</h3>
+                      <p class="text-[#637383] text-base">Access curated courses and resources designed for the UK job market</p>
+                    </div>
                   </div>
-                  <button
-                    class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-8 px-4 flex-row-reverse bg-[#ebedf0] text-[#121417] text-sm font-medium leading-normal w-fit"
-                  >
-                    <span class="truncate">Explore Market Insights</span>
-                  </button>
+                  <div class="grid grid-cols-1 md:grid-cols-2 gap-6">
+                    <div class="flex flex-col gap-3 p-4 rounded-lg bg-blue-50">
+                      <div class="flex items-center gap-3">
+                        <div class="text-blue-600 bg-blue-100 p-3 rounded-lg">
+                          <i class="fas fa-laptop-code text-xl"></i>
+                        </div>
+                        <h4 class="font-semibold">Technical Skills</h4>
+                      </div>
+                      <p class="text-[#637383] text-sm">Master in-demand technical skills with our specialized courses and workshops.</p>
+                    </div>
+                    <div class="flex flex-col gap-3 p-4 rounded-lg bg-green-50">
+                      <div class="flex items-center gap-3">
+                        <div class="text-green-600 bg-green-100 p-3 rounded-lg">
+                          <i class="fas fa-handshake text-xl"></i>
+                        </div>
+                        <h4 class="font-semibold">Interview Mastery</h4>
+                      </div>
+                      <p class="text-[#637383] text-sm">Expert-led interview preparation and soft skills development programs.</p>
+                    </div>
+                    <div class="flex flex-col gap-3 p-4 rounded-lg bg-purple-50">
+                      <div class="flex items-center gap-3">
+                        <div class="text-purple-600 bg-purple-100 p-3 rounded-lg">
+                          <i class="fas fa-certificate text-xl"></i>
+                        </div>
+                        <h4 class="font-semibold">Professional Certifications</h4>
+                      </div>
+                      <p class="text-[#637383] text-sm">Industry-recognized certifications to boost your credentials.</p>
+                    </div>
+                    <div class="flex flex-col gap-3 p-4 rounded-lg bg-orange-50">
+                      <div class="flex items-center gap-3">
+                        <div class="text-orange-600 bg-orange-100 p-3 rounded-lg">
+                          <i class="fas fa-users text-xl"></i>
+                        </div>
+                        <h4 class="font-semibold">Career Mentorship</h4>
+                      </div>
+                      <p class="text-[#637383] text-sm">One-on-one guidance from industry professionals in your field.</p>
+                    </div>
+                  </div>
+                  <div class="flex gap-3">
+                    <a href="marketplace.html" class="flex items-center gap-2 px-6 py-3 bg-[#213345] text-white rounded-xl hover:bg-[#1a2835] transition-colors">
+                      <span>Explore Marketplace</span>
+                      <i class="fas fa-arrow-right"></i>
+                    </a>
+                    <button class="flex items-center gap-2 px-6 py-3 bg-[#ebedf0] text-[#121417] rounded-xl hover:bg-gray-200 transition-colors">
+                      <span>View Free Resources</span>
+                      <i class="fas fa-book"></i>
+                    </button>
+                  </div>
                 </div>
-                <div
-                  class="w-full bg-center bg-no-repeat aspect-video bg-cover rounded-xl flex-1"
-                  style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA6kEy56o-ONXK9MBCf10SUaw-A24QpibApDqKbYsLM8aCVqZtran4LSY0Rb-7MqXePOn6UsxoT0qDw3LyVq1cvcwo98qLEfwY-sleg0KeXpewOgM7quHNHjaiOuO31u2PeDdk1rJy4fOKfbIpP_gvAA_BiObALlFJbMKSkeygRt1VlvODLBdZkJqfYbgkpaFnGsuWDNJv4tRcbURBM3HA_EUImblDjjpwrW0ABRwVqChZW2UYShrcoQnzJtXUW7sPOzglluDAYYRc");'
-                ></div>
+                <div class="lg:flex-1">
+                  <div class="relative h-full min-h-[400px] bg-gradient-to-r from-blue-50 to-purple-50 rounded-xl overflow-hidden">
+                    <div class="absolute inset-0 bg-center bg-cover bg-no-repeat opacity-90"
+                      style='background-image: url("https://images.unsplash.com/photo-1522202176988-66273c2fd55f?q=80&w=1200&auto=format&fit=crop");'>
+                    </div>
+                    <div class="absolute inset-0 bg-gradient-to-t from-[rgba(0,0,0,0.7)] to-transparent"></div>
+                    <div class="absolute bottom-0 left-0 p-6 text-white">
+                      <div class="flex flex-col gap-2">
+                        <p class="text-2xl font-bold">Start Learning Today</p>
+                        <p class="text-sm opacity-90">Join thousands of professionals advancing their careers</p>
+                        <div class="flex items-center gap-2 mt-2">
+                          <div class="flex -space-x-2">
+                            <div class="w-8 h-8 rounded-full bg-blue-500"></div>
+                            <div class="w-8 h-8 rounded-full bg-green-500"></div>
+                            <div class="w-8 h-8 rounded-full bg-purple-500"></div>
+                          </div>
+                          <span class="text-sm">1,000+ active learners</span>
+                        </div>
+                      </div>
+                    </div>
+                  </div>
+                </div>
               </div>
             </div>
-            <h2 class="text-[#121417] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Testimonials</h2>
-            <div class="flex overflow-y-auto [-ms-scrollbar-style:none] [scrollbar-width:none] [&amp;::-webkit-scrollbar]:hidden">
-              <div class="flex items-stretch p-4 gap-3">
-                <div class="flex h-full flex-1 flex-col gap-4 rounded-lg min-w-60">
-                  <div
-                    class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-xl flex flex-col"
-                    style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuA89YUzBbSbDDtwJ1hkM3-ngdZCqkOA_NMJwx-HXCS3zbOxbpPziccVTGC9m1ed3JpF3T1bvxtnFPX3WNtofcOtY6iKMtuiM3ii7ad_KLaZCSNrZUQr34FDWav7NJN8weUvYLKXc_Hr7Wz0d0AYUXOJF5ihJt0fPZk-sVGWwSIiRmhna8YuwLi2PPqlETdNdDWrdVDCgPtgOJldtqvkTOZvIpm7m4ULpE2FXxdsP1mMku2H1IsYs2YH5WoQvCJe-EaadxoFiYRx_D4");'
-                  ></div>
-                  <div>
-                    <p class="text-[#121417] text-base font-medium leading-normal">
-                      "CVtailor.uk helped me land my dream job in London! The templates are modern and easy to use, and I was able to create a professional resume in minutes."
-                    </p>
-                    <p class="text-[#637383] text-sm font-normal leading-normal">Olivia Bennett, Marketing Manager</p>
+            <h2 class="text-[#121417] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Success Stories</h2>
+            <div class="flex overflow-x-auto gap-6 px-4 py-6 [-ms-scrollbar-style:none] [scrollbar-width:none] [&::-webkit-scrollbar]:hidden">
+              <!-- Testimonial 1 -->
+              <div class="flex-none w-[350px] bg-white rounded-xl shadow-lg overflow-hidden">
+                <div class="relative h-[200px] bg-[#f8f9fa]">
+                  <img src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e" 
+                       alt="Sarah Mitchell" 
+                       class="w-full h-full object-cover">
+                </div>
+                <div class="p-6">
+                  <div class="flex items-center gap-2 mb-4">
+                    <div class="text-yellow-400">
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star"></i>
+                    </div>
+                    <span class="text-sm text-gray-500">2 weeks ago</span>
+                  </div>
+                  <p class="text-[#121417] text-base font-medium leading-relaxed mb-4">
+                    "Thanks to CVtailor.uk's AI-powered system, I landed a position at Deloitte. The customized CV and cover letter perfectly highlighted my skills for the role."
+                  </p>
+                  <div class="flex items-center gap-3">
+                    <div>
+                      <h4 class="text-[#121417] font-bold">Sarah Mitchell</h4>
+                      <p class="text-[#637383] text-sm">Financial Analyst at Deloitte</p>
+                    </div>
                   </div>
                 </div>
-                <div class="flex h-full flex-1 flex-col gap-4 rounded-lg min-w-60">
-                  <div
-                    class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-xl flex flex-col"
-                    style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuAQKL1OOJoQi-iTk43jEjj6ntJENLU8x2KiGtydY5l-7PzZGKE243IrdurZrUwWftveRZF8XpX4eVBe70TwjUvSfZjKjz4SGLG3f23aKYepGtTumlnnACxXj6_T_quhMIT7ZnyygtbjK1tnWb9ybsI5m55Sv7-l5bqDKT0eR9Vtr_Z3mo3L_usEsIARskUbYojtKXxOmb2MRl0mBjKD3VWypzRdZdEW_RTXEJiZTs8Z6BpjeASYOMJ4wYe7LNNu6HLto9kCT3Arpas");'
-                  ></div>
-                  <div>
-                    <p class="text-[#121417] text-base font-medium leading-normal">
-                      "I was struggling to update my resume for the UK market until I found CVtailor.uk. The customization options are fantastic, and I love that I can tailor my
-                      application to specific regions."
-                    </p>
-                    <p class="text-[#637383] text-sm font-normal leading-normal">Ethan Davies, Software Engineer</p>
+              </div>
+
+              <!-- Testimonial 2 -->
+              <div class="flex-none w-[350px] bg-white rounded-xl shadow-lg overflow-hidden">
+                <div class="relative h-[200px] bg-[#f8f9fa]">
+                  <img src="https://images.unsplash.com/photo-1556157382-97eda2d62296" 
+                       alt="James Wilson" 
+                       class="w-full h-full object-cover">
+                </div>
+                <div class="p-6">
+                  <div class="flex items-center gap-2 mb-4">
+                    <div class="text-yellow-400">
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star"></i>
+                    </div>
+                    <span class="text-sm text-gray-500">1 month ago</span>
+                  </div>
+                  <p class="text-[#121417] text-base font-medium leading-relaxed mb-4">
+                    "The region search feature helped me discover tech companies in Manchester I didn't even know existed. Now I'm working at my dream startup!"
+                  </p>
+                  <div class="flex items-center gap-3">
+                    <div>
+                      <h4 class="text-[#121417] font-bold">James Wilson</h4>
+                      <p class="text-[#637383] text-sm">Software Developer at TechNorth</p>
+                    </div>
                   </div>
                 </div>
-                <div class="flex h-full flex-1 flex-col gap-4 rounded-lg min-w-60">
-                  <div
-                    class="w-full bg-center bg-no-repeat aspect-square bg-cover rounded-xl flex flex-col"
-                    style='background-image: url("https://lh3.googleusercontent.com/aida-public/AB6AXuBOClLv2GkUJo1G5SrrKAiLalIZrT8T2eUFPsTZR-wbsXGTFP3NZXZYOHErV70LeaoSsSxku8mXktqYPrQ0wy2ZBVe35k7txohD8LnCQMM8LkgfmjU8ePLUbkOluMzlkDUQSc9jz4CRqVQ1nU1To7quw3rmtx2lqO-Qrcfo5LMFdohUqOXO1zRoUztC-dNQUiHDIF6fifs7BTjdN2JsMEKrn8KFYFcAv1L8NurvgTiWeZcwhIis5Gvn21qoJYiCtEhzeQO_RfzuM6g");'
-                  ></div>
-                  <div>
-                    <p class="text-[#121417] text-base font-medium leading-normal">
-                      "The support team at CVtailor.uk is amazing. They helped me choose the right template for my industry, and I got an interview within a week of applying."
-                    </p>
-                    <p class="text-[#637383] text-sm font-normal leading-normal">Chloe Walker, Project Coordinator</p>
+              </div>
+
+              <!-- Testimonial 3 -->
+              <div class="flex-none w-[350px] bg-white rounded-xl shadow-lg overflow-hidden">
+                <div class="relative h-[200px] bg-[#f8f9fa]">
+                  <img src="https://images.unsplash.com/photo-1580489944761-15a19d654956" 
+                       alt="Emma Thompson" 
+                       class="w-full h-full object-cover">
+                </div>
+                <div class="p-6">
+                  <div class="flex items-center gap-2 mb-4">
+                    <div class="text-yellow-400">
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star"></i>
+                      <i class="fas fa-star"></i>
+                    </div>
+                    <span class="text-sm text-gray-500">3 weeks ago</span>
+                  </div>
+                  <p class="text-[#121417] text-base font-medium leading-relaxed mb-4">
+                    "The premium templates and AI customization made my application stand out. Received multiple interviews within days of updating my CV!"
+                  </p>
+                  <div class="flex items-center gap-3">
+                    <div>
+                      <h4 class="text-[#121417] font-bold">Emma Thompson</h4>
+                      <p class="text-[#637383] text-sm">Marketing Manager at Google</p>
+                    </div>
                   </div>
                 </div>
               </div>
             </div>
             <div class="@container">
+              <!-- Add Pricing Plans Section -->
+              <h2 id="pricing-section" class="text-[#121417] text-[22px] font-bold leading-tight tracking-[-0.015em] px-4 pb-3 pt-5">Pricing Plans</h2>
+              <div class="flex justify-center gap-6 px-4 py-10">
+                <!-- Free Plan -->
+                <div class="flex flex-col gap-4 p-6 bg-white rounded-xl shadow-lg max-w-sm">
+                  <h3 class="text-xl font-bold text-[#121417]">Free Plan</h3>
+                  <div class="text-4xl font-bold text-[#121417]">£0<span class="text-lg font-normal text-[#637383]">/month</span></div>
+                  <ul class="space-y-3 text-[#637383]">
+                    <li class="flex items-center">
+                      <i class="fas fa-check text-green-500 mr-2"></i>
+                      20 Free Credits
+                    </li>
+                    <li class="flex items-center">
+                      <i class="fas fa-check text-green-500 mr-2"></i>
+                      Basic CV Templates
+                    </li>
+                    <li class="flex items-center">
+                      <i class="fas fa-check text-green-500 mr-2"></i>
+                      Limited Region Search
+                    </li>
+                  </ul>
+                  <button onclick="showForm('signup')" class="mt-4 w-full py-3 px-4 bg-[#213345] text-white rounded-xl font-medium hover:bg-[#1a2835] transition-colors">
+                    Get Started
+                  </button>
+                </div>
+
+                <!-- Premium Plan -->
+                <div class="flex flex-col gap-4 p-6 bg-white rounded-xl shadow-lg max-w-sm border-2 border-[#2ecc71]">
+                  <div class="absolute top-0 right-0 bg-[#2ecc71] text-white px-3 py-1 text-sm rounded-bl-lg rounded-tr-xl">
+                    Popular
+                  </div>
+                  <h3 class="text-xl font-bold text-[#121417]">Premium Plan</h3>
+                  <div class="text-4xl font-bold text-[#121417]">£9.99<span class="text-lg font-normal text-[#637383]">/month</span></div>
+                  <ul class="space-y-3 text-[#637383]">
+                    <li class="flex items-center">
+                      <i class="fas fa-check text-green-500 mr-2"></i>
+                      Unlimited CV Generation
+                    </li>
+                    <li class="flex items-center">
+                      <i class="fas fa-check text-green-500 mr-2"></i>
+                      All Premium Templates
+                    </li>
+                    <li class="flex items-center">
+                      <i class="fas fa-check text-green-500 mr-2"></i>
+                      Unlimited Region Search
+                    </li>
+                    <li class="flex items-center">
+                      <i class="fas fa-check text-green-500 mr-2"></i>
+                      Priority Support
+                    </li>
+                  </ul>
+                  <button onclick="showForm('signup')" class="mt-4 w-full py-3 px-4 bg-[#2ecc71] text-white rounded-xl font-medium hover:bg-[#27ae60] transition-colors">
+                    Start Free Trial
+                  </button>
+                </div>
+              </div>
+              <!-- End Pricing Plans Section -->
+
               <div class="flex flex-col justify-end gap-6 px-4 py-10 @[480px]:gap-8 @[480px]:px-10 @[480px]:py-20">
                 <div class="flex flex-col gap-2 text-center">
                   <h1
@@ -258,8 +646,9 @@
                   <div class="flex justify-center">
                     <button
                       class="flex min-w-[84px] max-w-[480px] cursor-pointer items-center justify-center overflow-hidden rounded-xl h-10 px-4 @[480px]:h-12 @[480px]:px-5 bg-[#213345] text-gray-50 text-sm font-bold leading-normal tracking-[0.015em] @[480px]:text-base @[480px]:font-bold @[480px]:leading-normal @[480px]:tracking-[0.015em] grow"
+                      onclick="window.location.href='signin.html';"
                     >
-                      <span class="truncate">Create My Resume</span>
+                      <span class="truncate">Start Now</span>
                     </button>
                   </div>
                 </div>
@@ -272,14 +661,14 @@
   <footer class="footer">
     <div class="footer-content">
       <div class="footer-logo">
-        <img src="tinywow_change_bg_photo_79922413 (1).png" alt="Logo" style="height: 100px;">
+        <img src="logo /tinywow_change_bg_photo_79922413 (1).png" alt="Logo" style="height: 100px;">
       </div>
       <div class="footer-contact">
         <p><a href="mailto:grh@cvtailor.uk">grg@cvtailor.uk</a></p>
         <p><a href="https://cvtailor.cc">cvtailor.cc</a></p>
       </div>
       <div class="footer-button">
-        <button>Contact Us</button>
+        <button onclick="showContactCard(event)">Contact Us</button>
       </div>
     </div>
     <div class="footer-bottom">
@@ -353,6 +742,95 @@
       text-align: center;
       line-height: 30px;
     }
+
+    @keyframes highlightSection {
+      0% { background-color: transparent; }
+      50% { background-color: rgba(46, 204, 113, 0.1); }
+      100% { background-color: transparent; }
+    }
+
+    .highlight-section {
+      animation: highlightSection 1.5s ease-in-out;
+    }
+
+    .features-card {
+      transition: transform 0.3s ease-in-out;
+    }
+
+    .features-card:hover {
+      transform: translateY(-5px);
+    }
   </style>
+  <div id="contactCard" class="fixed inset-0 bg-black bg-opacity-50 hidden flex items-center justify-center z-50">
+  <div class="bg-white rounded-xl p-8 max-w-md w-full mx-4 shadow-2xl transform transition-transform duration-300">
+    <div class="flex justify-between items-center mb-6">
+      <h3 class="text-xl font-bold text-[#121417]">Contact Us</h3>
+      <button onclick="hideContactCard()" class="text-gray-500 hover:text-gray-700">
+        <i class="fas fa-times"></i>
+      </button>
+    </div>
+    <div class="text-center">
+      <div class="mb-6">
+        <i class="fas fa-envelope text-4xl text-[#2ecc71] mb-4"></i>
+        <p class="text-[#637383] mb-2">Please email us at:</p>
+        <a href="mailto:grg@cvtailor.uk" class="text-[#2ecc71] text-lg font-semibold hover:underline">
+          grg@cvtailor.uk
+        </a>
+      </div>
+      <p class="text-sm text-[#637383]">We'll get back to you as soon as possible!</p>
+    </div>
+  </div>
+</div>
+  <script>
+function scrollToPricing(event) {
+    event.preventDefault();
+    const pricingSection = document.getElementById('pricing-section');
+    pricingSection.scrollIntoView({ 
+        behavior: 'smooth',
+        block: 'start'
+    });
+}
+
+function scrollToSection(event, sectionId) {
+    event.preventDefault();
+    const section = document.getElementById(sectionId);
+    if (section) {
+        section.scrollIntoView({ 
+            behavior: 'smooth',
+            block: 'start'
+        });
+        
+        // Add a subtle highlight animation
+        section.classList.add('highlight-section');
+        setTimeout(() => {
+            section.classList.remove('highlight-section');
+        }, 1500);
+    }
+}
+
+function showContactCard(event) {
+  event.preventDefault();
+  document.getElementById('contactCard').classList.remove('hidden');
+  document.body.style.overflow = 'hidden';
+}
+
+function hideContactCard() {
+  document.getElementById('contactCard').classList.add('hidden');
+  document.body.style.overflow = 'auto';
+}
+
+// Close on background click
+document.addEventListener('click', function(event) {
+  const contactCard = document.getElementById('contactCard');
+  if (event.target === contactCard) {
+    hideContactCard();
+  }
+  
+  // Also allow clicking footer button to show contact card
+  if (event.target.closest('.footer-button button')) {
+    showContactCard(event);
+  }
+});
+</script>
   </body>
 </html>
