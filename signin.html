@@ -183,8 +183,20 @@
                     .then((userCredential) => {
                         const user = userCredential.user;
                         console.log('User signed up:', user);
-                        document.getElementById('success-message').style.display = 'block';
-                        
+
+                        user.sendEmailVerification()
+                            .then(() => {
+                                console.log('Verification email sent.');
+                                firebase.auth().signOut();
+                                document.getElementById('signup-error-message').textContent = 'Please check your email to verify your account.';
+                                document.getElementById('signup-error-message').style.color = 'green';
+                                document.getElementById('success-message').style.display = 'none';
+                            })
+                            .catch((error) => {
+                                console.error('Error sending verification email:', error);
+                                errorMessage.textContent = 'Error sending verification email: ' + error.message;
+                            });
+                    
                         const firstName = document.getElementById('signup-firstname').value;
                         const lastName = document.getElementById('signup-lastname').value;
                         const email = document.getElementById('signup-email').value;
@@ -198,10 +210,11 @@
                             credits: 20,
                             subscriptionStatus: null,
                             subscriptionId: null,
-                            isNewUser: true // Add this flag
+                            isNewUser: true,
+                            isVerified: false
                         })
                         .then(() => {
-                            window.location.href = 'index.html?newUser=true'; // Add query parameter
+                            // window.location.href = 'index.html?newUser=true'; // Add query parameter - don't redirect
                         })
                         .catch((error) => {
                             console.error('Error saving user data:', error);
@@ -216,9 +229,40 @@
                     .then((userCredential) => {
                         // Signed in
                         const user = userCredential.user;
+                        
+                        if (!user.emailVerified) {
+                            firebase.auth().signOut();
+                            errorMessage.textContent = 'Please verify your email before logging in.';
+                            errorMessage.style.color = 'red';
+                            return;
+                        }
+
                         console.log('User logged in:', user);
-                        // Redirect after successful login
-                        window.location.href = 'index.html';
+
+                        db.collection('users').doc(user.uid).get()
+                            .then((doc) => {
+                                if (doc.exists) {
+                                    const userData = doc.data();
+                                    if (userData.isNewUser) {
+                                        db.collection('users').doc(user.uid).update({ isNewUser: false })
+                                            .then(() => {
+                                                window.location.href = 'index.html?newUser=true';
+                                            })
+                                            .catch((error) => {
+                                                console.error('Error updating isNewUser:', error);
+                                                window.location.href = 'index.html'; // Redirect anyway
+                                            });
+                                    } else {
+                                        window.location.href = 'index.html';
+                                    }
+                                } else {
+                                    window.location.href = 'index.html';
+                                }
+                            })
+                            .catch((error) => {
+                                console.error('Error getting user data:', error);
+                                window.location.href = 'index.html'; // Redirect anyway
+                            });
                     })
                     .catch((error) => {
                         console.error('Login error:', error);
