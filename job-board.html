@@ -147,6 +147,65 @@
             padding: 20px;
             display: none;
         }
+
+        /* Styles for the modal popup */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        .modal-content {
+            background-color: #fff;
+            margin: 15% auto; /* 15% from the top and centered */
+            padding: 30px;
+            border: 1px solid #ccc;
+            width: 500px; /* Set a fixed width */
+            border-radius: 10px;
+            text-align: center;
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); /* Add a shadow */
+        }
+
+        .modal-content p {
+            font-size: 1.2em;
+            margin-bottom: 20px;
+            color: #333;
+        }
+
+        .modal-content button {
+            background: #dc3545;
+            color: white;
+            border: none;
+            padding: 12px 24px;
+            border-radius: 5px;
+            cursor: pointer;
+            font-size: 1.1em;
+            transition: background-color 0.3s ease;
+        }
+
+        .modal-content button:hover {
+            background: #c82333;
+        }
+
+        .close {
+            color: #aaa;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: black;
+            text-decoration: none;
+            cursor: pointer;
+        }
     </style>
 </head>
 <body>
@@ -155,7 +214,7 @@
             <i class="fas fa-chevron-left"></i>
         </button>
         <div class="logo">
-            <img src="tinywow_change_bg_photo_79922413 (1).png" alt="CVTailor.CC" style="width: 150px; height: auto;">
+            <img src="tinywow_change_bg_photo_79922413.png" alt="CVTailor.CC Logo" style="width: 150px; height: auto;">
         </div>
         <ul class="nav-links">
             <li class="active" onclick="window.location.href='index.html'"><i class="fas fa-home"></i><span>Home</span></li>
@@ -215,6 +274,15 @@
             </div>
             <div class="loading-spinner" id="loadingSpinner">
                 <i class="fas fa-spinner fa-spin fa-2x"></i>
+            </div>
+
+            <!-- The Modal -->
+            <div id="upgradeModal" class="modal">
+                <div class="modal-content">
+                    <span class="close">&times;</span>
+                    <p style="font-size: 1.2em; margin-bottom: 20px; color: #333;">Free plan users can only save up to 3 job listings. Upgrade your plan to save more.</p>
+                    <button style="background:#dc3545;color:white;border:none;padding:12px 24px;border-radius:5px;cursor:pointer; font-size: 1.1em;">Upgrade Now</button>
+                </div>
             </div>
         </div>
     </main>
@@ -301,7 +369,7 @@
             if (location) url += `&where=${encodeURIComponent(location)}`;
             if (jobType) url += `&contract_type=${jobType}`;
             if (category) url += `&category=${category}`;
-            if (sortBy) url += `&sort_by=${sortBy}`;
+            if (sortBy) url += `&sortBy=${sortBy}`;
             url += `&results_per_page=${resultsPerPage}`;
 
             try {
@@ -493,6 +561,43 @@
                 if (!user) {
                     alert('Please log in to save jobs to region');
                     return;
+                }
+
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                if (!userDoc.exists) {
+                    alert('Could not retrieve user data. Please try again.');
+                    return;
+                }
+
+                const userData = userDoc.data();
+                const currentPlan = userData.plan || 'free';
+
+                if (currentPlan === 'free') {
+                    const savedJobsSnapshot = await db.collection('users').doc(user.uid).collection('savedRegions').get();
+                    const savedJobsCount = savedJobsSnapshot.size;
+                    if (savedJobsCount >= 3) {
+                        // Get the modal
+                        var modal = document.getElementById("upgradeModal");
+
+                        // Get the <span> element that closes the modal
+                        var span = document.getElementsByClassName("close")[0];
+
+                        // When the user clicks the button, open the modal 
+                        modal.style.display = "block";
+
+                        // When the user clicks on <span> (x), close the modal
+                        span.onclick = function() {
+                            modal.style.display = "none";
+                        }
+
+                        // When the user clicks anywhere outside of the modal, close it
+                        window.onclick = function(event) {
+                            if (event.target == modal) {
+                                modal.style.display = "none";
+                            }
+                        }
+                        return;
+                    }
                 }
 
                 // Get the full job details from the DOM
