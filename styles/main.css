@@ -243,6 +243,10 @@ body {
     display: none;
 }
 
+.sidebar.collapsed .logo {
+    display: none;
+}
+
 /* Main Content Area */
 .main-content {
     margin-left: 250px;
