@@ -121,91 +121,13 @@
             cursor: pointer;
         }
 
-        .save-region-btn {
-            background: #2ecc71;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-            margin-right: 10px;
-            display: flex;
-            align-items: center;
-            gap: 5px;
-        }
-
-        .save-region-btn i {
-            font-size: 14px;
-        }
-
-        .save-region-btn:hover {
-            background: #27ae60;
-        }
-
         .loading-spinner {
             text-align: center;
             padding: 20px;
             display: none;
         }
 
-        /* Styles for the modal popup */
-        .modal {
-            display: none; /* Hidden by default */
-            position: fixed; /* Stay in place */
-            z-index: 1; /* Sit on top */
-            left: 0;
-            top: 0;
-            width: 100%; /* Full width */
-            height: 100%; /* Full height */
-            overflow: auto; /* Enable scroll if needed */
-            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
-        }
-
-        .modal-content {
-            background-color: #fff;
-            margin: 15% auto; /* 15% from the top and centered */
-            padding: 30px;
-            border: 1px solid #ccc;
-            width: 500px; /* Set a fixed width */
-            border-radius: 10px;
-            text-align: center;
-            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2); /* Add a shadow */
-        }
-
-        .modal-content p {
-            font-size: 1.2em;
-            margin-bottom: 20px;
-            color: #333;
-        }
-
-        .modal-content button {
-            background: #dc3545;
-            color: white;
-            border: none;
-            padding: 12px 24px;
-            border-radius: 5px;
-            cursor: pointer;
-            font-size: 1.1em;
-            transition: background-color 0.3s ease;
-        }
-
-        .modal-content button:hover {
-            background: #c82333;
-        }
-
-        .close {
-            color: #aaa;
-            float: right;
-            font-size: 28px;
-            font-weight: bold;
-        }
-
-        .close:hover,
-        .close:focus {
-            color: black;
-            text-decoration: none;
-            cursor: pointer;
-        }
+        /* Remove modal styles */
     </style>
 </head>
 <body>
@@ -217,11 +139,11 @@
             <img src="tinywow_change_bg_photo_79922413 (1).png" alt="CVTailor.CC Logo" style="width: 150px; height: auto;">
         </div>
         <ul class="nav-links">
-            <li class="active" onclick="window.location.href='index.html'"><i class="fas fa-home"></i><span>Home</span></li>
+            <li onclick="window.location.href='index.html'"><i class="fas fa-home"></i><span>Home</span></li>
             <li onclick="window.location.href='marketplace.html'"><i class="fas fa-store"></i><span>Marketplace</span></li>
-            <li onclick="window.location.href='region.html'"><i class="fas fa-globe"></i><span>Region</span></li>
+            <li onclick="window.location.href='events.html'"><i class="fas fa-calendar-alt"></i><span>Events</span></li>
             <li onclick="window.location.href='cv-section.html'"><i class="fas fa-file-alt"></i><span>CV & Cover Letter</span></li>
-            <li onclick="window.location.href='job-board.html'"><i class="fas fa-briefcase"></i><span>Job Board</span></li>
+            <li onclick="window.location.href='job-board.html'" class="active"><i class="fas fa-briefcase"></i><span>Job Board</span></li>
             <li><i class="fas fa-tasks"></i><span>Application Tracker <span style="color: grey;">(Coming Soon)</span></span></li>
             <li onclick="window.location.href='profile.html'"><i class="fas fa-user"></i><span>Profile</span></li>
             <li><i class="fas fa-comments"></i><span>Consultation <span style="color: grey;">(Coming Soon)</span></span></li>
@@ -276,14 +198,7 @@
                 <i class="fas fa-spinner fa-spin fa-2x"></i>
             </div>
 
-            <!-- The Modal -->
-            <div id="upgradeModal" class="modal">
-                <div class="modal-content">
-                    <span class="close">&times;</span>
-                    <p style="font-size: 1.2em; margin-bottom: 20px; color: #333;">Free plan users can only save up to 3 job listings. Upgrade your plan to save more.</p>
-                    <button style="background:#dc3545;color:white;border:none;padding:12px 24px;border-radius:5px;cursor:pointer; font-size: 1.1em;">Upgrade Now</button>
-                </div>
-            </div>
+            <!-- Remove the Modal -->
         </div>
     </main>
 
@@ -390,8 +305,6 @@
 
             // Clean and escape the data to prevent JS errors
             const cleanData = {
-                id: job.id?.toString().replace(/'/g, '\\\'') || '',
-                location: job.location?.display_name?.replace(/'/g, '\\\'') || '',
                 title: job.title?.replace(/'/g, '\\\'') || '',
                 company: job.company?.display_name?.replace(/'/g, '\\\'') || ''
             };
@@ -409,10 +322,6 @@
                             </div>
                         </div>
                         <div class="job-actions">
-                            <button class="save-region-btn" data-job-id="${cleanData.id}" 
-                                onclick="saveJobToRegion('${cleanData.id}', '${cleanData.location}', '${cleanData.title}', '${cleanData.company}')">
-                                <i class="fas fa-map-pin"></i> Save to Region
-                            </button>
                             <button class="apply-btn" onclick="window.open('${job.redirect_url}', '_blank')">Apply Now</button>
                         </div>
                     </div>
@@ -553,117 +462,6 @@
                 .catch((error) => {
                     console.error('Logout failed:', error);
                 });
-        }
-
-        async function saveJobToRegion(jobId, location, title, companyName) {
-            try {
-                const user = auth.currentUser;
-                if (!user) {
-                    alert('Please log in to save jobs to region');
-                    return;
-                }
-
-                const userDoc = await db.collection('users').doc(user.uid).get();
-                if (!userDoc.exists) {
-                    alert('Could not retrieve user data. Please try again.');
-                    return;
-                }
-
-                const userData = userDoc.data();
-                const currentPlan = userData.plan || 'free';
-
-                if (currentPlan === 'free') {
-                    const savedJobsSnapshot = await db.collection('users').doc(user.uid).collection('savedRegions').get();
-                    const savedJobsCount = savedJobsSnapshot.size;
-                    if (savedJobsCount >= 3) {
-                        // Get the modal
-                        var modal = document.getElementById("upgradeModal");
-
-                        // Get the <span> element that closes the modal
-                        var span = document.getElementsByClassName("close")[0];
-
-                        // When the user clicks the button, open the modal 
-                        modal.style.display = "block";
-
-                        // When the user clicks on <span> (x), close the modal
-                        span.onclick = function() {
-                            modal.style.display = "none";
-                        }
-
-                        // When the user clicks anywhere outside of the modal, close it
-                        window.onclick = function(event) {
-                            if (event.target == modal) {
-                                modal.style.display = "none";
-                            }
-                        }
-                        return;
-                    }
-                }
-
-                // Get the full job details from the DOM
-                const jobCard = document.querySelector(`[data-job-id="${jobId}"]`).closest('.job-card');
-                const salary = jobCard.querySelector('.job-details .fa-dollar-sign').nextSibling.textContent.trim();
-                const jobType = jobCard.querySelector('.job-tags .tag:last-child')?.textContent || 'Not specified';
-                const description = jobCard.querySelector('.job-description')?.textContent || '';
-
-                const savedJob = {
-                    jobId: jobId,
-                    title: title,
-                    companyName: companyName,
-                    jobType: jobType,
-                    salary: salary,
-                    location: {
-                        displayName: location,
-                        city: location.split(',')[0]?.trim() || '',
-                        region: location.split(',')[1]?.trim() || '',
-                        country: 'United Kingdom'
-                    },
-                    savedAt: firebase.firestore.FieldValue.serverTimestamp(),
-                    description: description.substring(0, 200),
-                    status: 'active'
-                };
-
-                // Get coordinates using Google Maps Geocoding
-                try {
-                    const geocoder = new google.maps.Geocoder();
-                    const response = await new Promise((resolve, reject) => {
-                        geocoder.geocode({ address: location }, (results, status) => {
-                            if (status === 'OK') {
-                                resolve(results[0]);
-                            } else {
-                                reject(status);
-                            }
-                        });
-                    });
-
-                    savedJob.coordinates = {
-                        lat: response.geometry.location.lat(),
-                        lng: response.geometry.location.lng(),
-                        formattedAddress: response.formatted_address
-                    };
-                } catch (geocodeError) {
-                    console.warn('Geocoding failed:', geocodeError);
-                }
-
-                // Save only to savedRegions collection
-                await db.collection('users').doc(user.uid)
-                    .collection('savedRegions')
-                    .doc(jobId)
-                    .set(savedJob);
-
-                alert('Job location saved successfully! You can view it in the Region section.');
-
-                // Update button state
-                const saveBtn = document.querySelector(`[data-job-id="${jobId}"]`);
-                if (saveBtn) {
-                    saveBtn.innerHTML = '<i class="fas fa-check"></i> Saved';
-                    saveBtn.style.background = '#27ae60';
-                    saveBtn.disabled = true;
-                }
-            } catch (error) {
-                console.error('Error saving job location:', error);
-                alert('Failed to save job location. Please try again.');
-            }
         }
     </script>
 </body>
