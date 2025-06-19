@@ -3,149 +3,37 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Job Board - JobSeeker</title>
+    <title>Job Seeker Dashboard</title>
     <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
     <link href="styles/main.css" rel="stylesheet">
+    <!-- Add Firebase SDK -->
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
     <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
-    <style>
-        .job-board-container {
-            padding: 20px;
-        }
-
-        .search-section {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            margin-bottom: 20px;
-        }
-
-        .search-bar {
-            display: flex;
-            gap: 10px;
-            margin-bottom: 15px;
-        }
-
-        .search-input {
-            flex: 2;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-
-        .location-input {
-            flex: 1;
-            padding: 10px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-
-        .filter-section {
-            display: flex;
-            gap: 10px;
-            flex-wrap: wrap;
-        }
-
-        .filter-select {
-            min-width: 150px;
-            padding: 8px;
-            border: 1px solid #ddd;
-            border-radius: 4px;
-        }
-
-        .job-list {
-            display: grid;
-            gap: 15px;
-        }
-
-        .job-card {
-            background: white;
-            padding: 20px;
-            border-radius: 8px;
-            box-shadow: 0 2px 4px rgba(0,0,0,0.1);
-            cursor: pointer;
-            transition: transform 0.2s;
-        }
-
-        .job-card:hover {
-            transform: translateY(-2px);
-        }
-
-        .job-header {
-            display: flex;
-            justify-content: space-between;
-            margin-bottom: 10px;
-        }
-
-        .company-info {
-            display: flex;
-            align-items: center;
-            gap: 10px;
-        }
-
-        .company-logo {
-            width: 50px;
-            height: 50px;
-            border-radius: 4px;
-            background: #f0f0f0;
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .job-details {
-            margin-top: 10px;
-        }
-
-        .job-tags {
-            display: flex;
-            gap: 8px;
-            margin-top: 10px;
-        }
-
-        .tag {
-            background: #f0f0f0;
-            padding: 4px 8px;
-            border-radius: 12px;
-            font-size: 0.9em;
-        }
-
-        .apply-btn {
-            background: #3498db;
-            color: white;
-            border: none;
-            padding: 8px 16px;
-            border-radius: 4px;
-            cursor: pointer;
-        }
-
-        .loading-spinner {
-            text-align: center;
-            padding: 20px;
-            display: none;
-        }
-
-        /* Remove modal styles */
-    </style>
 </head>
 <body>
+<script>
+  // Check if the user is logged in using Firebase
+  function isLoggedIn() {
+    return firebase.auth().currentUser !== null;
+  }
+
+</script>
     <nav class="sidebar">
         <button class="toggle-btn">
             <i class="fas fa-chevron-left"></i>
         </button>
         <div class="logo">
-            <img src="tinywow_change_bg_photo_79922413 (1).png" alt="CVTailor.CC Logo" style="width: 150px; height: auto;">
+            <img src="tinywow_change_bg_photo_79922413 (1).png" alt="CVTailor.CC" style="width: 150px; height: auto;">
         </div>
         <ul class="nav-links">
-            <li onclick="window.location.href='index.html'"><i class="fas fa-home"></i><span>Home</span></li>
+            <li class="active"><i class="fas fa-home"></i><span>Home</span></li>
             <li onclick="window.location.href='marketplace.html'"><i class="fas fa-store"></i><span>Marketplace</span></li>
             <li onclick="window.location.href='events.html'"><i class="fas fa-calendar-alt"></i><span>Events</span></li>
             <li onclick="window.location.href='cv-section.html'"><i class="fas fa-file-alt"></i><span>CV & Cover Letter</span></li>
-            <li onclick="window.location.href='job-board.html'" class="active"><i class="fas fa-briefcase"></i><span>Job Board</span></li>
+            <li onclick="window.location.href='job-board.html'"><i class="fas fa-briefcase"></i><span>Job Board</span></li>
             <li><i class="fas fa-tasks"></i><span>Application Tracker <span style="color: grey;">(Coming Soon)</span></span></li>
-            <li onclick="window.location.href='profile.html'"><i class="fas fa-user"></i><span>Profile</span></li>
+            <li onclick="window.location.href='profile.html'" ><i class="fas fa-user"></i><span>Profile</span></li>
             <li><i class="fas fa-comments"></i><span>Consultation <span style="color: grey;">(Coming Soon)</span></span></li>
             <li onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i><span>Logout</span></li>
             <li onclick="window.location.href='plan.html'" class="subscription-plan"><i class="fas fa-credit-card"></i><span>Subscription Plan</span><span id="nav-credit-display" style="font-size: 0.8em; color: #fff; margin-left: 5px;">(Credit: Loading...)</span></li>
@@ -153,57 +41,164 @@
     </nav>
 
     <main class="main-content">
-        <div class="job-board-container">
-            <div class="search-section">
-                <div class="search-bar">
-                    <input type="text" class="search-input" placeholder="Search job titles, keywords...">
-                    <input type="text" class="location-input" placeholder="Location (city, country)">
-                    <button class="apply-btn" id="searchBtn">Search</button>
-                </div>
-                <div class="filter-section">
-                    <select class="filter-select" id="jobType">
-                        <option value="">Job Type</option>
-                        <option value="full_time">Full Time</option>
-                        <option value="part_time">Part Time</option>
-                        <option value="contract">Contract</option>
-                        <option value="permanent">Permanent</option>
-                    </select>
-                    <select class="filter-select" id="category">
-                        <option value="">Category</option>
-                        <option value="it-jobs">IT Jobs</option>
-                        <option value="engineering-jobs">Engineering</option>
-                        <option value="healthcare-nursing-jobs">Healthcare</option>
-                        <option value="finance-accounting-jobs">Finance</option>
-                        <option value="sales-jobs">Sales</option>
-                        <option value="marketing-jobs">Marketing</option>
-                    </select>
-                    <select class="filter-select" id="sortBy">
-                        <option value="">Sort By</option>
-                        <option value="date">Date Posted</option>
-                        <option value="salary">Salary</option>
-                        <option value="relevance">Relevance</option>
-                    </select>
-                    <select class="filter-select" id="resultsPerPage">
-                        <option value="10">10 per page</option>
-                        <option value="20">20 per page</option>
-                        <option value="50">50 per page</option>
-                    </select>
-                </div>
+        <div class="welcome-section">
+            <h1 id="welcome-title">Welcome to Your Dashboard</h1>
+            <p id="welcome-message">Start your job search journey here</p>
+        </div>
+
+        <div class="features-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; padding: 20px;">
+            <!-- Job Board Feature -->
+            <div class="feature-card" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <i class="fas fa-briefcase" style="font-size: 24px; color: #3498db; margin-bottom: 15px;"></i>
+                <h3>Job Board</h3>
+                <p>Search and filter job listings tailored to your preferences. Track applications and save interesting positions.</p>
+                <button onclick="window.location.href='job-board.html'" style="background: #3498db; color: white; border: none; padding: 10px 20px; border-radius: 4px; margin-top: 15px; cursor: pointer;">
+                    Explore Jobs
+                </button>
             </div>
 
-            <div class="job-list" id="jobList">
-                <!-- Job cards will be dynamically added here -->
-            </div>
-            <div class="loading-spinner" id="loadingSpinner">
-                <i class="fas fa-spinner fa-spin fa-2x"></i>
+            <!-- Events Feature -->
+            <div class="feature-card" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <i class="fas fa-calendar-alt" style="font-size: 24px; color: #2ecc71; margin-bottom: 15px;"></i>
+                <h3>Events</h3>
+                <p>Discover networking events, workshops, and career fairs in your industry. Stay connected and grow your network.</p>
+                <button onclick="window.location.href='events.html'" style="background: #2ecc71; color: white; border: none; padding: 10px 20px; border-radius: 4px; margin-top: 15px; cursor: pointer;">
+                    Browse Events
+                </button>
             </div>
 
-            <!-- Remove the Modal -->
+            <!-- CV & Cover Letter Feature -->
+            <div class="feature-card" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <i class="fas fa-file-alt" style="font-size: 24px; color: #9b59b6; margin-bottom: 15px;"></i>
+                <h3>CV & Cover Letter</h3>
+                <p>AI-powered CV and cover letter tailoring. Generate customized documents for each application.</p>
+                <button onclick="window.location.href='cv-section.html'" style="background: #9b59b6; color: white; border: none; padding: 10px 20px; border-radius: 4px; margin-top: 15px; cursor: pointer;">
+                    Customize Documents
+                </button>
+            </div>
+
+            <!-- Profile Management -->
+            <div class="feature-card" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <i class="fas fa-user" style="font-size: 24px; color: #e74c3c; margin-bottom: 15px;"></i>
+                <h3>Profile Management</h3>
+                <p>Manage your professional profile, skills, and preferences. Keep your information up to date.</p>
+                <button onclick="window.location.href='profile.html'" style="background: #e74c3c; color: white; border: none; padding: 10px 20px; border-radius: 4px; margin-top: 15px; cursor: pointer;">
+                    Update Profile
+                </button>
+            </div>
+
+            <!-- Marketplace  -->
+            <div class="feature-card" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1);">
+                <i class="fas fa-store" style="font-size: 24px; color: #f39c12; margin-bottom: 15px;"></i>
+                <h3>Marketplace</h3>
+                <p>Access professional services, templates, and resources to enhance your job search.</p>
+                <button onclick="window.location.href='marketplace.html'" style="background: #f39c12; color: white; border: none; padding: 10px 20px; border-radius: 4px; margin-top: 15px; cursor: pointer;">
+                    Explore Marketplace
+                </button>
+            </div>
+
+            <!-- Consultation -->
+            <div class="feature-card" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); opacity: 0.7;">
+                <i class="fas fa-comments" style="font-size: 24px; color: #27ae60; margin-bottom: 15px;"></i>
+                <h3>Consultation</h3>
+                <p>Coming soon! Schedule a consultation with a career expert to get personalized advice.</p>
+                <button disabled style="background: #27ae60; color: white; border: none; padding: 10px 20px; border-radius: 4px; margin-top: 15px; opacity: 0.7; cursor: not-allowed;">
+                    Coming Soon
+                </button> 
+            </div>
+
+
+            <!-- Application Tracker Coming Soon -->
+            <div class="feature-card" style="background: white; padding: 20px; border-radius: 8px; box-shadow: 0 2px 4px rgba(0,0,0,0.1); opacity: 0.7;">
+                <i class="fas fa-tasks" style="font-size: 24px; color: #1abc9c; margin-bottom: 15px;"></i>
+                <h3>Application Tracker</h3>
+                <p>Coming soon! Track your job applications, interviews, and follow-ups in one place.</p>
+                <button disabled style="background: #1abc9c; color: white; border: none; padding: 10px 20px; border-radius: 4px; margin-top: 15px; opacity: 0.7; cursor: not-allowed;">
+                    Coming Soon
+                </button>
+            </div>
         </div>
     </main>
 
+    <!-- Guide Modal for New Users -->
+    <div id="guide-modal" class="modal" style="display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.5); z-index: 1000;">
+        <div class="modal-content" style="background: white; width: 80%; max-width: 800px; margin: 50px auto; padding: 30px; border-radius: 8px; max-height: 90vh; overflow-y: auto;">
+            <h2>Welcome to CVTailor.CC! 🎉</h2>
+            <p style="color: #e74c3c; font-weight: bold; margin: 10px 0;">📝 First Step: Complete Your Profile!</p>
+            <p>To get the most out of our services, please take a moment to <a href="profile.html" style="color: #3498db; text-decoration: none; font-weight: bold;">complete your profile</a>. This helps us provide better tailored services.</p>
+            
+            <div class="guide-step">
+                <h3>1. Your Free Credits</h3>
+                <p>You've received 20 free credits to start! Here's how to use them:</p>
+                <ul>
+                    <li>CV Generation (2 credits) - AI-powered CV tailoring</li>
+                    <li>Cover Letter Creation (2 credits) - Customized for each job</li>
+                    <li>Event Registration (2 credits) - Register for premium events</li>
+                    <li>Application Q&A (1 credit) - Get AI help with application questions</li>
+                </ul>
+            </div>
+
+            <div class="guide-step">
+                <h3>2. Key Features</h3>
+                <ul>
+                    <li><b>📅 Events:</b> 
+                        <ul>
+                            <li>Access exclusive networking events</li>
+                            <li>Join industry workshops and webinars</li>
+                            <li>Connect with industry professionals</li>
+                        </ul>
+                    </li>
+                    <li><b>📄 CV & Cover Letter:</b>
+                        <ul>
+                            <li>AI-powered document customization</li>
+                            <li>Multiple templates available</li>
+                            <li>Automatic formatting and styling</li>
+                        </ul>
+                    </li>
+                    <li><b>💼 Job Board:</b>
+                        <ul>
+                            <li>Browse curated job listings</li>
+                            <li>Filter by location and industry</li>
+                            <li>Save interesting positions</li>
+                        </ul>
+                    </li>
+                </ul>
+            </div>
+
+            <div class="guide-step">
+                <h3>3. Premium Benefits</h3>
+                <p>Upgrade to Premium (£9.99/month) to get:</p>
+                <ul>
+                    <li>Unlimited CV and cover letter generation</li>
+                    <li>Unlimited region searches</li>
+                    <li>Priority support</li>
+                    <li>Advanced features access</li>
+                </ul>
+            </div>
+
+            <div class="guide-step" style="background: #e8f5e9;">
+                <h3>🚀 Getting Started</h3>
+                <ol>
+                    <li style="margin-bottom: 10px;"><b>Complete your profile</b> - Add your skills, experience, and preferences</li>
+                    <li style="margin-bottom: 10px;">Try generating your first CV using our AI system</li>
+                    <li style="margin-bottom: 10px;">Explore the Region section to find potential employers</li>
+                    <li style="margin-bottom: 10px;">Check the Job Board for current opportunities</li>
+                </ol>
+            </div>
+
+            <div style="display: flex; gap: 10px; margin-top: 20px;">
+                <button onclick="window.location.href='profile.html'" style="background: #2ecc71; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; flex: 1;">
+                    Complete Profile Now
+                </button>
+                <button onclick="closeGuide()" style="background: #7f8c8d; color: white; border: none; padding: 10px 20px; border-radius: 4px; cursor: pointer; flex: 1;">
+                    Explore Later
+                </button>
+            </div>
+        </div>
+    </div>
+
     <script>
-        // Firebase configuration (same as other pages)
+        // Firebase configuration
         const firebaseConfig = {
             apiKey: "AIzaSyCCoH_alBrRE_LrrE_nR-edbJXqy1pjfCU",
             authDomain: "quick-test-aac28.firebaseapp.com",
@@ -214,233 +209,38 @@
             measurementId: "G-0KXC6TQCEE"
         };
 
+        // Initialize Firebase
         if (!firebase.apps.length) {
             firebase.initializeApp(firebaseConfig);
         }
         const auth = firebase.auth();
         const db = firebase.firestore();
 
-        // Function to update credit display in the subscription button
-        async function updateCreditDisplayInButton(credits) {
-            const navCreditDisplay = document.getElementById('nav-credit-display');
-            if (navCreditDisplay) {
-                const user = auth.currentUser;
-                if (user) {
-                    const userDoc = await db.collection('users').doc(user.uid).get();
-                    if (userDoc.exists) {
-                        const userData = userDoc.data();
-                        const currentPlan = userData.plan || 'free';
-
-                        if (currentPlan === 'premium') {
-                            navCreditDisplay.textContent = 'Premium';
-                        } else {
-                            navCreditDisplay.textContent = `(Credit: ${credits})`;
-                        }
-                    }
-                }
-            }
-        }
-
-        auth.onAuthStateChanged(async (user) => {
+        // Check auth state and fetch user data
+        auth.onAuthStateChanged((user) => {
             if (!user) {
                 window.location.href = 'auth.html';
             } else {
-                const userDoc = await db.collection('users').doc(user.uid).get();
-                if (userDoc.exists) {
-                    const userData = userDoc.data();
-                    userCredits = userData.credits || 0; // Default to 0 if credits don't exist
-                    const currentPlan = userData.plan || 'free'; // Default to free if no plan exists
-                    updateCreditDisplayInButton(userCredits); // Update the button
-                } else {
-                    console.error('Error fetching user data: Document does not exist');
-                }
-            }
-        });
-
-        const ADZUNA_API_KEY = 'deb3c987d4de390bd69ae659651f08d9';
-        const ADZUNA_APP_ID = '17058022';
-        
-        let currentPage = 1;
-        let isLoading = false;
-        let hasMoreJobs = true;
-        let currentSearchParams = {};
-
-        async function fetchJobs(params = {}) {
-            const {
-                query = '',
-                location = '',
-                jobType = '',
-                category = '',
-                sortBy = '',
-                resultsPerPage = 10,
-                page = 1
-            } = params;
-
-            const baseUrl = `https://api.adzuna.com/v1/api/jobs/gb/search/${page}`;
-            let url = `${baseUrl}?app_id=${ADZUNA_APP_ID}&app_key=${ADZUNA_API_KEY}`;
-            
-            // Add search parameters
-            if (query) url += `&what=${encodeURIComponent(query)}`;
-            if (location) url += `&where=${encodeURIComponent(location)}`;
-            if (jobType) url += `&contract_type=${jobType}`;
-            if (category) url += `&category=${category}`;
-            if (sortBy) url += `&sortBy=${sortBy}`;
-            url += `&results_per_page=${resultsPerPage}`;
-
-            try {
-                const response = await fetch(url);
-                const data = await response.json();
-                hasMoreJobs = data.results.length === parseInt(resultsPerPage);
-                return data.results || [];
-            } catch (error) {
-                console.error('Error fetching jobs:', error);
-                return [];
-            }
-        }
-
-        function createJobCard(job) {
-            const salary = job.salary_min && job.salary_max 
-                ? `£${Math.floor(job.salary_min).toLocaleString()} - £${Math.floor(job.salary_max).toLocaleString()}`
-                : 'Salary not specified';
-
-            // Clean and escape the data to prevent JS errors
-            const cleanData = {
-                title: job.title?.replace(/'/g, '\\\'') || '',
-                company: job.company?.display_name?.replace(/'/g, '\\\'') || ''
-            };
-
-            return `
-                <div class="job-card">
-                    <div class="job-header">
-                        <div class="company-info">
-                            <div class="company-logo">
-                                <i class="fas fa-building"></i>
-                            </div>
-                            <div>
-                                <h3>${job.title}</h3>
-                                <p>${job.company.display_name}</p>
-                            </div>
-                        </div>
-                        <div class="job-actions">
-                            <button class="apply-btn" onclick="window.open('${job.redirect_url}', '_blank')">Apply Now</button>
-                        </div>
-                    </div>
-                    <div class="job-details">
-                        <p><i class="fas fa-map-marker-alt"></i> ${job.location.display_name}</p>
-                        <p><i class="fas fa-clock"></i> ${job.contract_time || 'Not specified'}</p>
-                        <p><i class="fas fa-dollar-sign"></i> ${salary}</p>
-                    </div>
-                    <div class="job-description">
-                        ${job.description.substring(0, 200)}...
-                    </div>
-                    <div class="job-tags">
-                        ${job.category.label ? `<span class="tag">${job.category.label}</span>` : ''}
-                        ${job.contract_time ? `<span class="tag">${job.contract_time}</span>` : ''}
-                    </div>
-                </div>
-            `;
-        }
-
-        async function initializeJobs() {
-            const jobList = document.getElementById('jobList');
-            jobList.innerHTML = '<p>Loading jobs...</p>';
-            
-            const jobs = await fetchJobs();
-            if (jobs.length === 0) {
-                jobList.innerHTML = '<p>No jobs found</p>';
-                return;
-            }
-            
-            jobList.innerHTML = '';
-            jobs.forEach(job => {
-                jobList.innerHTML += createJobCard(job);
-            });
-        }
-
-        async function handleSearch() {
-            currentPage = 1;
-            hasMoreJobs = true;
-            const query = document.querySelector('.search-input').value;
-            const location = document.querySelector('.location-input').value;
-            const jobType = document.getElementById('jobType').value;
-            const category = document.getElementById('category').value;
-            const sortBy = document.getElementById('sortBy').value;
-            const resultsPerPage = document.getElementById('resultsPerPage').value;
-
-            currentSearchParams = {
-                query,
-                location,
-                jobType,
-                category,
-                sortBy,
-                resultsPerPage
-            };
-
-            const jobList = document.getElementById('jobList');
-            jobList.innerHTML = '<p>Searching...</p>';
-            
-            const jobs = await fetchJobs(currentSearchParams);
-            jobList.innerHTML = '';
-            
-            if (jobs.length === 0) {
-                jobList.innerHTML = '<p>No jobs found</p>';
-                return;
-            }
-            
-            jobs.forEach(job => {
-                jobList.innerHTML += createJobCard(job);
-            });
-        }
-
-        async function loadMoreJobs() {
-            if (isLoading || !hasMoreJobs) return;
-
-            isLoading = true;
-            document.getElementById('loadingSpinner').style.display = 'block';
-            
-            currentPage++;
-            const jobs = await fetchJobs({
-                ...currentSearchParams,
-                page: currentPage
-            });
-
-            if (jobs.length > 0) {
-                jobs.forEach(job => {
-                    document.getElementById('jobList').innerHTML += createJobCard(job);
+                db.collection('users').doc(user.uid).get()
+                .then((doc) => {
+                    if (doc.exists) {
+                        const userData = doc.data();
+                        const fullName = userData.lastName 
+                            ? `${userData.firstName} ${userData.lastName}`
+                            : userData.firstName;
+                        document.getElementById('welcome-title').textContent = 
+                            `Welcome to Your Dashboard, ${fullName}`;
+                        document.getElementById('welcome-message').textContent = 
+                            'We\'re glad to have you back!';
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error fetching user data:', error);
                 });
             }
-
-            isLoading = false;
-            document.getElementById('loadingSpinner').style.display = 'none';
-        }
-
-        // Infinite scroll detection
-        window.addEventListener('scroll', () => {
-            if ((window.innerHeight + window.scrollY) >= document.body.offsetHeight - 500) {
-                loadMoreJobs();
-            }
         });
 
-        // Update event listeners
-        document.getElementById('searchBtn').addEventListener('click', handleSearch);
-        document.querySelector('.search-input').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleSearch();
-        });
-        document.querySelector('.location-input').addEventListener('keypress', (e) => {
-            if (e.key === 'Enter') handleSearch();
-        });
-
-        // Add filter change handlers
-        ['jobType', 'category', 'sortBy', 'resultsPerPage'].forEach(filterId => {
-            document.getElementById(filterId).addEventListener('change', handleSearch);
-        });
-
-        // Initialize the page with jobs
-        document.addEventListener('DOMContentLoaded', () => {
-            initializeJobs();
-        });
-
-        // Sidebar toggle functionality
+         // Sidebar toggle functionality
         const sidebar = document.querySelector('.sidebar');
         const mainContent = document.querySelector('.main-content');
         const toggleBtn = document.querySelector('.toggle-btn');
@@ -463,6 +263,86 @@
                     console.error('Logout failed:', error);
                 });
         }
+
+        // Function to update credit display in the subscription button
+        async function updateCreditDisplayInButton(credits) {
+            const navCreditDisplay = document.getElementById('nav-credit-display');
+            if (navCreditDisplay) {
+                const user = auth.currentUser;
+                if (user) {
+                    const userDoc = await db.collection('users').doc(user.uid).get();
+                    if (userDoc.exists) {
+                        const userData = userDoc.data();
+                        const currentPlan = userData.plan || 'free';
+
+                        if (currentPlan === 'premium') {
+                            navCreditDisplay.textContent = 'Premium';
+                        } else {
+                            navCreditDisplay.textContent = `(Credit: ${credits})`;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Call this function after fetching user data
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = 'auth.html';
+            } else {
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    userCredits = userData.credits || 0; // Default to 0 if credits don't exist
+                    const currentPlan = userData.plan || 'free'; // Default to free if no plan exists
+                    updateCreditDisplayInButton(userCredits); // Update the button
+                } else {
+                    console.error('Error fetching user data: Document does not exist');
+                }
+            }
+        });
+
+        // Show guide modal for new users
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('newUser') === 'true') {
+                document.getElementById('guide-modal').style.display = 'block';
+                // Update user flag
+                const user = firebase.auth().currentUser;
+                if (user) {
+                    db.collection('users').doc(user.uid).update({
+                        isNewUser: false
+                    });
+                }
+            }
+        };
+
+        function closeGuide() {
+            document.getElementById('guide-modal').style.display = 'none';
+        }
     </script>
+
+    <style>
+        .guide-step {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+
+        .guide-step h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .guide-step ul {
+            margin-left: 20px;
+        }
+
+        .guide-step li {
+            margin: 5px 0;
+            color: #555;
+        }
+    </style>
 </body>
 </html>
