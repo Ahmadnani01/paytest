@@ -1,0 +1,401 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Events - JobSeeker</title>
+    <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet">
+    <link href="styles/main.css" rel="stylesheet">
+    <!-- Add Firebase SDK -->
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-app-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-auth-compat.js"></script>
+    <script src="https://www.gstatic.com/firebasejs/9.6.0/firebase-firestore-compat.js"></script>
+</head>
+<body>
+<script>
+  // Check if the user is logged in using Firebase
+  function isLoggedIn() {
+    return firebase.auth().currentUser !== null;
+  }
+
+</script>
+    <nav class="sidebar">
+        <button class="toggle-btn">
+            <i class="fas fa-chevron-left"></i>
+        </button>
+        <div class="logo">
+            <img src="tinywow_change_bg_photo_79922413 (1).png" alt="CVTailor.CC Logo" style="width: 150px; height: auto;">
+        </div>
+        <ul class="nav-links">
+            <li onclick="window.location.href='index.html'"><i class="fas fa-home"></i><span>Home</span></li>
+            <li onclick="window.location.href='marketplace.html'"><i class="fas fa-store"></i><span>Marketplace</span></li>
+            <li onclick="window.location.href='events.html'" class="active"><i class="fas fa-calendar-alt"></i><span>Events</span></li>
+            <li onclick="window.location.href='cv-section.html'"><i class="fas fa-file-alt"></i><span>CV & Cover Letter</span></li>
+            <li onclick="window.location.href='job-board.html'"><i class="fas fa-briefcase"></i><span>Job Board</span></li>
+            <li><i class="fas fa-tasks"></i><span>Application Tracker <span style="color: grey;">(Coming Soon)</span></span></li>
+            <li onclick="window.location.href='profile.html'"><i class="fas fa-user"></i><span>Profile</span></li>
+            <li><i class="fas fa-comments"></i><span>Consultation <span style="color: grey;">(Coming Soon)</span></span></li>
+            <li onclick="handleLogout()"><i class="fas fa-sign-out-alt"></i><span>Logout</span></li>
+            <li onclick="window.location.href='plan.html'" class="subscription-plan"><i class="fas fa-credit-card"></i><span>Subscription Plan</span><span id="nav-credit-display" style="font-size: 0.8em; color: #fff; margin-left: 5px;">(Credit: Loading...)</span></li>
+        </ul>
+    </nav>
+
+    <main class="main-content">
+        <div class="welcome-section">
+            <h1>Events</h1>
+            <p>Discover and join upcoming career events and networking opportunities</p>
+        </div>
+
+        <div id="event-cards-container" class="features-grid" style="display: grid; grid-template-columns: repeat(auto-fit, minmax(300px, 1fr)); gap: 20px; padding: 20px;">
+            <!-- Event cards will be dynamically added here -->
+        </div>
+    </main>
+
+    <script>
+        // Firebase configuration
+        const firebaseConfig = {
+            apiKey: "AIzaSyCCoH_alBrRE_LrrE_nR-edbJXqy1pjfCU",
+            authDomain: "quick-test-aac28.firebaseapp.com",
+            projectId: "quick-test-aac28",
+            storageBucket: "quick-test-aac28.firebasestorage.app",
+            messagingSenderId: "892247718936",
+            appId: "1:892247718936:web:e74b78c6897ef081e3d76d",
+            measurementId: "G-0KXC6TQCEE"
+        };
+
+        // Initialize Firebase
+        if (!firebase.apps.length) {
+            firebase.initializeApp(firebaseConfig);
+        }
+        const auth = firebase.auth();
+        const db = firebase.firestore();
+
+        // Check auth state and fetch user data
+        auth.onAuthStateChanged((user) => {
+            if (!user) {
+                window.location.href = 'auth.html';
+            } else {
+                db.collection('users').doc(user.uid).get()
+                .then((doc) => {
+                    if (doc.exists) {
+                        const userData = doc.data();
+                        const fullName = userData.lastName 
+                            ? `${userData.firstName} ${userData.lastName}`
+                            : userData.firstName;
+                        document.getElementById('welcome-title').textContent = 
+                            `Welcome to Your Dashboard, ${fullName}`;
+                        document.getElementById('welcome-message').textContent = 
+                            'We\'re glad to have you back!';
+                    }
+                })
+                .catch((error) => {
+                    console.error('Error fetching user data:', error);
+                });
+            }
+        });
+
+         // Sidebar toggle functionality
+        const sidebar = document.querySelector('.sidebar');
+        const mainContent = document.querySelector('.main-content');
+        const toggleBtn = document.querySelector('.toggle-btn');
+        const toggleIcon = toggleBtn.querySelector('i');
+
+        toggleBtn.addEventListener('click', () => {
+            sidebar.classList.toggle('collapsed');
+            mainContent.classList.toggle('expanded');
+            toggleIcon.classList.toggle('fa-chevron-left');
+            toggleIcon.classList.toggle('fa-chevron-right');
+        });
+
+        // Logout functionality
+        function handleLogout() {
+            auth.signOut()
+                .then(() => {
+                    window.location.href = 'auth.html';
+                })
+                .catch((error) => {
+                    console.error('Logout failed:', error);
+                });
+        }
+
+        // Function to update credit display in the subscription button
+        async function updateCreditDisplayInButton(credits) {
+            const navCreditDisplay = document.getElementById('nav-credit-display');
+            if (navCreditDisplay) {
+                const user = auth.currentUser;
+                if (user) {
+                    const userDoc = await db.collection('users').doc(user.uid).get();
+                    if (userDoc.exists) {
+                        const userData = userDoc.data();
+                        const currentPlan = userData.plan || 'free';
+
+                        if (currentPlan === 'premium') {
+                            navCreditDisplay.textContent = 'Premium';
+                        } else {
+                            navCreditDisplay.textContent = `(Credit: ${credits})`;
+                        }
+                    }
+                }
+            }
+        }
+
+        // Call this function after fetching user data
+        auth.onAuthStateChanged(async (user) => {
+            if (!user) {
+                window.location.href = 'auth.html';
+            } else {
+                const userDoc = await db.collection('users').doc(user.uid).get();
+                if (userDoc.exists) {
+                    const userData = userDoc.data();
+                    userCredits = userData.credits || 0; // Default to 0 if credits don't exist
+                    const currentPlan = userData.plan || 'free'; // Default to free if no plan exists
+                    updateCreditDisplayInButton(userCredits); // Update the button
+                } else {
+                    console.error('Error fetching user data: Document does not exist');
+                }
+            }
+        });
+
+        // Show guide modal for new users
+        window.onload = function() {
+            const urlParams = new URLSearchParams(window.location.search);
+            if (urlParams.get('newUser') === 'true') {
+                document.getElementById('guide-modal').style.display = 'block';
+                // Update user flag
+                const user = firebase.auth().currentUser;
+                if (user) {
+                    db.collection('users').doc(user.uid).update({
+                        isNewUser: false
+                    });
+                }
+            }
+        };
+
+        function closeGuide() {
+            document.getElementById('guide-modal').style.display = 'none';
+        }
+    </script>
+
+    <script>
+        // Function to parse CSV and generate event cards
+        function loadEvents() {
+            // Show loading placeholders while fetching data
+            createLoadingPlaceholders();
+            
+            fetch('events.csv')
+                .then(response => response.text())
+                .then(csv => {
+                    const events = parseCSV(csv);
+                    displayEvents(events);
+                })
+                .catch(error => {
+                    console.error('Error loading events:', error);
+                    // Show error state in the container
+                    const container = document.getElementById('event-cards-container');
+                    container.innerHTML = '<p class="error-message">Failed to load events. Please try again later.</p>';
+                });
+        }
+
+        // Function to create loading placeholders
+        function createLoadingPlaceholders() {
+            const container = document.getElementById('event-cards-container');
+            container.innerHTML = ''; // Clear container
+            
+            // Create 6 placeholder cards
+            for (let i = 0; i < 6; i++) {
+                const placeholderCard = document.createElement('div');
+                placeholderCard.className = 'loading-card';
+                placeholderCard.innerHTML = `
+                    <div class="placeholder title"></div>
+                    <div class="placeholder text"></div>
+                    <div class="placeholder text"></div>
+                    <div class="placeholder image"></div>
+                    <div class="placeholder text"></div>
+                `;
+                container.appendChild(placeholderCard);
+            }
+        }
+
+        // Function to parse CSV data
+        function parseCSV(csv) {
+            const lines = csv.split('\n');
+            const headers = lines[0].split(',');
+            const events = [];
+
+            for (let i = 1; i < lines.length; i++) {
+                const data = lines[i].match(/(".*?"|[^",]+)(?=\s*,|\s*$)/g);
+                if (data && data.length === headers.length) {
+                    const event = {};
+                    for (let j = 0; j < headers.length; j++) {
+                        event[headers[j].trim()] = data[j].trim().replace(/^"|"$/g, '');
+                    }
+                    events.push(event);
+                }
+            }
+            return events;
+        }
+
+        // Function to display events in cards
+        function displayEvents(events) {
+            const container = document.getElementById('event-cards-container');
+            container.innerHTML = ''; // Clear container including placeholders
+            
+            events.forEach(event => {
+                const card = document.createElement('div');
+                card.className = 'feature-card';
+
+                // Parse the date string from the format "Wed, 18/06/2025, 9:30 AM"
+                const [_, datePart, timePart] = event["Event Date"].split(", ");
+                const [day, month, year] = datePart.split("/");
+                const eventDate = new Date(`${year}-${month}-${day}`);
+                const formattedDate = event["Event Date"].split(",")[0] + "," + datePart;
+
+                card.innerHTML = `
+                    <h3>${event["Event Name"]}</h3>
+                    <div class="event-date-time">
+                        <span><i class="fas fa-calendar"></i> ${formattedDate}</span>
+                        <span><i class="fas fa-clock"></i> ${event["Event Time"]}</span>
+                    </div>
+                    <img src="${event["Event Image"]}" alt="${event["Event Name"]}" 
+                         onerror="this.src='https://via.placeholder.com/400x200?text=Event+Image'">
+                    <p class="event-price"><i class="fas fa-tag"></i> ${event["Event Price"]}</p>
+                    <p><a href="${event["Event Link"]}" target="_blank">
+                        <i class="fas fa-external-link-alt"></i> More Information
+                    </a></p>
+                `;
+                container.appendChild(card);
+            });
+        }
+
+        // Load events when the page loads
+        document.addEventListener('DOMContentLoaded', function() {
+            loadEvents();
+        });
+    </script>
+
+    <style>
+        .guide-step {
+            margin: 20px 0;
+            padding: 15px;
+            background: #f8f9fa;
+            border-radius: 6px;
+        }
+
+        .guide-step h3 {
+            color: #2c3e50;
+            margin-bottom: 10px;
+        }
+
+        .guide-step ul {
+            margin-left: 20px;
+        }
+
+        .guide-step li {
+            margin: 5px 0;
+            color: #555;
+        }
+
+        /* Event Card Styles */
+        .feature-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            transition: transform 0.2s, box-shadow 0.2s;
+            display: flex;
+            flex-direction: column;
+            gap: 15px;
+        }
+
+        .feature-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 6px 12px rgba(0,0,0,0.15);
+        }
+
+        .feature-card h3 {
+            color: #2c3e50;
+            font-size: 1.4em;
+            margin: 0;
+            padding-bottom: 10px;
+            border-bottom: 2px solid #f0f0f0;
+        }
+
+        .feature-card img {
+            width: 100%;
+            height: 200px;
+            object-fit: cover;
+            border-radius: 8px;
+            margin-top: 10px;
+        }
+
+        .feature-card p {
+            margin: 5px 0;
+            color: #555;
+        }
+
+        .feature-card a {
+            color: #3498db;
+            text-decoration: none;
+            font-weight: 600;
+            transition: color 0.2s;
+        }
+
+        .feature-card a:hover {
+            color: #2980b9;
+        }
+
+        .event-price {
+            font-weight: bold;
+            color: #27ae60;
+        }
+
+        .event-date-time {
+            display: flex;
+            gap: 15px;
+            color: #666;
+            font-size: 0.95em;
+        }
+
+        /* Loading placeholder styles */
+        .loading-card {
+            background: white;
+            padding: 20px;
+            border-radius: 12px;
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+            animation: pulse 2s cubic-bezier(0.4, 0, 0.6, 1) infinite;
+        }
+
+        .loading-card .placeholder {
+            background: linear-gradient(90deg, #f0f0f0 0%, #e0e0e0 50%, #f0f0f0 100%);
+            background-size: 200% 100%;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            animation: shimmer 2s infinite;
+        }
+
+        .loading-card .title {
+            height: 24px;
+            width: 80%;
+        }
+
+        .loading-card .text {
+            height: 16px;
+            width: 60%;
+        }
+
+        .loading-card .image {
+            height: 200px;
+            width: 100%;
+            margin: 15px 0;
+            background: url('https://via.placeholder.com/800x400?text=Loading...') center center/cover no-repeat;
+            border-radius: 8px;
+        }
+
+        @keyframes pulse {
+            0% { opacity: 1; }
+            50% { opacity: 0.7; }
+            100% { opacity: 1; }
+        }
+    </style>
+</body>
+</html>
