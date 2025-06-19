@@ -8,6 +8,145 @@
     display: flex;
     align-items: center;
     color: #555;
+.course-suggestion {
+    background: #f0f0f0;
+    padding: 20px;
+    border-radius: 5px;
+    margin-top: 20px;
+}
+
+.event-card {
+    border: 1px solid #ccc;
+    padding: 0;
+}
+
+.course-suggestion li {
+    margin-bottom: 5px;
+}
+
+.course-suggestion a {
+    color: #3498db;
+    text-decoration: none;
+}
+
+.course-suggestion a:hover {
+    text-decoration: underline;
+}
+}
+
+.cv-analysis {
+    background: #fff;
+    padding: 30px;
+    border-radius: 12px;
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+    margin-top: 30px;
+    border: 1px solid #eee;
+    text-align: left;
+}
+
+.cv-analysis h2 {
+    font-size: 22px;
+    margin-bottom: 20px;
+    color: #34495e;
+    text-align: center;
+}
+
+.analysis-breakdown {
+    padding: 25px;
+    border-radius: 10px;
+    background-color: #f9f9f9;
+    box-shadow: inset 0 1px 3px rgba(0, 0, 0, 0.05);
+}
+
+.analysis-breakdown p {
+    margin-bottom: 15px;
+    font-size: 15px;
+    color: #4a5568;
+    line-height: 1.5;
+}
+
+.analysis-breakdown p strong {
+    font-weight: 600;
+    color: #2d3748;
+}
+
+.criteria {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+    gap: 15px;
+    margin-top: 20px;
+}
+
+.criteria p {
+    margin-bottom: 10px;
+    font-size: 14px;
+    color: #555;
+}
+
+.cv-analysis {
+    background: #f9f9f9;
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+    margin-top: 20px;
+}
+
+.cv-analysis h2 {
+    font-size: 20px;
+    margin-bottom: 15px;
+    color: #333;
+    text-align: center;
+}
+
+.analysis-criteria {
+    margin-bottom: 15px;
+    padding: 15px;
+    border: 1px solid #eee;
+    border-radius: 6px;
+}
+
+.analysis-criteria h3 {
+    font-size: 16px;
+    margin-bottom: 10px;
+    color: #555;
+}
+
+.analysis-criteria p {
+    font-size: 14px;
+    color: #777;
+    margin: 5px 0;
+}
+
+.analysis-section {
+    margin-top: 20px;
+    padding: 20px;
+    background: #f9f9f9;
+    border-radius: 8px;
+    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
+}
+
+.analysis-section h2 {
+    margin-bottom: 15px;
+    color: #2c3e50;
+}
+
+.analysis-section .result-box {
+    margin-bottom: 15px;
+    padding: 15px;
+    background: white;
+    border-radius: 8px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.1);
+}
+
+.analysis-section h3 {
+    font-size: 14px;
+    margin-bottom: 8px;
+    color: #3498db;
+}
+
+.analysis-section p {
+    font-size: 12px;
+    color: #555;
 }
 
 #autofill-loading i {
@@ -1408,4 +1547,25 @@ body {
 
 .subscription-plan:hover {
     background-color: #773993;
+}
+
+.event-card {
+    border: 1px solid #ccc;
+    padding: 10px;
+    margin-bottom: 10px;
+    border-radius: 5px;
+}
+
+.event-card h3 {
+    font-size: 1.2em;
+    margin-bottom: 5px;
+}
+
+.event-card p {
+    margin-bottom: 3px;
+}
+
+.event-card img {
+    max-width: 100%;
+    height: auto;
 }
