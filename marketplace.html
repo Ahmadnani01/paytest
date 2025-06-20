@@ -1123,14 +1123,23 @@
                 industryDropdown: document.getElementById('industry-dropdown')
             };
 
-            // Initialize sidebar toggle
+            // Sidebar toggle functionality with persistent state
             if (elements.toggleBtn) {
                 const toggleIcon = elements.toggleBtn.querySelector('i');
+                // On page load, set sidebar state from localStorage
+                if (localStorage.getItem('sidebarCollapsed') === 'true') {
+                    elements.sidebar.classList.add('collapsed');
+                    elements.mainContent.classList.add('expanded');
+                    toggleIcon.classList.remove('fa-chevron-left');
+                    toggleIcon.classList.add('fa-chevron-right');
+                }
                 elements.toggleBtn.addEventListener('click', () => {
                     elements.sidebar.classList.toggle('collapsed');
                     elements.mainContent.classList.toggle('expanded');
                     toggleIcon.classList.toggle('fa-chevron-left');
                     toggleIcon.classList.toggle('fa-chevron-right');
+                    // Save state to localStorage
+                    localStorage.setItem('sidebarCollapsed', elements.sidebar.classList.contains('collapsed'));
                 });
             }
 
