@@ -180,7 +180,9 @@ body {
 
 /* Sidebar Styles */
 .sidebar {
-    width: 250px;
+    width: 18vw;
+    min-width: 70px;
+    max-width: 300px;
     background-color: #2c3e50;
     color: white;
     padding: 20px 0;
@@ -249,7 +251,7 @@ body {
 
 /* Main Content Area */
 .main-content {
-    margin-left: 250px;
+    margin-left: 18vw;
     padding: 20px;
     flex-grow: 1;
     background-color: #f5f6fa;
@@ -526,6 +528,50 @@ body {
 
     .main-content {
         margin-left: 70px;
+    }
+}
+
+@media (max-width: 1200px) {
+    .sidebar {
+        width: 22vw;
+        max-width: 220px;
+    }
+    .main-content {
+        margin-left: 22vw;
+    }
+}
+
+@media (max-width: 900px) {
+    .sidebar {
+        width: 70px;
+    }
+    .main-content {
+        margin-left: 70px;
+    }
+    .features-grid, .skills-grid {
+        grid-template-columns: 1fr;
+    }
+}
+
+@media (max-width: 600px) {
+    .sidebar {
+        position: absolute;
+        width: 100vw;
+        left: 0;
+        top: 0;
+        height: auto;
+        z-index: 1000;
+    }
+    .main-content {
+        margin-left: 0;
+        padding: 10px;
+    }
+    .features-grid, .skills-grid {
+        grid-template-columns: 1fr;
+        gap: 10px;
+    }
+    .feature-card, .event-card {
+        padding: 10px;
     }
 }
 
