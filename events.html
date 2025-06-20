@@ -94,17 +94,27 @@
             }
         });
 
-         // Sidebar toggle functionality
+         // Sidebar toggle functionality with persistent state
         const sidebar = document.querySelector('.sidebar');
         const mainContent = document.querySelector('.main-content');
         const toggleBtn = document.querySelector('.toggle-btn');
         const toggleIcon = toggleBtn.querySelector('i');
+
+        // Load sidebar state from localStorage
+        if (localStorage.getItem('sidebarCollapsed') === 'true') {
+            sidebar.classList.add('collapsed');
+            mainContent.classList.add('expanded');
+            toggleIcon.classList.remove('fa-chevron-left');
+            toggleIcon.classList.add('fa-chevron-right');
+        }
 
         toggleBtn.addEventListener('click', () => {
             sidebar.classList.toggle('collapsed');
             mainContent.classList.toggle('expanded');
             toggleIcon.classList.toggle('fa-chevron-left');
             toggleIcon.classList.toggle('fa-chevron-right');
+            // Save state to localStorage
+            localStorage.setItem('sidebarCollapsed', sidebar.classList.contains('collapsed'));
         });
 
         // Logout functionality
